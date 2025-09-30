@@ -1,4 +1,4 @@
-## 黑马头条前端的3个工程
+## 校园头条前端的3个工程
 
 - heima-leadnews-admin
 - heima-leadnews-app
