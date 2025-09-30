@@ -1,4 +1,4 @@
-# heima-leadnews-wemedia
+# leadnews-wemedia
 
 > 黑马头条自媒体端
 
