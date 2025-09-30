@@ -1,6 +1,6 @@
-# heima-leadnews-wemedia
+# leadnews-wemedia
 
-> 黑马头条自媒体端
+> 校园头条自媒体端
 
 ## Build Setup
 
