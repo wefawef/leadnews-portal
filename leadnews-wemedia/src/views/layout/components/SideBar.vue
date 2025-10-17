@@ -1,14 +1,11 @@
 <template>
     <div  class="sidebar">
-        <div class="logo">
-            <img src="@/assets/logo_admin.png" alt="">
-        </div>
-        <el-menu class="sidebar-el-menu" 
-            :default-active="defaultRoute" 
+        <el-menu class="sidebar-el-menu"
+            :default-active="defaultRoute"
              background-color="#353b4e"
              text-color="#adafb5"
-             router    
-             :collapse="collapse"        
+             router
+             :collapse="collapse"
             >
             <sidebar-item v-for="route in items" :item="route" :key="route.path"/>
         </el-menu>

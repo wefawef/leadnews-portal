@@ -1,7 +1,7 @@
 {
   "name": "heima-leadnews-admin",
   "version": "1.0.0",
-  "description": "黑马头条自媒体端",
+  "description": "校园头条自媒体端",
   "author": "miukoo <miukoo@126.com>",
   "private": true,
   "scripts": {

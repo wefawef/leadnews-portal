@@ -29,11 +29,18 @@ export default {
         let files = document.querySelector('.el-upload .el-upload__input').files ;
         if(files && files.length) {
           let fd = new FormData();
-          fd.append('file', files[0],files[0].name);
-          let result = await uploadImg(fd)
-          this.$message({message:'上传成功',type:'success'}) && (this.upload_img_url = result.data.url)
-          debugger;
-          this.imgChange && this.imgChange(result.url) //调用上层的方法 通知数据变化
+          fd.append('multipartFile', files[0],files[0].name);
+          try {
+            let result = await uploadImg(fd)
+            if(result.code == "200"){
+            this.$message({ message: '上传成功', type: 'success' });
+            this.upload_img_url = result.data.url;
+            }else {
+              this.$message({ message: '上传失败: ' + result.errorMessage});
+            }
+          } catch (error) {
+            this.$message({ message: '上传失败: ' + error.message, type: 'error' });
+          }
         }else{
            this.$message({message:"请选择一张图片",type:"warning"})
         }

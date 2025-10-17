@@ -2,7 +2,7 @@
  <div class="filter">
      <header>图片管理</header>
      <div class="container">
-          <el-radio-group size='small' @change="loadData" v-model="activeSelect"  style="margin-bottom: 30px;">
+          <el-radio-group size='small' @change="handleTabChange" v-model="activeSelect"  style="margin-bottom: 30px;">
              <el-radio-button  label="0">全部</el-radio-button>
              <el-radio-button  label="1">收藏</el-radio-button>
           </el-radio-group>
@@ -11,7 +11,8 @@
               <div class="img_list_item" v-for="img in imgData" :key="img.id">
                   <img :src="img.url" />
                   <div v-if="activeSelect == '0'" class="operate">
-                     <img @click="collectOrCancel(img)" :src="img.is_collection ? collectSelectedIcon : collectIcon" alt="" />
+
+                     <img @click="collectOrCancel(img)" :src="img.isCollection ? collectSelectedIcon : collectIcon" alt="" />
                      <img @click="delImg(img)" :src="delIcon" alt="">
                   </div>
               </div>
@@ -72,6 +73,11 @@ export default {
         this.loadData();
     },
     methods:{
+      handleTabChange() {
+        // 重置分页参数为第一页
+        this.imgPage.currentPage = 1
+        this.loadData()
+      },
       loadData : function(){
         //初始化时加载数据
         this.getImgData({
@@ -88,17 +94,17 @@ export default {
       //获取图片素材
       async  getImgData (params) {
         let result = await getAllImgData(params)
-        this.imgData = result.data.list
-        this.imgPage.total = result.data.total
+        this.imgData = result.data
+        this.imgPage.total = result.total
         this.imgPage.pageCount = Math.ceil(this.imgPage.total / this.imgPage.pageSize)
       },
       //取消或者收藏图片
       async collectOrCancel (img) {
-          let isCollected = img.is_collection;
+          let isCollected = img.isCollection;
           if(isCollected==1){ isCollected = 0; }else{ isCollected=1; }
           //取相反状态
          await collectOrCancel(img.id , {isCollected:isCollected})
-         img.is_collection = isCollected //取相反状态
+         img.isCollection = isCollected //取相反状态
          this.$forceUpdate() //强制更新
          this.$message({type:'success',message:'操作成功'})
       },
@@ -106,7 +112,6 @@ export default {
       async delImg (img) {
         let result =  await  this.$confirm('确认删除该素材?');
          result ? await delImg(img.id) : null //删除数据
-        //写多了if  else 写个三元表达式 换换口味
          this.$message({type:'success',message:'删除成功'}) &&
          this.loadData();
       },

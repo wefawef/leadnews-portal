@@ -4,7 +4,7 @@
       <el-col :span="15">
         <dl class="user-info">
           <dd class="user-avatar"><img src="@/assets/avatar.jpg"></dd>
-          <dt>黑马头条官方账号</dt>
+          <dt>校园头条官方账号</dt>
           <dd class="tips">视频发布</dd>
         </dl>
       </el-col>
@@ -34,7 +34,7 @@
 
 export default {
   props: {
-    
+
   },
   data() {
     return {
@@ -43,7 +43,7 @@ export default {
   mounted() {
   },
   methods: {
-    
+
   }
 }
 </script>

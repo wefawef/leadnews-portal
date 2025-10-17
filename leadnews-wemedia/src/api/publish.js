@@ -15,7 +15,7 @@ export function getAllImgData (data) {
 export function  uploadImg (data) {
     return Request({
         url:API_USERIMAGES_ADD,
-        method:'post',
+        method:'put',
         data
     })
 }

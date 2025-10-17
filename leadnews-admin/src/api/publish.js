@@ -6,14 +6,14 @@ export function getAllImgData (data) {
         url:API_USERIMAGES_LIST,
         method:'post',
         params:{},
-        data:data
+        data
     })
 }
 //上传图片
 export function  uploadImg (data) {
     return Request({
         url:API_USERIMAGES_ADD,
-        method:'post',
+        method:'put',
         data
     })
 }
