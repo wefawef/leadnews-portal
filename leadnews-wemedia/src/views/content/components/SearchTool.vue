@@ -4,35 +4,35 @@
     <div class="filter-container">
       <el-form ref="form">
           <el-form-item label="文章状态：" label-width="110px">
-            <a  
-            v-for='item in stateList'  
+            <a
+            v-for='item in stateList'
             :key="item.value"
-            href="javascript:;" 
-            :class="['state_label',(item.value === selectState.value) ? 'active' : '']" 
+            href="javascript:;"
+            :class="['state_label',(item.value === selectState.value) ? 'active' : '']"
             @click="changeState(item)">{{item.label}}</a>
           </el-form-item>
         <el-form-item label="频道列表："  label-width="110px">
             <el-select  v-model="channel_id" @change="queryData">
-              <el-option               
+              <el-option
                 v-for="item in channel_list"
                 :key="item.id"
                 :label="item.name"
                 :value="item.id">
               </el-option>
-            </el-select>           
+            </el-select>
         </el-form-item>
          <el-form-item label="时间选择:  " label-width="110px" >
-           <el-date-picker  
+           <el-date-picker
                 type="datetimerange"
                 v-model="date"
                 range-separator="-"
                 start-placeholder="开始日期"
-                end-placeholder="结束日期" 
-                format="yyyy-MM-dd" 
+                end-placeholder="结束日期"
+                format="yyyy-MM-dd"
                 value-format="yyyy-MM-dd"
                 placeholder="选择日期"
                 @change="queryData"
-              />        
+              />
         </el-form-item>
       </el-form>
     </div>
@@ -57,20 +57,20 @@ export default {
       },
       channel_id:null, //频道id
       date:null,
-     
+
     }
   },
   methods: {
-     //查询数据 值得注意的是 一旦条件形成 那么页码应该重新设置为1 
+     //查询数据 值得注意的是 一旦条件形成 那么页码应该重新设置为1
     // 因为查询条件的变化  页码应该从第一页开始
     queryData () {
       let params = {
          resetPage:true, //用于判断是否需要重新设置分页器的标记
-         channel_id:this.channel_id,
+         channelId:this.channel_id,
          status: this.selectState.value == 5 ? null : this.selectState.value,
          page:1,
-         begin_pubdate:(this.date && this.date.length) ? this.date[0] : null,
-         end_pubdate:(this.date && this.date.length > 1) ? this.date[1] : null
+         beginPubDate:(this.date && this.date.length) ? this.date[0] : null,
+         endPubDate:(this.date && this.date.length > 1) ? this.date[1] : null
       }
      this.changePage && this.changePage(params) //调用上层组件的查询方法
     },

@@ -8,11 +8,11 @@
           </el-radio-group>
           <el-button @click="showPicDialog = true" class="upload_btn" type="primary">上传图片</el-button>
           <div class="img_list">
-              <div class="img_list_item" v-for="img in imgData" :key="img.id">
-                  <img :src="img.url" />
+              <div class="img_list_item" v-for="img in imgData" :key="img.id || img.imageId">
+                  <img :src="img.url || img.imageUrl" />
                   <div v-if="activeSelect == '0'" class="operate">
 
-                     <img @click="collectOrCancel(img)" :src="img.isCollection ? collectSelectedIcon : collectIcon" alt="" />
+                     <img @click="collectOrCancel(img)" :src="(img.isCollection || img.isCollected) ? collectSelectedIcon : collectIcon" alt="" />
                      <img @click="delImg(img)" :src="delIcon" alt="">
                   </div>
               </div>
@@ -100,20 +100,35 @@ export default {
       },
       //取消或者收藏图片
       async collectOrCancel (img) {
-          let isCollected = img.isCollection;
+          let isCollected = img.isCollection || img.isCollected;
           if(isCollected==1){ isCollected = 0; }else{ isCollected=1; }
           //取相反状态
-         await collectOrCancel(img.id , {isCollected:isCollected})
+         await collectOrCancel(img.id || img.imageId , {isCollected:isCollected})
          img.isCollection = isCollected //取相反状态
+         img.isCollected = isCollected //兼容驼峰命名
          this.$forceUpdate() //强制更新
          this.$message({type:'success',message:'操作成功'})
       },
       //删除图片
       async delImg (img) {
+
         let result =  await  this.$confirm('确认删除该素材?');
-         result ? await delImg(img.id) : null //删除数据
-         this.$message({type:'success',message:'删除成功'}) &&
-         this.loadData();
+        if (result) {
+          try {
+            const response = await delImg(img.id || img.imageId)
+            if (response.code === 200) {
+              this.$message({ type: 'success', message: '删除成功' })
+              this.loadData()
+            } else if (response.code === 500) {
+              this.$message({ type: 'error', message: '该素材已经被使用了,无法删除！！！' })
+            } else {
+              this.$message({ type: 'error', message: '删除失败' })
+            }
+          } catch (error) {
+            this.$message({ type: 'error', message: '删除失败，请求异常' })
+          }
+        }
+
       },
      imgChangeCall () {
          //图片变化了 记录改变的状态 用于关闭弹层时 重新加载数据

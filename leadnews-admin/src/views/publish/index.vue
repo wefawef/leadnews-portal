@@ -260,8 +260,8 @@
           page: temp,
           is_collected: isCollect?1:0 //是否是收藏
         });
-        this.imgData = result.data.list;
-        this.imgPage.total = result.data.total;
+        this.imgData = result.data;
+        this.imgPage.total = result.total;
         this.imgPage.pageCount = Math.ceil(
           this.imgPage.total / this.imgPage.pageSize
         );

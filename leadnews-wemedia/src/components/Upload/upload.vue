@@ -35,6 +35,8 @@ export default {
             if(result.code == "200"){
             this.$message({ message: '上传成功', type: 'success' });
             this.upload_img_url = result.data.url;
+            // 通知父组件刷新数据
+            this.imgChange && this.imgChange(result.data.url);
             }else {
               this.$message({ message: '上传失败: ' + result.errorMessage});
             }

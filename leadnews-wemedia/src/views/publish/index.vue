@@ -87,11 +87,11 @@
             <div
               class="img_list"
               v-for="item in imgData"
-              :key="item.id"
-              @click="selectPic(item.id,item.url)"
+              :key="item.id "
+              @click="selectPic(item.id , item.url )"
             >
-              <img :src="item.url">
-              <img v-if="item.id == selectedImg.id" :src="selected_img_url" class="selected">
+              <img :src="item.url ">
+              <img v-if="(item.id ) == selectedImg.id" :src="selected_img_url" class="selected">
             </div>
           </div>
           <div class="pagination">
@@ -155,7 +155,7 @@
           /***用来存储页面的页码及行数信息*****/
           total: 0, //总页数
           currentPage: 1, //第几页
-          pageSize: 5, //每页多少条
+          pageSize: 8, //每页多少条
           pageCount: 1 //共多少页
         },
         imgData: [], //存储图片的数据
@@ -197,10 +197,10 @@
         this.FormData = {
           id:result.data.id,
           title: result.data.title,
-          channel_id: result.data.channel_id,
+          channel_id: result.data.channelId,
           labels:result.data.labels,
           type: ""+result.data.type,
-          publish_time:result.data.publish_time
+          publish_time:result.data.publishTime
         }
         let conts = [];
         if(result.data.content){
@@ -282,8 +282,8 @@
           page: temp,
           is_collected: isCollect?1:0 //是否是收藏
         });
-        this.imgData = result.data.list;
-        this.imgPage.total = result.data.total;
+        this.imgData = result.data;
+        this.imgPage.total = result.total;
         this.imgPage.pageCount = Math.ceil(
           this.imgPage.total / this.imgPage.pageSize
         );

@@ -57,7 +57,7 @@
         //搜索文章
         async searchArticle (newParams) {
           this.tempParams = newParams
-          let result = await searchArticle({...this.params,key_word:this.searchText,...this.tempParams})
+          let result = await searchArticle({...this.params,keyword:this.searchText,...this.tempParams})
           /****需要重新将分页器的页码设置为1******/
           if(this.$refs.mySearchResult){
             this.$refs.mySearchResult.resetPage(); //重置
@@ -66,25 +66,21 @@
           this.total = result.total //总记录数
           this.articleList = result.data //当前的数组
         },
-        //根据Id删除文章
+        // 根据Id删除文章：仅返回 Promise，成功 resolve，失败抛出错误；提示与刷新由子组件统一处理
         async deleteArticlesById (Id) {
-          let temp = await deleteArticles(Id)
-          if(temp.code==0) {
-            this.$message({type: 'success', message: '删除成功!'});
-            this.searchArticle();
-          }else{
-            this.$message({type: 'error', message: temp.error_message});
+          const resp = await deleteArticles(Id)
+          if (resp && resp.code == 200) {
+            return resp;
           }
+          throw new Error((resp && resp.error_message) || '删除失败');
         },
-        //上下架
-        async upOrDown (Id,enable) {
-          let temp = await upDownArticle({id:Id,enable:enable})
-          if(temp.code==0) {
-            this.$message({type: 'success', message: '操作成功!'});
-            this.searchArticle();
-          }else{
-            this.$message({type: 'error', message: temp.error_message});
+        // 上下架：仅返回 Promise，成功 resolve，失败抛出错误；提示与刷新由子组件统一处理
+        async upOrDown (Id, enable) {
+          const resp = await upDownArticle({ id: Id, enable });
+          if (resp && resp.code == 200) {
+            return resp; // 让子组件 then 中提示并刷新
           }
+          throw new Error((resp && resp.error_message) || '操作失败');
         },
         //拉取频道数据
         async getChannels () {
