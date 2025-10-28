@@ -139,7 +139,9 @@
           type: "3",
           labels:"",
           publish_time:"",
-          channel_id: null//频道ID
+          channel_id: null,//频道ID
+          // publishTime:"",
+          // channelId: null//频道ID
         },
         host:'',//图片host
         singlePic: null, //单图模式
@@ -350,6 +352,15 @@
             this.$message({ type: "warning", message: "文章封面未设置" });
             return;
           }
+        }
+        // 在发送前将字段统一为 publishedTime 和 channelId
+        if (data.publish_time !== undefined) {
+          data.publishTime = data.publish_time;
+          delete data.publish_time;
+        }
+        if (data.channel_id !== undefined) {
+          data.channelId = data.channel_id;
+          delete data.channel_id;
         }
         //编辑或者发布文章
         !articleId
