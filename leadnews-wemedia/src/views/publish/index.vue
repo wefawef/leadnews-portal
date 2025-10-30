@@ -363,14 +363,26 @@
           delete data.channel_id;
         }
         //编辑或者发布文章
-        !articleId
+        let res = !articleId
           ? await publishArticles(params, data)
           : await modifyArticles(articleId, params, data);
-        this.$message({
-          type: "success",
-          message: articleId ? "编辑文章成功" : "新增文章成功"
-        });
-        this.$router.replace({ path: "/article/list" });
+        if(res.code === 200){
+          this.$message({
+            type: "success",
+            message: articleId ? "编辑文章成功" : "新增文章成功"
+          });
+          this.$router.replace({ path: "/article/list" });
+        } else if(res.code === 3501){
+          this.$message({
+            type: "error",
+            message: "素材引用失效，请选用其他素材"
+          });
+        } else {
+          this.$message({
+            type: "error",
+            message: res.message || "操作失败"
+          });
+        }
       }
     }
   };
