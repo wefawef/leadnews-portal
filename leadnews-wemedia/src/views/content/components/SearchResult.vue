@@ -22,7 +22,7 @@
             <el-tag class="audit" v-if="item.status == '4'">待发布</el-tag>
             <el-tag class="publish" v-if="item.status == '8'">待发布</el-tag>
             <el-tag class="publish" v-if="item.status == '9'">已发表</el-tag>
-            <el-tag class="unaudit" v-if="item.status == '2'">未通过审核:{item.reason}</el-tag>
+            <el-tag class="unaudit" v-if="item.status == '2'">未通过审核:{{item.reason}}</el-tag>
             <el-tag class="delete" v-if="item.status == '100'">已删除</el-tag>
             <template v-if="item.status == '9'">
               <el-tag class="draft" v-if="item.enable == '0'">已下架</el-tag>
