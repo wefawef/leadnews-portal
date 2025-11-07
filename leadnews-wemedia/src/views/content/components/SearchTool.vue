@@ -12,7 +12,7 @@
             @click="changeState(item)">{{item.label}}</a>
           </el-form-item>
         <el-form-item label="频道列表："  label-width="110px">
-            <el-select  v-model="channel_id" @change="queryData">
+            <el-select  v-model="channel_id" @change="queryData" clearable>
               <el-option
                 v-for="item in channel_list"
                 :key="item.id"
@@ -28,8 +28,8 @@
                 range-separator="-"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
-                format="yyyy-MM-dd"
-                value-format="yyyy-MM-dd"
+                format="yyyy-MM-dd HH:mm"
+                value-format="yyyy-MM-dd HH:mm"
                 placeholder="选择日期"
                 @change="queryData"
               />
@@ -47,9 +47,12 @@ export default {
       stateList:[
         {label:'全部',value:5},
         {label:'草稿',value:0},
-        {label:'待审核',value:1},
-        {label:'审核通过',value:2},
-        {label:'审核失败',value:3},
+        {label:'提交(待审核)',value:1},
+        {label:'审核失败',value:2},
+        {label:'人工审核',value:3},
+        {label:'人工审核通过',value:4},
+        {label:'审核通过(待发布)',value:8},
+        {label:'已发布',value:9},
       ],
       selectState:{
         //选择的筛选状态
