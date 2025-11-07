@@ -7,7 +7,7 @@
         <dl class="article-content">
           <dd class="article-time">{{ formatTime(item.publishTime) }}</dd>
           <dt>
-<!--            <a @click="noAction" href="#" class="">{{item.title}}</a>-->
+            <a href="#" class="">{{item.title}}</a>
             <div  @click="operateBtn(item.id,$event)">
               <i data-type='up'  v-if="item.status == '9'&&item.enable=='0'" class="el-icon-upload2">上架</i>
               <i data-type='down'  v-if="item.status == '9'&&item.enable=='1'" class="el-icon-download">下架</i>
