@@ -5,7 +5,7 @@
       <li v-for="(item,index) in  articleList" :key='index' class='articles-item'>
         <img class="article-img" :src="getImage(item)"/>
         <dl class="article-content">
-          <dd class="article-time">{{ formatTime(item.publishTime) }}</dd>
+          <dd class="article-time">在{{dateFormat(item.createdTime)}}创建</dd>
           <dt>
             <a href="#" class="">{{item.title}}</a>
             <div  @click="operateBtn(item.id,$event)">
@@ -29,8 +29,7 @@
               <el-tag class="audit" v-if="item.enable == '1'">已上架</el-tag>
             </template>
           </dd>
-          <dd class="time">{{dateFormat(item.publish_time)}}</dd>
-        </dl>
+          <dd class="time" v-if="item.publishTime">在{{dateFormat(item.publishTime)}}发布</dd>        </dl>
       </li>
     </ul>
     <div class="pagination">

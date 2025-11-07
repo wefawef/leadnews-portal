@@ -21,7 +21,7 @@
               </el-option>
             </el-select>
         </el-form-item>
-         <el-form-item label="时间选择:  " label-width="110px" >
+         <el-form-item label="发布时间选择:  " label-width="110px" >
            <el-date-picker
                 type="datetimerange"
                 v-model="date"
