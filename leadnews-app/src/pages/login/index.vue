@@ -56,34 +56,65 @@
                 modal.toast({ message:'该功能暂未实现！',duration:3})
             },
             see : function(){
-              {
-                Api.login(this.params).then(d=>{
-                    this.$store.setToken(d.data.token)
-                    this.$router.push("/home")
-                }).catch(e=>{
-                  console.log(e)
-                })
-              }
+                // 直接跳转到首页，不进行登录
+                this.$router.push("/home")
             },
             login:function(){
-                if(this.params.phone==''||this.params.password==''){
+                // 验证输入
+                if(!this.params.phone || String(this.params.phone).replace(/\s/g, '') === ''){
                     modal.toast({
-                        message:'请输入用户名或密码',
+                        message:'请输入手机号',
                         duration:3
                     })
-                }else{
-                    alert(JSON.stringify(this.params))
-                    Api.login(this.params).then(d=>{
-                        if(d.code==0){
-                            this.$store.setToken(d.data.token)
-                            this.$router.push("/home")
-                        }else{
-                            modal.toast({ message:'用户或密码错误',duration:3})
-                        }
-                    }).catch(e=>{
-                        console.log(e)
-                    })
+                    return;
                 }
+                if(!this.params.password || String(this.params.password).replace(/\s/g, '') === ''){
+                    modal.toast({
+                        message:'请输入密码',
+                        duration:3
+                    })
+                    return;
+                }
+                
+                // 调用登录接口
+                Api.login(this.params).then(d=>{
+                    // 根据返回的数据结构，code为200表示成功
+                    if(d.code === 200 && d.data){
+                        // 保存token
+                        this.$store.setToken(d.data.token).then(() => {
+                            // 保存用户信息
+                            if(d.data.user){
+                                return this.$store.setUser(d.data.user);
+                            }
+                            return Promise.resolve();
+                        }).then(() => {
+                            // 登录成功，跳转到首页
+                            modal.toast({
+                                message: d.errorMessage || '登录成功',
+                                duration: 2
+                            });
+                            this.$router.push("/home");
+                        }).catch(err => {
+                            console.error('保存登录信息失败:', err);
+                            modal.toast({
+                                message:'登录信息保存失败，请重试',
+                                duration:3
+                            });
+                        });
+                    }else{
+                        // 登录失败
+                        modal.toast({ 
+                            message: d.errorMessage || '登录失败，请检查用户名和密码', 
+                            duration:3
+                        });
+                    }
+                }).catch(e=>{
+                    console.error('登录请求失败:', e);
+                    modal.toast({ 
+                        message: '网络错误，请稍后重试', 
+                        duration:3
+                    });
+                })
             }
         }
     }

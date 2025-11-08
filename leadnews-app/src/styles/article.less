@@ -7,56 +7,62 @@
 @code-family            : Consolas,Menlo,Courier,monospace;
 @icon-font              :fontawesome;
 // 主页文章列表样式 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ START
-@list-0-height          :160px;
-@list-1-height          :190px;
-@list-2-height          :280px;
+@list-0-height          :120px;
+@list-1-height          :160px;
+@list-2-height          :220px;
 // 列表通用参数
-@list-lr-margin         :10px;
-@list-tb-margin         :5px;
-@list-bottom-color      :#dfdfdf;
-@list-loading-color     :#757575;
+@list-lr-margin         :15px;
+@list-tb-margin         :8px;
+@list-bottom-color      :#f0f0f0;
+@list-loading-color     :#999;
 
-@title-size             :32px;
+@title-size             :34px;
 @title-family           :@font-family;
-@title-color            :#383839;
+@title-color            :#333;
 
-@tag-size               :18px;
+@tag-size               :16px;
 @tag-family             :@font-family;
-@tag-color              :#b5b5b5;
-@tag-right-margin       :21px;
+@tag-color              :#999;
+@tag-right-margin       :18px;
 
-@tag-icon-color         :red;
-@tag-icon-size          :24px;
+@tag-icon-color         :#ff4757;
+@tag-icon-size          :20px;
 @tag-icon-font          :@icon-font;
 @tag-icon-bg            :transparent;
 
 .list-item {
-  width: 750px;
+  width: 100%;
+  max-width: 750px;
   flex-direction: column;
   border-bottom-width: 1px;
-  border-bottom-color: #efefef;
+  border-bottom-color: @list-bottom-color;
   padding-bottom: 12px;
   padding-left: 8px;
   padding-right: 8px;
+  padding-top: 12px;
+  box-sizing: border-box;
+  background-color: @component-background;
 }
 .title {
   flex: 1;
-  padding-top: 10px;
   padding-bottom: 10px;
   line-height: 36px;
   font-size: @title-size;
   font-family: @title-family;
   color: @title-color;
-  justify-content:center;
-  align-items: center;
+  justify-content:flex-start;
+  align-items: flex-start;
   margin: @list-tb-margin @list-lr-margin;
+  width: 100%;
+  word-break: break-all;
+  box-sizing: border-box;
 }
 
 .tags-text{
   font-size: @tag-size;
   color: @tag-color;
   font-family: @tag-family;
-  margin-right: @tag-right-margin;
+  margin-right: 15px;
   line-height: 20px;
 }
 .tags-icon{
@@ -69,7 +75,6 @@
   flex-direction: row;
   margin: 15px @list-lr-margin @list-tb-margin;
   justify-content: left;
-  align-items: center;
 }
 .date {
   margin-top: 3px;
@@ -97,6 +102,6 @@
 }
 .image{
   border-radius: 5px;
-  height: 160px;
+  height: 120px;
 }
 // 主页文章列表样式 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ENT

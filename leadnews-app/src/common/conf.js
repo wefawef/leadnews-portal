@@ -36,6 +36,8 @@ const  config = {
         user_follow:{url:'api/v1/user/user_follow/',sv:'user'},
         // ==========  login
         user_login:{url:'user/api/v1/login/login_auth',sv:'login'},
+        // ==========  channel - 确保使用正确的GET路径
+        load_channels:{url:'api/v1/channel/channels',sv:'article', method:'GET'},
         // 解决多访问地址的问题
         getBase : function(url){
             let sv = url.sv
@@ -48,10 +50,14 @@ const  config = {
         },
         get:function(name){
             let tmp = config.urls[name];
-            if(tmp)
-                return config.urls.getBase(tmp)+"/"+tmp.url;
-            else
+            if(tmp) {
+                const fullUrl = config.urls.getBase(tmp)+"/"+tmp.url;
+                console.log('构建API URL:', name, '->', fullUrl);
+                return fullUrl;
+            } else {
+                console.warn('未找到URL配置:', name);
                 return name;
+            }
         }
     },
     style : {

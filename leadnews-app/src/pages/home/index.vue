@@ -49,10 +49,12 @@
       api:null,// API
       shownew:false,//是否显示loadnew动画
       showmore:false,//是否显示loadmore动画
-      tabTitles: Config.tabTitles,//频道配置
+      loading: false, // 是否正在加载数据
+      tabTitles: [],//频道配置，从接口加载
       tabStyles: Config.tabStyles,//频道样式
-      tabList: [...Array(Config.tabTitles.length).keys()].map(i => []),//列表数据集合
+      tabList: [],//列表数据集合
       tabPageHeight: 1334,//列表总高度
+      hasMoreData: {},//记录每个频道是否还有更多数据
       params:{
         loaddir:1,
         index:0,
@@ -62,7 +64,8 @@
         min_behot_time:20000000000000
       },//列表数据请求参数
       ashow : {},//列表展示行为记录表
-      timer : null//定时函数
+      timer : null,//定时函数
+      loadingChannels: false//是否正在加载频道
     }),
     computed:{
       // 渲染加载最新和更多的国际化语言
@@ -70,8 +73,7 @@
       load_more_text:function(){return this.$lang.load_more_text}
     },
     mounted(){
-      // 激活推荐按钮
-      this.$refs['wxc-tab-page'].setPage(1,null,true);
+      // 频道加载和页面激活已在created中的loadChannels方法处理
     },
     destroyed(){
       clearInterval(this.timer)
@@ -81,6 +83,8 @@
       this.tabPageHeight = Utils.env.getPageHeight()-155;
       Api.setVue(this);
       let _this = this;
+      // 加载频道列表
+      this.loadChannels();
       // 每隔5秒提交一次数据
       this.timer = setInterval(function(){
         let result = Api.saveShowBehavior(_this.ashow);
@@ -96,6 +100,65 @@
       },5000);
     },
     methods: {
+      // 加载频道列表
+      loadChannels: function(){
+        if(this.loadingChannels) return;
+        this.loadingChannels = true;
+        console.log('开始加载频道列表...');
+        Api.loadChannels().then((d)=>{
+          console.log('频道列表加载成功:', d);
+          if(d.code === 200 && d.data && Array.isArray(d.data)){
+            // 转换频道数据格式，根据返回的结构
+            let channels = d.data.map(ch => ({
+              title: ch.name,
+              id: ch.id
+            }));
+            console.log('转换后的频道数据:', channels);
+            // 添加默认的"推荐"频道到第一个位置
+            this.tabTitles = [{title: '推荐', id: '__all__'}, ...channels];
+            // 初始化列表数据和hasMoreData
+            this.tabList = [...Array(this.tabTitles.length).keys()].map(i => []);
+            this.hasMoreData = {};
+            this.tabTitles.forEach((ch, idx) => {
+              this.hasMoreData[idx] = true;
+            });
+            // 默认加载第一个频道（推荐）的数据
+            this.$nextTick(() => {
+              if(this.$refs['wxc-tab-page']){
+                this.$refs['wxc-tab-page'].setPage(0, null, true);
+                this.params.index = 0;
+                this.params.tag = '__all__';
+                this.load();
+              }
+            });
+          } else {
+            console.log('频道列表加载失败，使用默认配置:', d);
+            // 如果接口失败，使用默认配置
+            this.tabTitles = Config.tabTitles;
+            this.tabList = [...Array(this.tabTitles.length).keys()].map(i => []);
+            this.hasMoreData = {};
+            this.tabTitles.forEach((ch, idx) => {
+              this.hasMoreData[idx] = true;
+            });
+            this.$nextTick(() => {
+                if(this.$refs['wxc-tab-page']){
+                  this.$refs['wxc-tab-page'].setPage(1, null, true);
+              }
+            });
+          }
+          this.loadingChannels = false;
+        }).catch((e)=>{
+          console.error('加载频道异常:', e);
+          // 如果接口失败，使用默认配置
+          this.tabTitles = Config.tabTitles;
+          this.tabList = [...Array(this.tabTitles.length).keys()].map(i => []);
+          this.hasMoreData = {};
+          this.tabTitles.forEach((ch, idx) => {
+            this.hasMoreData[idx] = true;
+          });
+          this.loadingChannels = false;
+        });
+      },
       // 列表项在可见区域展示后的事件处理
       show:function(id){
         if(this.ashow[id]==undefined){
@@ -104,9 +167,18 @@
       },
       // 上拉加载更多
       loadmore:function(){
-        this.showmore=true;
-        this.params.loaddir=2
-        this.load();
+        // 如果该频道没有更多数据，不加载
+        if(!this.hasMoreData[this.params.index]){
+          this.showmore=false;
+          return;
+        }
+        // 确保只在需要时设置加载状态，避免重复加载
+        if(!this.showmore && !this.loading) {
+          this.showmore=true;
+          this.loading = true; // 添加加载标志
+          this.params.loaddir=2;
+          this.load();
+        }
       },
       // 下来刷新数据
       loadnew:function(){
@@ -115,37 +187,102 @@
         this.load();
       },
       // 正常加载数据
-      load : function(){
-        Api.loaddata(this.params).then((d)=>{
+      load : function(){      
+      // 根据不同的加载方式设置特定的动画
+      if(this.params.loaddir == 2){//加载更多
+        this.showmore=true;
+      }else if(this.params.loaddir == 0){//下拉刷新
+        this.shownew=true;
+      }else{//首次加载或频道切换
+        this.shownew=false;
+        this.showmore=false;
+      }
+      
+      console.log('加载数据，频道索引:', this.params.index, '标签:', this.params.tag);
+      Api.loaddata(this.params).then((d)=>{
+        if(d.code === 200 && d.data){
           this.tanfer(d.data);
-        }).catch((e)=>{
-          console.log(e)
-        })
-      },
-      // 列表数据转换成View需要的Model对象
-      tanfer : function(data){
-        if(data.length==0){
+        } else {
           this.showmore=false;
           this.shownew=false;
-          modal.toast({message:'没有数据了...',duration:3})
+          this.loading = false;
+          modal.toast({
+            message: d.errorMessage || '加载失败',
+            duration: 2
+          });
+        }
+      }).catch((e)=>{
+        console.error('加载数据失败:', e);
+        this.showmore=false;
+        this.shownew=false;
+        this.loading = false;
+        modal.toast({
+          message: '网络错误，请稍后重试',
+          duration: 2
+        });
+      })
+    },
+      // 列表数据转换成View需要的Model对象
+      tanfer : function(data){
+        // 处理数据为空的情况
+        if(!data || data.length==0){
+          // 如果是加载更多且没有数据，标记为没有更多数据
+          if(this.params.loaddir == 2){
+            this.hasMoreData[this.params.index] = false;
+            // 如果当前列表为空，才提示没有数据
+            if(this.tabList[this.params.index].length === 0){
+              modal.toast({message:'暂无数据',duration:2});
+            }
+          } else {
+            // 下拉刷新时如果没有数据，提示
+            if(this.tabList[this.params.index].length === 0){
+              modal.toast({message:'暂无数据',duration:2});
+            }
+          }
+          // 重置所有加载状态
+          this.showmore=false;
+          this.shownew=false;
+          this.loading = false;
           return ;
         }
+        
+        // 如果返回的数据少于请求的size，说明没有更多数据了
+        if(data.length < this.params.size){
+          this.hasMoreData[this.params.index] = false;
+        }
+        
         let arr = []
         for(let i=0;i<data.length;i++){
           let ims = []
           if(data[i].images){
-            ims = data[i].images.replace(/[\[\]]/ig,'').split(',')
+            // 处理图片字符串，移除方括号并分割
+            let imgStr = String(data[i].images).replace(/[\[\]]/ig,'').trim();
+            if(imgStr){
+              ims = imgStr.split(',').filter(img => img.trim()).map(img => img.trim());
+            }
           }
-          let tmp = {
-            id:data[i].id,
-            title:data[i].title,
-            comment:data[i].comment,
-            authorId:data[i].author_id,
-            source:data[i].author_name,
-            date:data[i].publish_time,
-            type:ims.length==2?1:ims.length,
-            image:ims,
-            icon:'\uf06d'
+          
+          // 根据图片数量确定类型：0=无图，1=单图，2或3=多图（最多3张）
+          let type = 0;
+          if(ims.length === 1){
+            type = 1;
+          } else if(ims.length >= 2){
+            // 2张或3张都使用article_3组件，但限制最多3张
+            type = ims.length > 3 ? 3 : ims.length;
+          }
+          
+          // 先创建一个新对象，复制所有原始字段
+          let tmp = {...data[i]};
+          // 添加视图需要的额外字段
+          tmp.comment = tmp.comment || 0;
+          tmp.source = tmp.authorName || '未知';
+          tmp.date = tmp.publishTime;
+          tmp.type = type;
+          tmp.image = ims.slice(0, 3); // 最多保留3张图片
+          tmp.icon = '\uf06d';
+          // 确保staticUrl字段被正确处理（移除可能的引号和空格）
+          if(tmp.staticUrl){
+            tmp.staticUrl = String(tmp.staticUrl).replace(/[`'"\s]/g, '').trim();
           }
           let time = data[i].publish_time;
           if(this.params.max_behot_time<time){
@@ -156,26 +293,45 @@
           }
           arr.push(tmp);
         }
-        let newList = [...Array(this.tabTitles.length).keys()].map(i => []);
-        if(this.params.loaddir!=0){
-          arr = this.tabList[this.params.index].concat(arr);
-        }else{
-          arr=arr.concat(this.tabList[this.params.index]);
+        
+        // 更新列表数据
+        let newList = [...this.tabList];
+        
+        if(this.params.loaddir == 2){
+          // 加载更多：追加到列表末尾
+          newList[this.params.index] = this.tabList[this.params.index].concat(arr);
+        } else if(this.params.loaddir == 0){
+          // 下拉刷新：新数据放在前面
+          newList[this.params.index] = arr.concat(this.tabList[this.params.index]);
+        } else {
+          // 首次加载：直接替换
+          newList[this.params.index] = arr;
         }
-        newList[this.params.index] = arr;
+        
+        // 数据更新完成后再重置所有加载状态
         this.tabList = newList;
         this.showmore=false;
         this.shownew=false;
+        this.loading = false;
       },
       // 频道页切换事件
-      wxcTabPageCurrentTabSelected (e) {
-        this.params.loaddir=1
-        this.params.index=e.page
-        this.params.tag = Config.tabTitles[e.page]['id'];
-        this.params.max_behot_time=0
-        this.params.min_behot_time=20000000000000
-        this.shownew=true
+    wxcTabPageCurrentTabSelected (e) {
+      console.log('切换到频道:', e.page, this.tabTitles[e.page] && this.tabTitles[e.page]['title'] || '未知');
+      this.params.loaddir=1
+      this.params.index=e.page
+      this.params.tag = this.tabTitles[e.page] ? this.tabTitles[e.page]['id'] : '__all__';
+      this.params.max_behot_time=0
+      this.params.min_behot_time=20000000000000
+      // 清空当前频道的数据
+      this.tabList[this.params.index] = [];
+      // 重置加载状态，确保不显示加载提示
+      this.showmore = false;
+      this.shownew = false;
+      this.hasMoreData[this.params.index] = true;
+      // 使用setTimeout确保DOM更新后再加载数据
+      setTimeout(() => {
         this.load();
+      }, 50);
       },
       // 兼容回调
       wxcPanItemPan (e) {
@@ -185,11 +341,23 @@
       },
       // 列表项点击事件
       wxcPanItemClicked(item){
+        console.log('点击文章，文章ID:', item.id);
 
+        // 只传递必要的参数，避免URL过长
         this.$router.push({
           name:'article-info',
-          params:item
-        })
+          params:{
+            id: item.id,
+            staticUrl: item.staticUrl,
+            title: item.title,
+            createdTime: item.createdTime,
+            authorId: item.authorId
+          },
+          // 不再将整个对象放入query参数
+          query: {}
+        });
+        
+        console.log('路由跳转已执行');
       }
     }
   };

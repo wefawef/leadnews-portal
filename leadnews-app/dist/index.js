@@ -5524,6 +5524,8 @@ var config = {
         user_follow: { url: 'api/v1/user/user_follow/', sv: 'user' },
         // ==========  login
         user_login: { url: 'user/api/v1/login/login_auth', sv: 'login' },
+        // ==========  channel - 确保使用正确的GET路径
+        load_channels: { url: 'api/v1/channel/channels', sv: 'article', method: 'GET' },
         // 解决多访问地址的问题
         getBase: function getBase(url) {
             var sv = url.sv;
@@ -5536,7 +5538,14 @@ var config = {
         },
         get: function get(name) {
             var tmp = config.urls[name];
-            if (tmp) return config.urls.getBase(tmp) + "/" + tmp.url;else return name;
+            if (tmp) {
+                var fullUrl = config.urls.getBase(tmp) + "/" + tmp.url;
+                console.log('构建API URL:', name, '->', fullUrl);
+                return fullUrl;
+            } else {
+                console.warn('未找到URL配置:', name);
+                return name;
+            }
         }
     },
     style: {
@@ -5670,7 +5679,11 @@ Request.prototype = {
     get: function get(path, parms) {
         var _this5 = this;
 
-        if (parms) {
+        console.log('执行GET请求:', path);
+        // 确保parms存在
+        if (!parms) parms = {};
+
+        if (Object.keys(parms).length > 0) {
             var tmp = querystring.stringify(parms);
             if (path.indexOf("?") == -1) {
                 tmp = "?" + tmp;
@@ -5682,13 +5695,16 @@ Request.prototype = {
         var time = new Date().getTime();
         parms['t'] = time;
         return this.store.getToken().then(function (token) {
+            console.log('使用token发送GET请求:', path);
             return _this5.__fetch('GET', path, token, time, parms);
         }).catch(function (e) {
             if (e.status) {
+                console.error('获取token失败，请求被拒绝:', e);
                 return new Promise(function (resolve, reject) {
                     reject(e);
                 });
             } else {
+                console.log('无token，使用空token发送GET请求:', path);
                 return _this5.__fetch('GET', path, '', time, parms);
             }
         });
@@ -9129,6 +9145,7 @@ function Cache() {
     this.storage = null;
     this.tokenKey = "TOKEN_KEY";
     this.equipmentidKey = "EQUIPMENTID_KEY";
+    this.userKey = "USER_KEY";
 }
 Cache.prototype = {
     setToken: function setToken(token) {
@@ -9145,6 +9162,20 @@ Cache.prototype = {
     },
     clearToken: function clearToken() {
         return this.__removeItem(this.tokenKey);
+    },
+    setUser: function setUser(user) {
+        return this.__setItem(this.userKey, JSON.stringify(user));
+    },
+    getUser: function getUser() {
+        return this.__getItem(this.userKey).then(function (data) {
+            if (data) {
+                return JSON.parse(data);
+            }
+            return null;
+        });
+    },
+    clearUser: function clearUser() {
+        return this.__removeItem(this.userKey);
     },
     __check: function __check() {
         if (this.storage == null) {
@@ -31174,60 +31205,65 @@ module.exports = __vue_exports__
 
 module.exports = {
   "list-item": {
-    "width": "750",
+    "width": 100,
+    "maxWidth": "750",
     "flexDirection": "column",
     "borderBottomWidth": "1",
-    "borderBottomColor": "#efefef",
+    "borderBottomColor": "#f0f0f0",
     "paddingBottom": "12",
     "paddingLeft": "8",
-    "paddingRight": "8"
+    "paddingRight": "8",
+    "paddingTop": "12",
+    "boxSizing": "border-box",
+    "backgroundColor": "#ffffff"
   },
   "title": {
     "flex": 1,
-    "paddingTop": "10",
     "paddingBottom": "10",
     "lineHeight": "36",
-    "fontSize": "32",
+    "fontSize": "34",
     "fontFamily": "\"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif",
-    "color": "#383839",
-    "justifyContent": "center",
-    "alignItems": "center",
-    "marginTop": "5",
-    "marginRight": "10",
-    "marginBottom": "5",
-    "marginLeft": "10"
+    "color": "#333333",
+    "justifyContent": "flex-start",
+    "alignItems": "flex-start",
+    "marginTop": "8",
+    "marginRight": "15",
+    "marginBottom": "8",
+    "marginLeft": "15",
+    "width": 100,
+    "wordBreak": "break-all",
+    "boxSizing": "border-box"
   },
   "tags-text": {
-    "fontSize": "18",
-    "color": "#b5b5b5",
+    "fontSize": "16",
+    "color": "#999999",
     "fontFamily": "\"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif",
-    "marginRight": "21",
+    "marginRight": "15",
     "lineHeight": "20"
   },
   "tags-icon": {
     "fontFamily": "fontawesome",
-    "fontSize": "24",
-    "color": "#FF0000",
+    "fontSize": "20",
+    "color": "#ff4757",
     "backgroundColor": "rgba(0,0,0,0)"
   },
   "tags": {
     "flexDirection": "row",
     "marginTop": "15",
-    "marginRight": "10",
-    "marginBottom": "5",
-    "marginLeft": "10",
-    "alignItems": "center"
+    "marginRight": "15",
+    "marginBottom": "8",
+    "marginLeft": "15"
   },
   "date": {
     "marginTop": "3"
   },
   "line": {
     "height": "2",
-    "backgroundColor": "#dfdfdf",
-    "marginTop": "10",
-    "marginRight": "10",
-    "marginBottom": "10",
-    "marginLeft": "10"
+    "backgroundColor": "#f0f0f0",
+    "marginTop": "15",
+    "marginRight": "15",
+    "marginBottom": "15",
+    "marginLeft": "15"
   },
   "loading": {
     "flexDirection": "row",
@@ -31237,17 +31273,17 @@ module.exports = {
     "height": "100"
   },
   "loading-text": {
-    "fontSize": "29.09090909",
-    "color": "#757575"
+    "fontSize": "30.90909091",
+    "color": "#999999"
   },
   "loading-icon": {
     "width": "100",
     "height": "100",
-    "color": "#ea0000"
+    "color": "#ff3333"
   },
   "image": {
     "borderRadius": "5",
-    "height": "160"
+    "height": "120"
   },
   "wrapper": {
     "backgroundColor": "#ffffff",
@@ -31285,6 +31321,8 @@ module.exports = {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _home_bar = __webpack_require__(309);
 
@@ -31361,12 +31399,12 @@ exports.default = {
       api: null, // API
       shownew: false, //是否显示loadnew动画
       showmore: false, //是否显示loadmore动画
-      tabTitles: _config2.default.tabTitles, //频道配置
+      loading: false, // 是否正在加载数据
+      tabTitles: [], //频道配置，从接口加载
       tabStyles: _config2.default.tabStyles, //频道样式
-      tabList: [].concat(_toConsumableArray(Array(_config2.default.tabTitles.length).keys())).map(function (i) {
-        return [];
-      }), //列表数据集合
+      tabList: [], //列表数据集合
       tabPageHeight: 1334, //列表总高度
+      hasMoreData: {}, //记录每个频道是否还有更多数据
       params: {
         loaddir: 1,
         index: 0,
@@ -31376,7 +31414,8 @@ exports.default = {
         min_behot_time: 20000000000000
       }, //列表数据请求参数
       ashow: {}, //列表展示行为记录表
-      timer: null //定时函数
+      timer: null, //定时函数
+      loadingChannels: false //是否正在加载频道
     };
   },
   computed: {
@@ -31389,8 +31428,7 @@ exports.default = {
     }
   },
   mounted: function mounted() {
-    // 激活推荐按钮
-    this.$refs['wxc-tab-page'].setPage(1, null, true);
+    // 频道加载和页面激活已在created中的loadChannels方法处理
   },
   destroyed: function destroyed() {
     clearInterval(this.timer);
@@ -31400,6 +31438,8 @@ exports.default = {
     this.tabPageHeight = _weexUi.Utils.env.getPageHeight() - 155;
     _api2.default.setVue(this);
     var _this = this;
+    // 加载频道列表
+    this.loadChannels();
     // 每隔5秒提交一次数据
     this.timer = setInterval(function () {
       var result = _api2.default.saveShowBehavior(_this.ashow);
@@ -31416,6 +31456,75 @@ exports.default = {
   },
 
   methods: {
+    // 加载频道列表
+    loadChannels: function loadChannels() {
+      var _this2 = this;
+
+      if (this.loadingChannels) return;
+      this.loadingChannels = true;
+      console.log('开始加载频道列表...');
+      _api2.default.loadChannels().then(function (d) {
+        console.log('频道列表加载成功:', d);
+        if (d.code === 200 && d.data && Array.isArray(d.data)) {
+          // 转换频道数据格式，根据返回的结构
+          var channels = d.data.map(function (ch) {
+            return {
+              title: ch.name,
+              id: ch.id
+            };
+          });
+          console.log('转换后的频道数据:', channels);
+          // 添加默认的"推荐"频道到第一个位置
+          _this2.tabTitles = [{ title: '推荐', id: '__all__' }].concat(_toConsumableArray(channels));
+          // 初始化列表数据和hasMoreData
+          _this2.tabList = [].concat(_toConsumableArray(Array(_this2.tabTitles.length).keys())).map(function (i) {
+            return [];
+          });
+          _this2.hasMoreData = {};
+          _this2.tabTitles.forEach(function (ch, idx) {
+            _this2.hasMoreData[idx] = true;
+          });
+          // 默认加载第一个频道（推荐）的数据
+          _this2.$nextTick(function () {
+            if (_this2.$refs['wxc-tab-page']) {
+              _this2.$refs['wxc-tab-page'].setPage(0, null, true);
+              _this2.params.index = 0;
+              _this2.params.tag = '__all__';
+              _this2.load();
+            }
+          });
+        } else {
+          console.log('频道列表加载失败，使用默认配置:', d);
+          // 如果接口失败，使用默认配置
+          _this2.tabTitles = _config2.default.tabTitles;
+          _this2.tabList = [].concat(_toConsumableArray(Array(_this2.tabTitles.length).keys())).map(function (i) {
+            return [];
+          });
+          _this2.hasMoreData = {};
+          _this2.tabTitles.forEach(function (ch, idx) {
+            _this2.hasMoreData[idx] = true;
+          });
+          _this2.$nextTick(function () {
+            if (_this2.$refs['wxc-tab-page']) {
+              _this2.$refs['wxc-tab-page'].setPage(1, null, true);
+            }
+          });
+        }
+        _this2.loadingChannels = false;
+      }).catch(function (e) {
+        console.error('加载频道异常:', e);
+        // 如果接口失败，使用默认配置
+        _this2.tabTitles = _config2.default.tabTitles;
+        _this2.tabList = [].concat(_toConsumableArray(Array(_this2.tabTitles.length).keys())).map(function (i) {
+          return [];
+        });
+        _this2.hasMoreData = {};
+        _this2.tabTitles.forEach(function (ch, idx) {
+          _this2.hasMoreData[idx] = true;
+        });
+        _this2.loadingChannels = false;
+      });
+    },
     // 列表项在可见区域展示后的事件处理
     show: function show(id) {
       if (this.ashow[id] == undefined) {
@@ -31424,9 +31533,18 @@ exports.default = {
     },
     // 上拉加载更多
     loadmore: function loadmore() {
-      this.showmore = true;
-      this.params.loaddir = 2;
-      this.load();
+      // 如果该频道没有更多数据，不加载
+      if (!this.hasMoreData[this.params.index]) {
+        this.showmore = false;
+        return;
+      }
+      // 确保只在需要时设置加载状态，避免重复加载
+      if (!this.showmore && !this.loading) {
+        this.showmore = true;
+        this.loading = true; // 添加加载标志
+        this.params.loaddir = 2;
+        this.load();
+      }
     },
     // 下来刷新数据
     loadnew: function loadnew() {
@@ -31436,39 +31554,111 @@ exports.default = {
     },
     // 正常加载数据
     load: function load() {
-      var _this2 = this;
+      var _this3 = this;
 
+      // 根据不同的加载方式设置特定的动画
+      if (this.params.loaddir == 2) {
+        //加载更多
+        this.showmore = true;
+      } else if (this.params.loaddir == 0) {
+        //下拉刷新
+        this.shownew = true;
+      } else {
+        //首次加载或频道切换
+        this.shownew = false;
+        this.showmore = false;
+      }
+
+      console.log('加载数据，频道索引:', this.params.index, '标签:', this.params.tag);
       _api2.default.loaddata(this.params).then(function (d) {
-        _this2.tanfer(d.data);
+        if (d.code === 200 && d.data) {
+          _this3.tanfer(d.data);
+        } else {
+          _this3.showmore = false;
+          _this3.shownew = false;
+          _this3.loading = false;
+          modal.toast({
+            message: d.errorMessage || '加载失败',
+            duration: 2
+          });
+        }
       }).catch(function (e) {
-        console.log(e);
+        console.error('加载数据失败:', e);
+        _this3.showmore = false;
+        _this3.shownew = false;
+        _this3.loading = false;
+        modal.toast({
+          message: '网络错误，请稍后重试',
+          duration: 2
+        });
       });
     },
     // 列表数据转换成View需要的Model对象
     tanfer: function tanfer(data) {
-      if (data.length == 0) {
+      // 处理数据为空的情况
+      if (!data || data.length == 0) {
+        // 如果是加载更多且没有数据，标记为没有更多数据
+        if (this.params.loaddir == 2) {
+          this.hasMoreData[this.params.index] = false;
+          // 如果当前列表为空，才提示没有数据
+          if (this.tabList[this.params.index].length === 0) {
+            modal.toast({ message: '暂无数据', duration: 2 });
+          }
+        } else {
+          // 下拉刷新时如果没有数据，提示
+          if (this.tabList[this.params.index].length === 0) {
+            modal.toast({ message: '暂无数据', duration: 2 });
+          }
+        }
+        // 重置所有加载状态
         this.showmore = false;
         this.shownew = false;
-        modal.toast({ message: '没有数据了...', duration: 3 });
+        this.loading = false;
         return;
       }
+
+      // 如果返回的数据少于请求的size，说明没有更多数据了
+      if (data.length < this.params.size) {
+        this.hasMoreData[this.params.index] = false;
+      }
+
       var arr = [];
       for (var i = 0; i < data.length; i++) {
         var ims = [];
         if (data[i].images) {
-          ims = data[i].images.replace(/[\[\]]/ig, '').split(',');
+          // 处理图片字符串，移除方括号并分割
+          var imgStr = String(data[i].images).replace(/[\[\]]/ig, '').trim();
+          if (imgStr) {
+            ims = imgStr.split(',').filter(function (img) {
+              return img.trim();
+            }).map(function (img) {
+              return img.trim();
+            });
+          }
         }
-        var tmp = {
-          id: data[i].id,
-          title: data[i].title,
-          comment: data[i].comment,
-          authorId: data[i].author_id,
-          source: data[i].author_name,
-          date: data[i].publish_time,
-          type: ims.length == 2 ? 1 : ims.length,
-          image: ims,
-          icon: "\uF06D"
-        };
+
+        // 根据图片数量确定类型：0=无图，1=单图，2或3=多图（最多3张）
+        var type = 0;
+        if (ims.length === 1) {
+          type = 1;
+        } else if (ims.length >= 2) {
+          // 2张或3张都使用article_3组件，但限制最多3张
+          type = ims.length > 3 ? 3 : ims.length;
+        }
+
+        // 先创建一个新对象，复制所有原始字段
+        var tmp = _extends({}, data[i]);
+        // 添加视图需要的额外字段
+        tmp.comment = tmp.comment || 0;
+        tmp.source = tmp.authorName || '未知';
+        tmp.date = tmp.publishTime;
+        tmp.type = type;
+        tmp.image = ims.slice(0, 3); // 最多保留3张图片
+        tmp.icon = "\uF06D";
+        // 确保staticUrl字段被正确处理（移除可能的引号和空格）
+        if (tmp.staticUrl) {
+          tmp.staticUrl = String(tmp.staticUrl).replace(/[`'"\s]/g, '').trim();
+        }
         var time = data[i].publish_time;
         if (this.params.max_behot_time < time) {
           this.params.max_behot_time = time;
@@ -31478,28 +31668,47 @@ exports.default = {
         }
         arr.push(tmp);
       }
-      var newList = [].concat(_toConsumableArray(Array(this.tabTitles.length).keys())).map(function (i) {
-        return [];
-      });
-      if (this.params.loaddir != 0) {
-        arr = this.tabList[this.params.index].concat(arr);
+
+      // 更新列表数据
+      var newList = [].concat(_toConsumableArray(this.tabList));
+
+      if (this.params.loaddir == 2) {
+        // 加载更多：追加到列表末尾
+        newList[this.params.index] = this.tabList[this.params.index].concat(arr);
+      } else if (this.params.loaddir == 0) {
+        // 下拉刷新：新数据放在前面
+        newList[this.params.index] = arr.concat(this.tabList[this.params.index]);
       } else {
-        arr = arr.concat(this.tabList[this.params.index]);
+        // 首次加载：直接替换
+        newList[this.params.index] = arr;
       }
-      newList[this.params.index] = arr;
+
+      // 数据更新完成后再重置所有加载状态
       this.tabList = newList;
       this.showmore = false;
       this.shownew = false;
+      this.loading = false;
     },
     // 频道页切换事件
     wxcTabPageCurrentTabSelected: function wxcTabPageCurrentTabSelected(e) {
+      var _this4 = this;
+
+      console.log('切换到频道:', e.page, this.tabTitles[e.page] && this.tabTitles[e.page]['title'] || '未知');
       this.params.loaddir = 1;
       this.params.index = e.page;
-      this.params.tag = _config2.default.tabTitles[e.page]['id'];
+      this.params.tag = this.tabTitles[e.page] ? this.tabTitles[e.page]['id'] : '__all__';
       this.params.max_behot_time = 0;
       this.params.min_behot_time = 20000000000000;
-      this.shownew = true;
-      this.load();
+      // 清空当前频道的数据
+      this.tabList[this.params.index] = [];
+      // 重置加载状态，确保不显示加载提示
+      this.showmore = false;
+      this.shownew = false;
+      this.hasMoreData[this.params.index] = true;
+      // 使用setTimeout确保DOM更新后再加载数据
+      setTimeout(function () {
+        _this4.load();
+      }, 50);
     },
 
     // 兼容回调
@@ -31511,11 +31720,23 @@ exports.default = {
 
     // 列表项点击事件
     wxcPanItemClicked: function wxcPanItemClicked(item) {
+      console.log('点击文章，文章ID:', item.id);
 
+      // 只传递必要的参数，避免URL过长
       this.$router.push({
         name: 'article-info',
-        params: item
+        params: {
+          id: item.id,
+          staticUrl: item.staticUrl,
+          title: item.title,
+          createdTime: item.createdTime,
+          authorId: item.authorId
+        },
+        // 不再将整个对象放入query参数
+        query: {}
       });
+
+      console.log('路由跳转已执行');
     }
   }
 };
@@ -32380,60 +32601,65 @@ module.exports.render._withStripped = true
 
 module.exports = {
   "list-item": {
-    "width": "750",
+    "width": 100,
+    "maxWidth": "750",
     "flexDirection": "column",
     "borderBottomWidth": "1",
-    "borderBottomColor": "#efefef",
+    "borderBottomColor": "#f0f0f0",
     "paddingBottom": "12",
     "paddingLeft": "8",
-    "paddingRight": "8"
+    "paddingRight": "8",
+    "paddingTop": "12",
+    "boxSizing": "border-box",
+    "backgroundColor": "#ffffff"
   },
   "title": {
     "flex": 1,
-    "paddingTop": "10",
     "paddingBottom": "10",
     "lineHeight": "36",
-    "fontSize": "32",
+    "fontSize": "34",
     "fontFamily": "\"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif",
-    "color": "#383839",
-    "justifyContent": "center",
-    "alignItems": "center",
-    "marginTop": "5",
-    "marginRight": "10",
-    "marginBottom": "5",
-    "marginLeft": "10"
+    "color": "#333333",
+    "justifyContent": "flex-start",
+    "alignItems": "flex-start",
+    "marginTop": "8",
+    "marginRight": "15",
+    "marginBottom": "8",
+    "marginLeft": "15",
+    "width": 100,
+    "wordBreak": "break-all",
+    "boxSizing": "border-box"
   },
   "tags-text": {
-    "fontSize": "18",
-    "color": "#b5b5b5",
+    "fontSize": "16",
+    "color": "#999999",
     "fontFamily": "\"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif",
-    "marginRight": "21",
+    "marginRight": "15",
     "lineHeight": "20"
   },
   "tags-icon": {
     "fontFamily": "fontawesome",
-    "fontSize": "24",
-    "color": "#FF0000",
+    "fontSize": "20",
+    "color": "#ff4757",
     "backgroundColor": "rgba(0,0,0,0)"
   },
   "tags": {
     "flexDirection": "row",
     "marginTop": "15",
-    "marginRight": "10",
-    "marginBottom": "5",
-    "marginLeft": "10",
-    "alignItems": "center"
+    "marginRight": "15",
+    "marginBottom": "8",
+    "marginLeft": "15"
   },
   "date": {
     "marginTop": "3"
   },
   "line": {
     "height": "2",
-    "backgroundColor": "#dfdfdf",
-    "marginTop": "10",
-    "marginRight": "10",
-    "marginBottom": "10",
-    "marginLeft": "10"
+    "backgroundColor": "#f0f0f0",
+    "marginTop": "15",
+    "marginRight": "15",
+    "marginBottom": "15",
+    "marginLeft": "15"
   },
   "loading": {
     "flexDirection": "row",
@@ -32443,17 +32669,17 @@ module.exports = {
     "height": "100"
   },
   "loading-text": {
-    "fontSize": "29.09090909",
-    "color": "#757575"
+    "fontSize": "30.90909091",
+    "color": "#999999"
   },
   "loading-icon": {
     "width": "100",
     "height": "100",
-    "color": "#ea0000"
+    "color": "#ff3333"
   },
   "image": {
     "borderRadius": "5",
-    "height": "160"
+    "height": "120"
   }
 }
 
@@ -32523,60 +32749,66 @@ module.exports.render._withStripped = true
 
 module.exports = {
   "list-item": {
-    "width": "750",
+    "width": 100,
+    "maxWidth": "750",
     "flexDirection": "column",
     "borderBottomWidth": "1",
-    "borderBottomColor": "#efefef",
+    "borderBottomColor": "#f0f0f0",
     "paddingBottom": "12",
     "paddingLeft": "8",
-    "paddingRight": "8"
+    "paddingRight": "8",
+    "paddingTop": "12",
+    "boxSizing": "border-box",
+    "backgroundColor": "#ffffff",
+    "minHeight": "160"
   },
   "title": {
     "flex": 1,
-    "paddingTop": "10",
     "paddingBottom": "10",
     "lineHeight": "36",
-    "fontSize": "32",
+    "fontSize": "34",
     "fontFamily": "\"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif",
-    "color": "#383839",
-    "justifyContent": "center",
-    "alignItems": "center",
-    "marginTop": "5",
-    "marginRight": "10",
-    "marginBottom": "5",
-    "marginLeft": "10"
+    "color": "#333333",
+    "justifyContent": "flex-start",
+    "alignItems": "flex-start",
+    "marginTop": "8",
+    "marginRight": "15",
+    "marginBottom": "8",
+    "marginLeft": "15",
+    "width": 100,
+    "wordBreak": "break-all",
+    "boxSizing": "border-box"
   },
   "tags-text": {
-    "fontSize": "18",
-    "color": "#b5b5b5",
+    "fontSize": "16",
+    "color": "#999999",
     "fontFamily": "\"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif",
-    "marginRight": "21",
+    "marginRight": "15",
     "lineHeight": "20"
   },
   "tags-icon": {
     "fontFamily": "fontawesome",
-    "fontSize": "24",
-    "color": "#FF0000",
+    "fontSize": "20",
+    "color": "#ff4757",
     "backgroundColor": "rgba(0,0,0,0)"
   },
   "tags": {
     "flexDirection": "row",
     "marginTop": "15",
-    "marginRight": "10",
-    "marginBottom": "5",
-    "marginLeft": "10",
-    "alignItems": "center"
+    "marginRight": "15",
+    "marginBottom": "8",
+    "marginLeft": "15"
   },
   "date": {
     "marginTop": "3"
   },
   "line": {
     "height": "2",
-    "backgroundColor": "#dfdfdf",
-    "marginTop": "10",
-    "marginRight": "10",
-    "marginBottom": "10",
-    "marginLeft": "10"
+    "backgroundColor": "#f0f0f0",
+    "marginTop": "15",
+    "marginRight": "15",
+    "marginBottom": "15",
+    "marginLeft": "15"
   },
   "loading": {
     "flexDirection": "row",
@@ -32586,31 +32818,28 @@ module.exports = {
     "height": "100"
   },
   "loading-text": {
-    "fontSize": "29.09090909",
-    "color": "#757575"
+    "fontSize": "30.90909091",
+    "color": "#999999"
   },
   "loading-icon": {
     "width": "100",
     "height": "100",
-    "color": "#ea0000"
+    "color": "#ff3333"
   },
   "image": {
-    "borderRadius": "5",
-    "height": "160"
+    "borderRadius": "8",
+    "height": "150",
+    "width": 100,
+    "objectFit": "cover",
+    "overflow": "hidden"
   },
-  "list-lr": {
-    "flexDirection": "row",
-    "justifyContent": "space-around"
-  },
-  "item-l": {
-    "width": "550"
-  },
-  "item-r": {
-    "width": "180",
-    "marginTop": "5",
-    "marginRight": "10",
-    "marginBottom": "5",
-    "marginLeft": "10"
+  "image-container": {
+    "marginTop": "10",
+    "marginRight": "9",
+    "marginBottom": "15",
+    "marginLeft": 0,
+    "paddingLeft": "10",
+    "boxSizing": "border-box"
   }
 }
 
@@ -32639,9 +32868,6 @@ Object.defineProperty(exports, "__esModule", {
 //
 //
 //
-//
-//
-//
 
 exports.default = {
     name: "article_1",
@@ -32653,11 +32879,16 @@ exports.default = {
     methods: {
         formatDate: function formatDate(time) {
             return this.$date.format13(time);
-        }, formatTitle: function formatTitle(title) {
-            if (title.length > 32) {
-                return title.substring(0, 31);
+        },
+        formatTitle: function formatTitle(title) {
+            if (title.length > 50) {
+                return title.substring(0, 49);
             }
             return title;
+        },
+        onImageLoad: function onImageLoad() {
+            // 图片加载完成后可以添加逻辑
+            console.log('图片加载完成:', this.data.image[0]);
         }
     }
 };
@@ -32669,13 +32900,20 @@ exports.default = {
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
     staticClass: ["list-item"]
-  }, [_c('div', {
-    staticClass: ["list-lr"]
-  }, [_c('div', {
-    staticClass: ["item-l"]
   }, [_c('text', {
     staticClass: ["title"]
   }, [_vm._v(_vm._s(_vm.formatTitle(_vm.data.title)))]), _c('div', {
+    staticClass: ["image-container"]
+  }, [_c('image', {
+    key: _vm.data.image[0],
+    staticClass: ["image"],
+    attrs: {
+      "src": _vm.data.image[0]
+    },
+    on: {
+      "load": _vm.onImageLoad
+    }
+  })]), _c('div', {
     staticClass: ["tags"]
   }, [_c('text', {
     staticClass: ["tags-text", "tags-icon"]
@@ -32683,14 +32921,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: ["tags-text"]
   }, [_vm._v(_vm._s(_vm.data.source))]), _c('text', {
     staticClass: ["tags-text"]
-  }, [_vm._v("评论 " + _vm._s(_vm.data.commit))])])]), _c('div', {
-    staticClass: ["item-r"]
-  }, [_c('image', {
-    staticClass: ["image"],
-    attrs: {
-      "src": _vm.data.image[0]
-    }
-  })])])])
+  }, [_vm._v("评论 " + _vm._s(_vm.data.commit))]), _c('text', {
+    staticClass: ["tags-text", "date"]
+  }, [_vm._v(_vm._s(_vm.formatDate(_vm.data.date)))])])])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 
@@ -32700,61 +32933,66 @@ module.exports.render._withStripped = true
 
 module.exports = {
   "list-item": {
-    "width": "750",
+    "width": 100,
+    "maxWidth": "750",
     "flexDirection": "column",
     "borderBottomWidth": "1",
-    "borderBottomColor": "#efefef",
+    "borderBottomColor": "#f0f0f0",
     "paddingBottom": "12",
     "paddingLeft": "8",
     "paddingRight": "8",
-    "height": "280"
+    "paddingTop": "12",
+    "boxSizing": "border-box",
+    "backgroundColor": "#ffffff",
+    "minHeight": "220"
   },
   "title": {
     "flex": 1,
-    "paddingTop": "10",
     "paddingBottom": "10",
     "lineHeight": "36",
-    "fontSize": "32",
+    "fontSize": "34",
     "fontFamily": "\"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif",
-    "color": "#383839",
-    "justifyContent": "center",
-    "alignItems": "center",
-    "marginTop": "5",
-    "marginRight": "10",
-    "marginBottom": "5",
-    "marginLeft": "10"
+    "color": "#333333",
+    "justifyContent": "flex-start",
+    "alignItems": "flex-start",
+    "marginTop": "8",
+    "marginRight": "15",
+    "marginBottom": "8",
+    "marginLeft": "15",
+    "width": 100,
+    "wordBreak": "break-all",
+    "boxSizing": "border-box"
   },
   "tags-text": {
-    "fontSize": "18",
-    "color": "#b5b5b5",
+    "fontSize": "16",
+    "color": "#999999",
     "fontFamily": "\"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif",
-    "marginRight": "21",
+    "marginRight": "15",
     "lineHeight": "20"
   },
   "tags-icon": {
     "fontFamily": "fontawesome",
-    "fontSize": "24",
-    "color": "#FF0000",
+    "fontSize": "20",
+    "color": "#ff4757",
     "backgroundColor": "rgba(0,0,0,0)"
   },
   "tags": {
     "flexDirection": "row",
     "marginTop": "15",
-    "marginRight": "10",
-    "marginBottom": "5",
-    "marginLeft": "10",
-    "alignItems": "center"
+    "marginRight": "15",
+    "marginBottom": "8",
+    "marginLeft": "15"
   },
   "date": {
     "marginTop": "3"
   },
   "line": {
     "height": "2",
-    "backgroundColor": "#dfdfdf",
-    "marginTop": "10",
-    "marginRight": "10",
-    "marginBottom": "10",
-    "marginLeft": "10"
+    "backgroundColor": "#f0f0f0",
+    "marginTop": "15",
+    "marginRight": "15",
+    "marginBottom": "15",
+    "marginLeft": "15"
   },
   "loading": {
     "flexDirection": "row",
@@ -32764,26 +33002,33 @@ module.exports = {
     "height": "100"
   },
   "loading-text": {
-    "fontSize": "29.09090909",
-    "color": "#757575"
+    "fontSize": "30.90909091",
+    "color": "#999999"
   },
   "loading-icon": {
     "width": "100",
     "height": "100",
-    "color": "#ea0000"
+    "color": "#ff3333"
   },
   "image": {
-    "borderRadius": "5",
-    "height": "160",
-    "width": "240"
+    "borderRadius": "8",
+    "height": "150",
+    "marginRight": "9",
+    "overflow": "hidden",
+    "marginRight:last-child": 0
   },
   "item-image": {
     "flexDirection": "row",
-    "paddingTop": "6",
+    "paddingTop": 0,
     "paddingRight": "10",
-    "paddingBottom": "0",
+    "paddingBottom": "15",
     "paddingLeft": "10",
-    "justifyContent": "space-around"
+    "justifyContent": "space-between",
+    "alignItems": "flex-start",
+    "width": 95,
+    "marginTop": "10",
+    "marginBottom": "10",
+    "boxSizing": "border-box"
   }
 }
 
@@ -32812,8 +33057,6 @@ Object.defineProperty(exports, "__esModule", {
 //
 //
 //
-//
-//
 
 exports.default = {
     name: "article_3",
@@ -32822,15 +33065,28 @@ exports.default = {
             type: Object
         }
     },
+    computed: {
+        // 限制最多显示3张图片
+        displayImages: function displayImages() {
+            if (!this.data.image || !Array.isArray(this.data.image)) {
+                return [];
+            }
+            return this.data.image.slice(0, 3);
+        }
+    },
     methods: {
         formatDate: function formatDate(time) {
             return this.$date.format13(time);
         },
         formatTitle: function formatTitle(title) {
-            if (title.length > 20) {
-                return title.substring(0, 19);
+            if (title.length > 50) {
+                return title.substring(0, 49);
             }
             return title;
+        },
+        onImageLoad: function onImageLoad(img) {
+            // 图片加载完成后可以添加逻辑
+            console.log('多图模式图片加载完成:', img);
         }
     }
 };
@@ -32846,16 +33102,20 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: ["title"]
   }, [_vm._v(_vm._s(_vm.formatTitle(_vm.data.title)))]), _c('div', {
     staticClass: ["item-image"]
-  }, _vm._l((_vm.data.image), function(img) {
+  }, _vm._l((_vm.displayImages), function(img, index) {
     return _c('image', {
+      key: img + index,
       staticClass: ["image"],
       attrs: {
         "src": img
+      },
+      on: {
+        "load": function($event) {
+          _vm.onImageLoad(img)
+        }
       }
     })
   })), _c('div', {
-    staticClass: ["item-l"]
-  }, [_c('div', {
     staticClass: ["tags"]
   }, [_c('text', {
     staticClass: ["tags-text", "tags-icon"]
@@ -32863,9 +33123,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: ["tags-text"]
   }, [_vm._v(_vm._s(_vm.data.source))]), _c('text', {
     staticClass: ["tags-text"]
-  }, [_vm._v("评论 " + _vm._s(_vm.data.commit))]), _c('text', {
-    staticClass: ["tags-text"]
-  }, [_vm._v(_vm._s(_vm.formatDate(_vm.data.date)))])])])])
+  }, [_vm._v("评论 " + _vm._s(_vm.data.comment || _vm.data.commit))]), _c('text', {
+    staticClass: ["tags-text", "date"]
+  }, [_vm._v(_vm._s(_vm.formatDate(_vm.data.date)))])])])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 
@@ -32978,6 +33238,23 @@ Api.prototype = {
         var url = this.vue.$config.urls.get('load');
         if (dir == 0) url = this.vue.$config.urls.get('loadnew');else if (dir == 2) url = this.vue.$config.urls.get('loadmore');
         return url;
+    },
+    // 获取频道列表
+    loadChannels: function loadChannels() {
+        var _this3 = this;
+
+        // 直接使用配置中的路径，确保使用GET方法
+        var url = this.vue.$config.urls.get('load_channels');
+        console.log('请求频道列表URL:', url);
+        return new Promise(function (resolve, reject) {
+            _this3.vue.$request.get(url).then(function (d) {
+                console.log('频道列表API返回:', d);
+                resolve(d);
+            }).catch(function (e) {
+                console.error('频道列表API请求失败:', e);
+                reject(e);
+            });
+        });
     }
 };
 
@@ -33305,14 +33582,23 @@ var modal = weex.requireModule("modal"); //
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 exports.default = {
     name: "index",
     components: { TopBar: _article_top_bar2.default, BottomBar: _article_bottom_bar2.default, WxcButton: _weexUi.WxcButton, Button: _button2.default },
-    props: ['id', 'title', 'date', 'comment', 'type', 'source', 'authorId'],
+    props: ['id', 'title', 'staticUrl', 'createdTime', 'authorId'],
     data: function data() {
-        return {
-            scrollerHeight: '500px',
+        return { scrollerHeight: '500px', iframeStyle: { height: '600px', width: '100%', border: 'none', overflow: 'hidden' },
             icon: {
                 like: '\uF164',
                 unlike: '\uF1F6',
@@ -33356,9 +33642,15 @@ exports.default = {
     },
     destroyed: function destroyed() {
         this.read();
+        // 移除事件监听
+        window.removeEventListener('resize', this.updateIframeSize);
     },
     mounted: function mounted() {
         this.scrollerHeight = _weexUi.Utils.env.getPageHeight() - 180 + 'px';
+        // 初始化iframe高度
+        this.updateIframeSize();
+        // 监听窗口大小变化
+        window.addEventListener('resize', this.updateIframeSize);
     },
 
     methods: {
@@ -33512,6 +33804,52 @@ exports.default = {
                 return {};
             }
         },
+        updateIframeSize: function updateIframeSize() {
+            try {
+                var iframe = this.$refs.articleIframe;
+                if (iframe) {
+                    // 计算可用视口高度
+                    var pageHeight = _weexUi.Utils.env.getPageHeight();
+                    // 减去固定元素高度
+                    var fixedElementsHeight = 90; // 顶部标题栏高度
+                    var contentAboveIframeHeight = 180; // 文章标题和作者信息高度
+                    var totalFixedHeight = fixedElementsHeight + contentAboveIframeHeight;
+
+                    // 设置最小高度为页面高度减去固定元素
+                    var iframeHeight = pageHeight - totalFixedHeight;
+
+                    // 如果iframe已经加载完成，尝试获取内容实际高度
+                    if (iframe.contentWindow && iframe.contentWindow.document) {
+                        var contentHeight = iframe.contentWindow.document.body.scrollHeight;
+                        // 取实际内容高度和最小高度的较大值
+                        iframeHeight = Math.max(iframeHeight, contentHeight + 50); // 加50px作为安全边距
+                    }
+
+                    this.iframeStyle = {
+                        height: iframeHeight + 'px',
+                        width: '100%',
+                        border: 'none',
+                        overflow: 'hidden'
+                    };
+                    console.log('更新iframe高度:', iframeHeight + 'px');
+                }
+            } catch (error) {
+                console.error('更新iframe高度时出错:', error);
+            }
+        },
+        onIframeLoad: function onIframeLoad() {
+            var _this9 = this;
+
+            // iframe加载完成后更新大小
+            setTimeout(function () {
+                _this9.updateIframeSize();
+                // 添加一个小延迟再次更新，确保内容完全渲染
+                setTimeout(function () {
+                    _this9.updateIframeSize();
+                }, 500);
+            }, 100);
+        },
+
         getImgStyle: function getImgStyle(item) {
             item = this.getStyle();
             item['width'] = '750px';
@@ -34465,9 +34803,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: ["more"]
   }, [_c('text', {
     staticClass: ["author"]
-  }, [_vm._v(_vm._s(_vm.source))]), _c('text', {
+  }, [_vm._v(_vm._s(_vm.authorId))]), _c('text', {
     staticClass: ["time"]
-  }, [_vm._v(_vm._s(_vm.formatDate(_vm.date)))])]), _c('div', {
+  }, [_vm._v(_vm._s(_vm.formatDate(_vm.createdTime)))])]), _c('div', {
     staticClass: ["empty"]
   }), (_vm.relation.isfollow) ? _c('wxc-button', {
     staticClass: ["button"],
@@ -34488,59 +34826,19 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "wxcButtonClicked": _vm.follow
     }
   }) : _vm._e()], 1), _c('div', {
-    staticClass: ["content"]
-  }, [_vm._l((_vm.content), function(item) {
-    return [(item.type == 'text') ? _c('text', {
-      staticClass: ["text"],
-      style: _vm.getStyle(item.style)
-    }, [_vm._v(_vm._s(item.value))]) : _vm._e(), (item.type == 'image') ? _c('image', {
-      staticClass: ["image"],
-      style: {
-        width: '710px',
-        height: _vm.imageHeight[item.value]
-      },
-      attrs: {
-        "src": item.value
-      },
-      on: {
-        "load": function($event) {
-          _vm.imageLoad(item, $event)
-        }
-      }
-    }) : _vm._e()]
-  })], 2), _c('div', {
-    staticClass: ["tools"]
-  }, [_c('Button', {
+    staticClass: ["news-container"]
+  }, [_c('iframe', {
+    ref: "articleIframe",
+    style: _vm.iframeStyle,
     attrs: {
-      "text": "点赞",
-      "icon": _vm.icon.like,
-      "active": _vm.relation.islike,
-      "activeText": "取消赞"
+      "src": _vm.staticUrl,
+      "frameborder": "0",
+      "sandbox": "allow-same-origin allow-scripts allow-forms"
     },
     on: {
-      "onClick": _vm.like
+      "load": _vm.onIframeLoad
     }
-  }), _c('Button', {
-    attrs: {
-      "text": "不喜欢",
-      "icon": _vm.icon.unlike,
-      "active": _vm.relation.isunlike
-    },
-    on: {
-      "onClick": _vm.unlike
-    }
-  })], 1)]), _c('div', {
-    staticClass: ["art-bottom"]
-  }, [_c('BottomBar', {
-    attrs: {
-      "forward": _vm.test.isforward,
-      "collection": _vm.relation.iscollection
-    },
-    on: {
-      "clickForward": _vm.forward,
-      "clickCollection": _vm.collection
-    }
-  })], 1)])
+  })], 1)])])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 
@@ -36147,38 +36445,67 @@ exports.default = {
             modal.toast({ message: '该功能暂未实现！', duration: 3 });
         },
         see: function see() {
-            var _this = this;
-
-            {
-                _api2.default.login(this.params).then(function (d) {
-                    _this.$store.setToken(d.data.token);
-                    _this.$router.push("/home");
-                }).catch(function (e) {
-                    console.log(e);
-                });
-            }
+            // 直接跳转到首页，不进行登录
+            this.$router.push("/home");
         },
         login: function login() {
-            var _this2 = this;
+            var _this = this;
 
-            if (this.params.phone == '' || this.params.password == '') {
+            // 验证输入
+            if (!this.params.phone || String(this.params.phone).replace(/\s/g, '') === '') {
                 modal.toast({
-                    message: '请输入用户名或密码',
+                    message: '请输入手机号',
                     duration: 3
                 });
-            } else {
-                alert(JSON.stringify(this.params));
-                _api2.default.login(this.params).then(function (d) {
-                    if (d.code == 0) {
-                        _this2.$store.setToken(d.data.token);
-                        _this2.$router.push("/home");
-                    } else {
-                        modal.toast({ message: '用户或密码错误', duration: 3 });
-                    }
-                }).catch(function (e) {
-                    console.log(e);
-                });
+                return;
             }
+            if (!this.params.password || String(this.params.password).replace(/\s/g, '') === '') {
+                modal.toast({
+                    message: '请输入密码',
+                    duration: 3
+                });
+                return;
+            }
+
+            // 调用登录接口
+            _api2.default.login(this.params).then(function (d) {
+                // 根据返回的数据结构，code为200表示成功
+                if (d.code === 200 && d.data) {
+                    // 保存token
+                    _this.$store.setToken(d.data.token).then(function () {
+                        // 保存用户信息
+                        if (d.data.user) {
+                            return _this.$store.setUser(d.data.user);
+                        }
+                        return Promise.resolve();
+                    }).then(function () {
+                        // 登录成功，跳转到首页
+                        modal.toast({
+                            message: d.errorMessage || '登录成功',
+                            duration: 2
+                        });
+                        _this.$router.push("/home");
+                    }).catch(function (err) {
+                        console.error('保存登录信息失败:', err);
+                        modal.toast({
+                            message: '登录信息保存失败，请重试',
+                            duration: 3
+                        });
+                    });
+                } else {
+                    // 登录失败
+                    modal.toast({
+                        message: d.errorMessage || '登录失败，请检查用户名和密码',
+                        duration: 3
+                    });
+                }
+            }).catch(function (e) {
+                console.error('登录请求失败:', e);
+                modal.toast({
+                    message: '网络错误，请稍后重试',
+                    duration: 3
+                });
+            });
         }
     }
 };
@@ -36600,60 +36927,65 @@ module.exports = __vue_exports__
 
 module.exports = {
   "list-item": {
-    "width": "750",
+    "width": 100,
+    "maxWidth": "750",
     "flexDirection": "column",
     "borderBottomWidth": "1",
-    "borderBottomColor": "#efefef",
+    "borderBottomColor": "#f0f0f0",
     "paddingBottom": "12",
     "paddingLeft": "8",
-    "paddingRight": "8"
+    "paddingRight": "8",
+    "paddingTop": "12",
+    "boxSizing": "border-box",
+    "backgroundColor": "#ffffff"
   },
   "title": {
     "flex": 1,
-    "paddingTop": "10",
     "paddingBottom": "10",
     "lineHeight": "36",
-    "fontSize": "32",
+    "fontSize": "34",
     "fontFamily": "\"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif",
-    "color": "#383839",
-    "justifyContent": "center",
-    "alignItems": "center",
-    "marginTop": "5",
-    "marginRight": "10",
-    "marginBottom": "5",
-    "marginLeft": "10"
+    "color": "#333333",
+    "justifyContent": "flex-start",
+    "alignItems": "flex-start",
+    "marginTop": "8",
+    "marginRight": "15",
+    "marginBottom": "8",
+    "marginLeft": "15",
+    "width": 100,
+    "wordBreak": "break-all",
+    "boxSizing": "border-box"
   },
   "tags-text": {
-    "fontSize": "18",
-    "color": "#b5b5b5",
+    "fontSize": "16",
+    "color": "#999999",
     "fontFamily": "\"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif",
-    "marginRight": "21",
+    "marginRight": "15",
     "lineHeight": "20"
   },
   "tags-icon": {
     "fontFamily": "fontawesome",
-    "fontSize": "24",
-    "color": "#FF0000",
+    "fontSize": "20",
+    "color": "#ff4757",
     "backgroundColor": "rgba(0,0,0,0)"
   },
   "tags": {
     "flexDirection": "row",
     "marginTop": "15",
-    "marginRight": "10",
-    "marginBottom": "5",
-    "marginLeft": "10",
-    "alignItems": "center"
+    "marginRight": "15",
+    "marginBottom": "8",
+    "marginLeft": "15"
   },
   "date": {
     "marginTop": "3"
   },
   "line": {
     "height": "2",
-    "backgroundColor": "#dfdfdf",
-    "marginTop": "10",
-    "marginRight": "10",
-    "marginBottom": "10",
-    "marginLeft": "10"
+    "backgroundColor": "#f0f0f0",
+    "marginTop": "15",
+    "marginRight": "15",
+    "marginBottom": "15",
+    "marginLeft": "15"
   },
   "loading": {
     "flexDirection": "row",
@@ -36663,17 +36995,17 @@ module.exports = {
     "height": "100"
   },
   "loading-text": {
-    "fontSize": "29.09090909",
-    "color": "#757575"
+    "fontSize": "30.90909091",
+    "color": "#999999"
   },
   "loading-icon": {
     "width": "100",
     "height": "100",
-    "color": "#ea0000"
+    "color": "#ff3333"
   },
   "image": {
     "borderRadius": "5",
-    "height": "160"
+    "height": "120"
   },
   "wrapper": {
     "backgroundColor": "#ffffff",

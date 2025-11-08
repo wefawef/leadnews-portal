@@ -1,17 +1,14 @@
 <template>
     <div class="list-item">
-        <div class="list-lr">
-            <div class="item-l">
-                <text class="title">{{formatTitle(data.title)}}</text>
-                <div class="tags">
-                    <text class="tags-text tags-icon">{{data.icon}}</text>
-                    <text class="tags-text">{{data.source}}</text>
-                    <text class="tags-text">评论 {{data.commit}}</text>
-                </div>
-            </div>
-            <div class="item-r">
-                <image class="image" :src="data.image[0]"/>
-            </div>
+        <text class="title">{{formatTitle(data.title)}}</text>
+        <div class="image-container">
+            <image class="image" :src="data.image[0]" :key="data.image[0]" @load="onImageLoad"/>
+        </div>
+        <div class="tags">
+            <text class="tags-text tags-icon">{{data.icon}}</text>
+            <text class="tags-text">{{data.source}}</text>
+            <text class="tags-text">评论 {{data.commit}}</text>
+            <text class="tags-text date">{{formatDate(data.date)}}</text>
         </div>
     </div>
 </template>
@@ -27,11 +24,16 @@
         methods : {
             formatDate:function(time){
                 return this.$date.format13(time);
-            },formatTitle:function(title){
-                if(title.length>32){
-                    return title.substring(0,31);
+            },
+            formatTitle:function(title){
+                if(title.length>50){
+                    return title.substring(0,49);
                 }
                 return title;
+            },
+            onImageLoad: function() {
+                // 图片加载完成后可以添加逻辑
+                console.log('图片加载完成:', this.data.image[0]);
             }
         }
     }
@@ -40,16 +42,20 @@
 <style lang="less" scoped>
     @import '../../styles/article';
     .list-item{
+        height: auto;
+        min-height: @list-1-height;
     }
-    .list-lr{
-        flex-direction: row;
-        justify-content: space-around;
+    .image-container{
+        width: calc(33.33% - 6px);
+        margin: 10px 9px 15px 0;
+        padding-left: 10px;
+        box-sizing: border-box;
     }
-    .item-l{
-        width: 550px;
-    }
-    .item-r{
-        width: 180px;
-        margin: @list-tb-margin @list-lr-margin;
+    .image{
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 8px;
+        overflow: hidden;
     }
 </style>

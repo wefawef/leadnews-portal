@@ -2,6 +2,7 @@ function Cache(){
     this.storage=null;
     this.tokenKey = "TOKEN_KEY"
     this.equipmentidKey = "EQUIPMENTID_KEY"
+    this.userKey = "USER_KEY"
 }
 Cache.prototype={
     setToken : function(token){
@@ -18,6 +19,20 @@ Cache.prototype={
     },
     clearToken : function(){
         return this.__removeItem(this.tokenKey);
+    },
+    setUser : function(user){
+        return this.__setItem(this.userKey, JSON.stringify(user));
+    },
+    getUser : function(){
+        return this.__getItem(this.userKey).then(data => {
+            if(data) {
+                return JSON.parse(data);
+            }
+            return null;
+        });
+    },
+    clearUser : function(){
+        return this.__removeItem(this.userKey);
     },
     __check : function(){
         if(this.storage==null){

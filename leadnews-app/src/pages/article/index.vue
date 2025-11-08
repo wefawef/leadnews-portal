@@ -6,28 +6,38 @@
             <div class="info">
                 <image src="https://p3.pstatp.com/thumb/1480/7186611868" class="head"></image>
                 <div class="more">
-                    <text class="author">{{source}}</text>
-                    <text class="time">{{formatDate(date)}}</text>
+                    <text class="author">{{authorId}}</text>
+                    <text class="time">{{formatDate(createdTime)}}</text>
                 </div>
                 <div class="empty"></div>
                 <wxc-button class="button" v-if="relation.isfollow" @wxcButtonClicked="follow" text="取消关注" size="small"></wxc-button>
                 <wxc-button class="button" v-if="!relation.isfollow" @wxcButtonClicked="follow" text="+ 关注" size="small"></wxc-button>
             </div>
-            <div class="content">
-                <template v-for="item in content">
-                    <text class="text" :style="getStyle(item.style)" v-if="item.type=='text'">{{item.value}}</text>
-                    <image @load="imageLoad(item,$event)" class="image" :style="{width:'710px',height:imageHeight[item.value]}" v-if="item.type=='image'" :src="item.value"></image>
-                </template>
-            </div>
-            <div class="tools">
-                <Button text="点赞" @onClick="like" :icon='icon.like' :active="relation.islike" active-text="取消赞"/>
-                <Button text="不喜欢" @onClick="unlike" :icon='icon.unlike' :active="relation.isunlike" />
-<!--                <Button text="微信" :icon='icon.wechat' @onClick="share(0)"/>-->
-<!--                <Button text="朋友圈" :icon='icon.friend' @onClick="share(1)"/>-->
-            </div>
+<!--            <div class="content">-->
+<!--                <template v-for="item in content">-->
+<!--                    <text class="text" :style="getStyle(item.style)" v-if="item.type=='text'">{{item.value}}</text>-->
+<!--                    <image @load="imageLoad(item,$event)" class="image" :style="{width:'710px',height:imageHeight[item.value]}" v-if="item.type=='image'" :src="item.value"></image>-->
+<!--                </template>-->
+<!--            </div>-->
+          <div class="news-container">
+            <iframe
+                ref="articleIframe"
+                :src="staticUrl"
+                frameborder="0"
+                :style="iframeStyle"
+                sandbox="allow-same-origin allow-scripts allow-forms"
+                @load="onIframeLoad"
+            ></iframe>
+          </div>
+<!--            <div class="tools">-->
+<!--                <Button text="点赞" @onClick="like" :icon='icon.like' :active="relation.islike" active-text="取消赞"/>-->
+<!--                <Button text="不喜欢" @onClick="unlike" :icon='icon.unlike' :active="relation.isunlike" />-->
+<!--&lt;!&ndash;                <Button text="微信" :icon='icon.wechat' @onClick="share(0)"/>&ndash;&gt;-->
+<!--&lt;!&ndash;                <Button text="朋友圈" :icon='icon.friend' @onClick="share(1)"/>&ndash;&gt;-->
+<!--            </div>-->
         </scroller>
-        <div class="art-bottom"><BottomBar :forward="test.isforward" @clickForward="forward"
-                                           :collection="relation.iscollection" @clickCollection="collection" /></div>
+<!--        <div class="art-bottom"><BottomBar :forward="test.isforward" @clickForward="forward"-->
+<!--                                           :collection="relation.iscollection" @clickCollection="collection" /></div>-->
     </div>
 </template>
 
@@ -43,10 +53,8 @@
     export default {
         name: "index",
         components:{TopBar,BottomBar,WxcButton,Button},
-        props:['id','title','date','comment','type','source','authorId'],
-        data(){
-            return {
-                scrollerHeight:'500px',
+        props:['id','title','staticUrl','createdTime','authorId'],
+        data(){            return {                scrollerHeight:'500px',                iframeStyle: { height: '600px', width: '100%', border: 'none', overflow: 'hidden' },
                 icon : {
                     like : '\uf164',
                     unlike : '\uf1f6',
@@ -90,9 +98,15 @@
         },
         destroyed(){
             this.read();
+            // 移除事件监听
+            window.removeEventListener('resize', this.updateIframeSize);
         },
         mounted(){
             this.scrollerHeight=(Utils.env.getPageHeight()-180)+'px';
+            // 初始化iframe高度
+            this.updateIframeSize();
+            // 监听窗口大小变化
+            window.addEventListener('resize', this.updateIframeSize);
         },
         methods : {
             imageLoad : function(item,e){
@@ -228,6 +242,49 @@
                 }else{
                     return {}
                 }
+            },
+            updateIframeSize() {
+                try {
+                    const iframe = this.$refs.articleIframe;
+                    if (iframe) {
+                        // 计算可用视口高度
+                        const pageHeight = Utils.env.getPageHeight();
+                        // 减去固定元素高度
+                        const fixedElementsHeight = 90; // 顶部标题栏高度
+                        const contentAboveIframeHeight = 180; // 文章标题和作者信息高度
+                        const totalFixedHeight = fixedElementsHeight + contentAboveIframeHeight;
+                        
+                        // 设置最小高度为页面高度减去固定元素
+                        let iframeHeight = pageHeight - totalFixedHeight;
+                        
+                        // 如果iframe已经加载完成，尝试获取内容实际高度
+                        if (iframe.contentWindow && iframe.contentWindow.document) {
+                            const contentHeight = iframe.contentWindow.document.body.scrollHeight;
+                            // 取实际内容高度和最小高度的较大值
+                            iframeHeight = Math.max(iframeHeight, contentHeight + 50); // 加50px作为安全边距
+                        }
+                        
+                        this.iframeStyle = {
+                            height: iframeHeight + 'px',
+                            width: '100%',
+                            border: 'none',
+                            overflow: 'hidden'
+                        };
+                        console.log('更新iframe高度:', iframeHeight + 'px');
+                    }
+                } catch (error) {
+                    console.error('更新iframe高度时出错:', error);
+                }
+            },
+            onIframeLoad() {
+                // iframe加载完成后更新大小
+                setTimeout(() => {
+                    this.updateIframeSize();
+                    // 添加一个小延迟再次更新，确保内容完全渲染
+                    setTimeout(() => {
+                        this.updateIframeSize();
+                    }, 500);
+                }, 100);
             },
             getImgStyle:function(item){
                 item = this.getStyle();

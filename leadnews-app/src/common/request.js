@@ -96,7 +96,11 @@ Request.prototype={
         })
     },
     get : function(path,parms){
-        if(parms){
+        console.log('执行GET请求:', path);
+        // 确保parms存在
+        if(!parms) parms = {};
+        
+        if(Object.keys(parms).length > 0){
             let tmp = querystring.stringify(parms)
             if(path.indexOf("?")==-1){
                 tmp="?"+tmp;
@@ -108,13 +112,16 @@ Request.prototype={
         let time = new Date().getTime()
         parms['t']=time
         return this.store.getToken().then(token=>{
+            console.log('使用token发送GET请求:', path);
             return  this.__fetch('GET',path,token,time,parms)
         }).catch(e=>{
             if(e.status){
+                console.error('获取token失败，请求被拒绝:', e);
                 return new Promise((resolve, reject) => {
                     reject(e)
                 });
             }else{
+                console.log('无token，使用空token发送GET请求:', path);
                 return  this.__fetch('GET',path,'',time,parms)
             }
         })

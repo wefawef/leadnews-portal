@@ -7,7 +7,7 @@ This boilerplate is targeted towards large, serious projects and assumes you are
 To use this template, scaffold a project with [weexpack v1.1.1+](https://github.com/weexteam/weex-pack).
 
 ``` bash
-$npm install -g weex-toolkit@latest
+$npm install -g weex-toolkit@latest 
 $ weex create my-project # default will create the webpack template
 $ cd my-project && npm start
 ```

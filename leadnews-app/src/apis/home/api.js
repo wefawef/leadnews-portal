@@ -60,6 +60,21 @@ Api.prototype = {
         else if(dir==2)
             url = this.vue.$config.urls.get('loadmore')
         return url;
+    },
+    // 获取频道列表
+    loadChannels : function(){
+        // 直接使用配置中的路径，确保使用GET方法
+        let url = this.vue.$config.urls.get('load_channels')
+        console.log('请求频道列表URL:', url);
+        return new Promise((resolve, reject) => {
+            this.vue.$request.get(url).then((d)=>{
+                console.log('频道列表API返回:', d);
+                resolve(d);
+            }).catch((e)=>{
+                console.error('频道列表API请求失败:', e);
+                reject(e);
+            })
+        })
     }
 }
 
