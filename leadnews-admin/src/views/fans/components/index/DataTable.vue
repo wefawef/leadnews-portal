@@ -60,7 +60,7 @@ export default {
 }
 </script>
 
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style lang="scss" scoped>
 .table-content {
   padding: 0 30px;
   header {

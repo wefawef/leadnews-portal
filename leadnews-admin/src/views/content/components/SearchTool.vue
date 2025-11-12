@@ -38,7 +38,7 @@
 </script>
 
 
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style lang="scss" scoped>
   .filter {
     background-color: #ffffff;
     text-align: left;

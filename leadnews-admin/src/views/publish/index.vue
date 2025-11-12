@@ -342,7 +342,7 @@
   };
 </script>
 
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style lang="scss" scoped>
   .tinymce-container {
     background-color: #ffffff;
     text-align: left;

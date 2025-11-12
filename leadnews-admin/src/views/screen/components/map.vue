@@ -71,7 +71,7 @@
     }
   }
 </script>
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style lang="scss" scoped>
   .chart {
     margin: 15px 3px 0px;
   }

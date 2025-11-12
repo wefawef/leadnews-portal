@@ -1,6 +1,6 @@
-# wemedia
+admin
 
-> 校园头条自媒体端
+
 
 ## Build Setup
 

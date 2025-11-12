@@ -96,7 +96,7 @@ export default {
 }
 </script>
 
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style lang="scss" scoped>
   .chart-content {
     padding: 0 30px;
   }

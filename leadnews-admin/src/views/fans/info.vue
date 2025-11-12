@@ -154,7 +154,7 @@ export default {
 }
 </script>
 
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style lang="scss" scoped>
 .fans-container {
   background-color: #ffffff;
   text-align: left;

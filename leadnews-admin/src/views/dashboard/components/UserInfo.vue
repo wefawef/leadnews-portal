@@ -47,7 +47,7 @@ export default {
   }
 }
 </script>
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style lang="scss" scoped>
   .dashboard-user {
     background-color: #fff;
     border: 1px solid #e7e7e9;

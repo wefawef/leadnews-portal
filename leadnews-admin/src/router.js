@@ -39,7 +39,7 @@ export const asyncRouterMap = [
       },
       {
         path:'/auth/index',
-        component: () => import('./views/auth/index.vue'),
+        component: () => import('@/views/auth/index.vue'),
       }
     ]
   },{

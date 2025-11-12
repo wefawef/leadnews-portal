@@ -37,7 +37,7 @@ const  config = {
         // ==========  login
         user_login:{url:'user/api/v1/login/login_auth',sv:'login'},
         // ==========  channel - 确保使用正确的GET路径
-        load_channels:{url:'api/v1/channel/channels',sv:'article', method:'GET'},
+        load_channels:{url:'http://127.0.0.1:8081/article/article/api/v1/article/channels',sv:'article', method:'GET'},
         // 解决多访问地址的问题
         getBase : function(url){
             let sv = url.sv

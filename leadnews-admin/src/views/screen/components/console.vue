@@ -84,7 +84,7 @@
     }
   }
 </script>
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style lang="scss" scoped>
   .console{
     padding: 10px;
     margin-top: 18px;

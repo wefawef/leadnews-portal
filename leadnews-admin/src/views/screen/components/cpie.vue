@@ -107,7 +107,7 @@
     }
   }
 </script>
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style lang="scss" scoped>
   .ccwapper{
     overflow: hidden;
     position: relative;

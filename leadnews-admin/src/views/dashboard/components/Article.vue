@@ -42,7 +42,7 @@ export default {
   }
 }
 </script>
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style lang="scss" scoped>
   .dashboard-article {
     background-color: #ffffff;
     border: 1px solid #e7e7e9;

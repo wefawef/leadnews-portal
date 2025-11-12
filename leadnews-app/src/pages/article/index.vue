@@ -1,6 +1,6 @@
 <template>
     <div class="art-page">
-        <div class="art-top"><TopBar :text="title"/></div>
+        <div class="art-top"><TopBar :text="title" :show-back="true" @back="goBack"/></div>
         <scroller class="scroller" ref="scroller" @scroll="scroller" show-scrollbar="true">
             <text class="title">{{title}}</text>
             <div class="info">
@@ -55,6 +55,7 @@
         components:{TopBar,BottomBar,WxcButton,Button},
         props:['id','title','staticUrl','createdTime','authorId'],
         data(){            return {                scrollerHeight:'500px',                iframeStyle: { height: '600px', width: '100%', border: 'none', overflow: 'hidden' },
+                scrollPosition: 0, // 记录滚动位置
                 icon : {
                     like : '\uf164',
                     unlike : '\uf1f6',
@@ -109,6 +110,26 @@
             window.addEventListener('resize', this.updateIframeSize);
         },
         methods : {
+            // 返回上一页
+            goBack: function() {
+                this.$router.back();
+            },
+            // 滚动事件处理
+            scroller: function(e) {
+                // 记录滚动位置
+                this.scrollPosition = e.contentOffset.y;
+                console.log('滚动位置:', this.scrollPosition);
+                
+                // 保存滚动位置到sessionStorage
+                if (typeof sessionStorage !== 'undefined') {
+                    sessionStorage.setItem('articleScrollPosition', this.scrollPosition.toString());
+                }
+                
+                // 计算阅读进度
+                let y = Math.abs(e.contentOffset.y)+(Utils.env.getPageHeight()-180)
+                let height = e.contentSize.height
+                this.time.percentage = Math.max(parseInt((y*100)/height),this.time.percentage)
+            },
             imageLoad : function(item,e){
                 console.log(item)
                 console.log(e)
@@ -297,11 +318,7 @@
                 }
                 return item;
             },
-            scroller : function(e){
-                let y = Math.abs(e.contentOffset.y)+(Utils.env.getPageHeight()-180)
-                let height = e.contentSize.height
-                this.time.percentage = Math.max(parseInt((y*100)/height),this.time.percentage)
-            }
+
         }
     }
 </script>

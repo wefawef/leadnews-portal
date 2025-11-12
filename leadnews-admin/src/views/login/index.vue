@@ -80,7 +80,7 @@ export default {
   }
 }
 </script>
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style lang="scss" scoped>
 .login {
   background-image: url('../../assets/login_bg.jpg');
   background-size: cover;

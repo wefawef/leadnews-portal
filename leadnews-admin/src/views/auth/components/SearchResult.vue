@@ -140,7 +140,7 @@ export default {
   }
 }
 </script>
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style lang="scss" scoped>
   .result {
     background-color: #ffffff;
     text-align: left;

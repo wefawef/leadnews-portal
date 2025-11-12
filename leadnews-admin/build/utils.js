@@ -30,20 +30,21 @@ exports.cssLoaders = function (options) {
   }
 
   // generate loader string to be used with extract text plugin
-  function generateLoaders (loader, loaderOptions) {
+  function generateLoaders(loader, loaderOptions) {
     const loaders = options.usePostCSS ? [cssLoader, postcssLoader] : [cssLoader]
 
     if (loader) {
-      loaders.push({
+      const loaderConfig = {
         loader: loader + '-loader',
         options: Object.assign({}, loaderOptions, {
           sourceMap: options.sourceMap
         })
-      })
+      }
+
+      loaders.push(loaderConfig)
     }
 
     // Extract CSS when that option is specified
-    // (which is the case during production build)
     if (options.extract) {
       return ExtractTextPlugin.extract({
         use: loaders,
@@ -55,6 +56,7 @@ exports.cssLoaders = function (options) {
   }
 
   // https://vue-loader.vuejs.org/en/configurations/extract-css.html
+  // Use sass-loader for both .sass and .scss
   return {
     css: generateLoaders(),
     postcss: generateLoaders(),

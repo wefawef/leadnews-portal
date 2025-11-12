@@ -48,8 +48,8 @@
           <slot :name="`tab-title-${index}`" v-if="titleUseSlot"></slot>
         </div>
       </scroller>
-      <text v-if="showMore" class="icon" @click="noAction"
-            :style="{ fontSize: tabStyles.fontSize*1.6+'px', color: tabStyles.titleColor}">&#xf0c9;</text>
+<!--      <text v-if="showMore" class="icon" @click="noAction"-->
+<!--            :style="{ fontSize: tabStyles.fontSize*1.6+'px', color: tabStyles.titleColor}">&#xf0c9;</text>-->
     </div>
     <div class="tab-page-wrap"
          ref="tab-page-wrap"
@@ -115,7 +115,7 @@
   }
 
   .tab-text {
-    lines: 1;
+    lines: 2;
     text-overflow: ellipsis;
   }
   .icon{

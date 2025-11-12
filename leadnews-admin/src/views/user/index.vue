@@ -197,7 +197,7 @@ export default {
   }
 }
 </script>
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style lang="scss" scoped>
 .user-container {
   background-color: #ffffff;
   text-align: left;

@@ -34,7 +34,13 @@ module.exports = {
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src'),
+      // Map module 'global' to our shim to satisfy packages requiring it
+      'global': resolve('build/global.js'),
     }
+  },
+  // Treat `global` as external to avoid resolution issues injected by loaders/loggers
+  externals: {
+    global: 'window'
   },
   module: {
     rules: [
@@ -84,6 +90,8 @@ module.exports = {
     fs: 'empty',
     net: 'empty',
     tls: 'empty',
-    child_process: 'empty'
+    child_process: 'empty',
+    // Ensure global is available
+    global: true
   }
 }

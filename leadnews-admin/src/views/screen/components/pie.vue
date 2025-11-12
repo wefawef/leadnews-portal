@@ -60,7 +60,7 @@
     }
   }
 </script>
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style lang="scss" scoped>
   .pwapper{
     padding-bottom: 15px;
   }

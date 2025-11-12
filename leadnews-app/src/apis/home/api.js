@@ -55,16 +55,16 @@ Api.prototype = {
     // 区别请求那个URL
     getLoadUrl : function(dir){
         let url = this.vue.$config.urls.get('load')
-        if(dir==0)
+        if(dir==2)
             url = this.vue.$config.urls.get('loadnew')
-        else if(dir==2)
+        else if(dir==1)
             url = this.vue.$config.urls.get('loadmore')
         return url;
     },
     // 获取频道列表
     loadChannels : function(){
-        // 直接使用配置中的路径，确保使用GET方法
-        let url = this.vue.$config.urls.get('load_channels')
+        // 直接使用完整的URL地址，避免路径拼接
+        let url = 'http://127.0.0.1:8081/article/article/api/v1/article/channels'
         console.log('请求频道列表URL:', url);
         return new Promise((resolve, reject) => {
             this.vue.$request.get(url).then((d)=>{
