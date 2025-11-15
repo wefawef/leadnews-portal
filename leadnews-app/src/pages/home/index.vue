@@ -10,8 +10,8 @@
             <text class="loading-text">{{load_new_text}}</text>
           </refresh>
           <!-- 列表项，并绑定显示事件 -->
-          <cell v-for="(item,key) in v" class="cell" @appear="show(item.id)" :key="key" :id="'item-' + index + '-' + key">
-            <wxc-pan-item :ext-id="'1-' + index + '-' + key" @wxcPanItemClicked="wxcPanItemClicked(item)" @wxcPanItemPan="wxcPanItemPan">
+          <cell v-for="(item,key) in v" class="cell" @appear="show(item.id)" :key="key" :id="'item-' + index + '-' + key" :ref="'itemref-' + index + '-' + key">
+            <wxc-pan-item :ext-id="'1-' + index + '-' + key" @wxcPanItemClicked="wxcPanItemClicked(item, index, key)" @wxcPanItemPan="wxcPanItemPan">
               <Item0 v-if="item.type==0" :data="item"/>
               <Item1 v-if="item.type==1" :data="item"/>
               <Item3 v-if="item.type==2" :data="item"/>
@@ -68,7 +68,9 @@
       loadingChannels: false,//是否正在加载频道
       needRestoreScroll: false, // 是否需要恢复滚动位置
       savedScrollPosition: 0, // 保存的滚动位置
-      savedArticleId: null // 保存的文章ID
+      savedArticleId: null,
+      savedItemIndex: null,
+      restoreAttempts: 0
     }),
     computed:{
       // 渲染加载最新和更多的国际化语言
@@ -86,21 +88,26 @@
       
       // 检查是否需要恢复滚动位置（从文章详情页返回）
       if (typeof sessionStorage !== 'undefined') {
-        const scrollPosition = sessionStorage.getItem('articleScrollPosition');
+        const itemIndexStr = sessionStorage.getItem('listItemIndex');
+        const scrollPosition = sessionStorage.getItem('listScrollPosition');
         const lastChannelIndex = sessionStorage.getItem('lastChannelIndex');
         const lastChannelTag = sessionStorage.getItem('lastChannelTag');
-        
-        if (scrollPosition && lastChannelIndex !== null) {
+        const lastArticleId = sessionStorage.getItem('lastArticleId');
+
+        if ((itemIndexStr !== null || scrollPosition || lastArticleId) && lastChannelIndex !== null) {
           this.needRestoreScroll = true;
-          this.savedScrollPosition = parseInt(scrollPosition);
+          this.savedItemIndex = itemIndexStr !== null ? parseInt(itemIndexStr) : null;
+          this.savedScrollPosition = scrollPosition ? parseInt(scrollPosition) : 0;
+          this.savedArticleId = lastArticleId || null;
           this.params.index = parseInt(lastChannelIndex);
           this.params.tag = lastChannelTag || '__all__';
-          console.log('检测到需要恢复滚动位置:', this.savedScrollPosition, '频道索引:', this.params.index);
-          
-          // 清除保存的滚动位置信息，避免重复使用
-          sessionStorage.removeItem('articleScrollPosition');
+          console.log('检测到需要恢复浏览位置: itemIndex=', this.savedItemIndex, 'px=', this.savedScrollPosition, '频道索引=', this.params.index, '文章ID=', this.savedArticleId);
+
+          sessionStorage.removeItem('listItemIndex');
+          sessionStorage.removeItem('listScrollPosition');
           sessionStorage.removeItem('lastChannelIndex');
           sessionStorage.removeItem('lastChannelTag');
+          sessionStorage.removeItem('lastArticleId');
         }
       }
       
@@ -256,38 +263,96 @@
       },
       // 恢复滚动位置的方法
       restoreScrollPosition() {
-        if (!this.needRestoreScroll || this.savedScrollPosition === 0) {
+        if (!this.needRestoreScroll) {
           return;
         }
-        
-        console.log('开始恢复滚动位置:', this.savedScrollPosition, 'px');
-        
-        // 等待DOM更新和数据加载完成
+        console.log('开始恢复浏览位置: itemIndex=', this.savedItemIndex, 'px=', this.savedScrollPosition);
         setTimeout(() => {
           try {
-            // 获取当前频道的列表容器
             const currentList = this.tabList[this.params.index];
             if (currentList && currentList.length > 0) {
-              // 查找滚动容器并设置滚动位置
-              this.setScrollPosition(this.savedScrollPosition);
-              
-              modal.toast({
-                message: `已恢复到之前的浏览位置`,
-                duration: 2
-              });
-              
-              console.log('滚动位置恢复完成:', this.savedScrollPosition);
-            } else {
-              console.log('当前频道列表为空，无法恢复位置');
+              if (this.savedArticleId) {
+                const idx = this.findItemIndexById(this.savedArticleId);
+                if (idx !== -1) {
+                  this.scrollToItemIndex(idx);
+                } else {
+                  this.loadMoreUntilFound();
+                  return;
+                }
+              } else if (this.savedItemIndex !== null) {
+                this.scrollToItemIndex(this.savedItemIndex);
+              } else if (this.savedScrollPosition > 0) {
+                this.setScrollPosition(this.savedScrollPosition);
+              }
+              modal.toast({ message: '已恢复到之前的浏览位置', duration: 2 });
+              console.log('浏览位置恢复完成');
             }
           } catch (error) {
             console.error('恢复滚动位置时出错:', error);
           }
-          
-          // 重置恢复标记
           this.needRestoreScroll = false;
           this.savedScrollPosition = 0;
+          this.savedItemIndex = null;
+          this.savedArticleId = null;
+          this.restoreAttempts = 0;
         }, 1000);
+      },
+      findItemIndexById(id) {
+        try {
+          const list = this.tabList[this.params.index] || [];
+          for (let i = 0; i < list.length; i++) {
+            const it = list[i];
+            if (it && (it.id === id || (it.id + '') === (id + ''))) {
+              return i;
+            }
+          }
+        } catch (e) {}
+        return -1;
+      },
+      loadMoreUntilFound(maxAttempts = 5) {
+        const tryFind = () => {
+          const idx = this.findItemIndexById(this.savedArticleId);
+          if (idx !== -1) {
+            this.scrollToItemIndex(idx);
+            modal.toast({ message: '已恢复到之前的浏览位置', duration: 2 });
+            this.needRestoreScroll = false;
+            this.savedArticleId = null;
+            this.restoreAttempts = 0;
+            return;
+          }
+          if (this.restoreAttempts >= maxAttempts) {
+            if (this.savedItemIndex !== null) {
+              this.scrollToItemIndex(this.savedItemIndex);
+            } else if (this.savedScrollPosition > 0) {
+              this.setScrollPosition(this.savedScrollPosition);
+            }
+            this.needRestoreScroll = false;
+            this.savedArticleId = null;
+            this.restoreAttempts = 0;
+            return;
+          }
+          this.restoreAttempts++;
+          this.params.loaddir = 1;
+          this.load();
+          setTimeout(tryFind, 600);
+        };
+        tryFind();
+      },
+      scrollToItemIndex(targetIndex) {
+        try {
+          if (typeof weex !== 'undefined' && weex.requireModule) {
+            const domModule = weex.requireModule('dom');
+            if (domModule && domModule.scrollToElement) {
+              const targetRef = 'itemref-' + this.params.index + '-' + targetIndex;
+              const elArr = this.$refs[targetRef];
+              const el = elArr && elArr[0] ? elArr[0] : null;
+              if (el) {
+                domModule.scrollToElement(el, { offset: 0, animated: false });
+                return;
+              }
+            }
+          }
+        } catch (error) {}
       },
       
       // 设置滚动位置的方法
@@ -307,17 +372,18 @@
                   let targetIndex = Math.max(0, Math.floor(position / averageItemHeight));
                   targetIndex = Math.min(targetIndex, currentList.length - 1);
                   
-                  const targetId = 'item-' + this.params.index + '-' + targetIndex;
-                  console.log('尝试滚动到元素:', targetId, '目标位置:', position);
-                  
-                  // 使用dom模块进行滚动
-                  domModule.scrollToElement(targetId, { 
-                    offset: position - (targetIndex * averageItemHeight),
-                    animated: false 
-                  });
-                  
-                  modal.toast({ message: '已恢复浏览位置', duration: 1 });
-                  return;
+                  const targetRef = 'itemref-' + this.params.index + '-' + targetIndex;
+                  console.log('尝试滚动到元素ref:', targetRef, '目标位置:', position);
+                  const elArr = this.$refs[targetRef];
+                  const el = elArr && elArr[0] ? elArr[0] : null;
+                  if (el) {
+                    domModule.scrollToElement(el, {
+                      offset: position - (targetIndex * averageItemHeight),
+                      animated: false
+                    });
+                    modal.toast({ message: '已恢复浏览位置', duration: 1 });
+                    return;
+                  }
                 }
               }
             } catch (error) {
@@ -541,17 +607,14 @@
         }
         
         // 重置参数
-        this.params.loaddir = 1;
+        this.params.loaddir = 0;
         this.params.index = e.page;
         this.params.tag = this.tabTitles[e.page] ? this.tabTitles[e.page]['id'] : '__all__';
         this.params.maxBehotTime = 0; // 重置最大时间戳
         this.params.minBehotTime = 20000000000000; // 重置最小时间戳
         
         // 清空当前频道的数据
-        if (!this.tabList[this.params.index] || this.tabList[this.params.index].length === 0) {
-          // 如果列表为空，才初始化为空数组，避免不必要的赋值
-          this.tabList[this.params.index] = [];
-        }
+        this.tabList[this.params.index] = [];
         
         // 重置加载状态
         this.showmore = false;
@@ -570,7 +633,7 @@
         }
       },
       // 列表项点击事件
-      wxcPanItemClicked(item){
+      wxcPanItemClicked(item, index, key){
       console.log('点击文章，文章ID:', item.id);
       console.log('当前频道索引:', this.params.index);
       console.log('当前频道标签:', this.params.tag);
@@ -579,6 +642,8 @@
       if (typeof sessionStorage !== 'undefined') {
         sessionStorage.setItem('lastChannelIndex', this.params.index.toString());
         sessionStorage.setItem('lastChannelTag', this.params.tag || '');
+        sessionStorage.setItem('listItemIndex', (key || 0).toString());
+        sessionStorage.setItem('lastArticleId', (item.id || '').toString());
         console.log('已保存当前频道信息，索引:', this.params.index, '标签:', this.params.tag);
       }
 

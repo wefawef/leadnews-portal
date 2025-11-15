@@ -68,7 +68,7 @@ export default {
        }
        //登录
        let result = await loginByUsername(name,password) //登录
-        if(result.code==0){
+        if(result.code==200){
           this.$router.replace({path:'/index'}) //跳转
         }else{
           this.$message({

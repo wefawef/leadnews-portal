@@ -120,9 +120,8 @@
                 this.scrollPosition = e.contentOffset.y;
                 console.log('滚动位置:', this.scrollPosition);
                 
-                // 保存滚动位置到sessionStorage
                 if (typeof sessionStorage !== 'undefined') {
-                    sessionStorage.setItem('articleScrollPosition', this.scrollPosition.toString());
+                    sessionStorage.setItem('articleDetailScrollPosition', this.scrollPosition.toString());
                 }
                 
                 // 计算阅读进度

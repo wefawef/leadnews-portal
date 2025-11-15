@@ -1,8 +1,8 @@
 <template>
     <div  class="sidebar">
-        <div class="logo">
-          <img src="@/assets/logo_admin.png" alt="">
-        </div>
+<!--        <div class="logo">-->
+<!--&lt;!&ndash;          <img src="@/assets/logo_admin.png" alt="">&ndash;&gt;-->
+<!--        </div>-->
         <el-menu class="sidebar-el-menu"
             :default-active="defaultRoute"
              background-color="#353b4e"

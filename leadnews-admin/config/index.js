@@ -13,10 +13,10 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/server_85/ADMIN': {
-        target: 'http://localhost:9007/', //源地址
+        target: 'http://localhost:51603/', //源地址
         changeOrigin: true, //改变源
         pathRewrite: {
-          '^/server_85/ADMIN': ''
+          '^/server_85/ADMIN': '/admin'
         }
       },
       '/server_85/WEBSOCKET': {

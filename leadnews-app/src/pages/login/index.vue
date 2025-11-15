@@ -21,7 +21,9 @@
             </div>
             <text class="button" @click="login"> 登 录 </text>
             <div class="more">
-                <text class="go-register" @click="tip">没有账号，去注册</text>
+                <router-link to="/register">
+                    <text class="go-register" @click="goRegister">没有账号，去注册</text>
+                </router-link>
                 <router-link to="/home">
                     <text class="go-home" @click="see">先看看，稍后登录</text>
                 </router-link>
@@ -52,8 +54,8 @@
             Api.setVue(this);
         },
         methods:{
-            tip : function(){
-                modal.toast({ message:'该功能暂未实现！',duration:3})
+            goRegister : function(){
+                this.$router.push('/register')
             },
             see : function(){
                 // 直接跳转到首页，不进行登录

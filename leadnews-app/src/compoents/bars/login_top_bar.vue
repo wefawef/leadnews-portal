@@ -1,5 +1,5 @@
 <template>
-    <wxc-minibar title="登 录"
+    <wxc-minibar :title="getText || '登 录'"
                  :background-color="backgroundColor"
                  text-color="#FFFFFF"
                  :useDefaultReturn="useDefaultReturn"
@@ -18,7 +18,7 @@
         props:{
           text:{
               type:String,
-              default:'文章标题'
+              default:'登 录'
           }
         },
         data:()=>{

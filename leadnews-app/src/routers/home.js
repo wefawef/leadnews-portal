@@ -4,6 +4,7 @@ import Home from '@/pages/home/index'
 import Article from '@/pages/article/index'
 import Search from '@/pages/search/index'
 import Login from '@/pages/login/index'
+import Register from '@/pages/register/index'
 import Screen from '@/pages/load_screen/index'
 import SearchResult from '@/pages/search_result/index'
 
@@ -26,6 +27,10 @@ let routes = [
         path:'/login',
         name: 'login',
         component:Login
+    },{
+        path:'/register',
+        name: 'register',
+        component:Register
     },{
         path:'/article',
         name: 'article-info',
