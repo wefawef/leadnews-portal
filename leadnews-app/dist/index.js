@@ -5568,8 +5568,9 @@ var config = {
         user_follow: { url: 'api/v1/user/user_follow/', sv: 'user' },
         // ==========  login
         user_login: { url: 'user/api/v1/login/login_auth', sv: 'login' },
-        // ==========  channel - 确保使用正确的GET路径
-        load_channels: { url: 'http://127.0.0.1:8081/article/article/api/v1/article/channels', sv: 'article', method: 'GET' },
+        user_register: { url: 'user/api/v1/login/register', sv: 'login' },
+        // ==========  channel
+        load_channels: { url: 'article/api/v1/article/channels', sv: 'article', method: 'GET' },
         // 解决多访问地址的问题
         getBase: function getBase(url) {
             var sv = url.sv;
@@ -33609,15 +33610,11 @@ Api.prototype = {
     loadChannels: function loadChannels() {
         var _this3 = this;
 
-        // 直接使用完整的URL地址，避免路径拼接
-        var url = 'http://127.0.0.1:8081/article/article/api/v1/article/channels';
-        console.log('请求频道列表URL:', url);
+        var url = this.vue.$config.urls.get('load_channels');
         return new Promise(function (resolve, reject) {
             _this3.vue.$request.get(url).then(function (d) {
-                console.log('频道列表API返回:', d);
                 resolve(d);
             }).catch(function (e) {
-                console.error('频道列表API请求失败:', e);
                 reject(e);
             });
         });
@@ -37433,7 +37430,7 @@ Api.prototype = {
         this.vue = vue;
     },
     register: function register(data) {
-        var url = 'http://127.0.0.1:8081/login/user/api/v1/login/register';
+        var url = this.vue.$config.urls.get('user_register');
         return this.vue.$request.postByEquipmentId(url, data);
     }
 };

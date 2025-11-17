@@ -36,8 +36,9 @@ const  config = {
         user_follow:{url:'api/v1/user/user_follow/',sv:'user'},
         // ==========  login
         user_login:{url:'user/api/v1/login/login_auth',sv:'login'},
-        // ==========  channel - 确保使用正确的GET路径
-        load_channels:{url:'http://127.0.0.1:8081/article/article/api/v1/article/channels',sv:'article', method:'GET'},
+        user_register:{url:'user/api/v1/login/register',sv:'login'},
+        // ==========  channel
+        load_channels:{url:'article/api/v1/article/channels',sv:'article', method:'GET'},
         // 解决多访问地址的问题
         getBase : function(url){
             let sv = url.sv

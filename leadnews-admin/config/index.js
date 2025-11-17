@@ -12,11 +12,13 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/server_85/ADMIN': {
-        target: 'http://localhost:51603/', //源地址
-        changeOrigin: true, //改变源
-        pathRewrite: {
-          '^/server_85/ADMIN': '/admin'
+          '/server_85/ADMIN': {
+            target: 'http://localhost:51603/', //源地址
+            changeOrigin: true, //改变源
+            pathRewrite: {
+              // 使用正确的正则表达式
+              '^/server_85/ADMIN/api/v1/sensitive': '/wemedia/api/v1/sensitive',
+              '^/server_85/ADMIN': '/admin'
         }
       },
       '/server_85/WEBSOCKET': {
