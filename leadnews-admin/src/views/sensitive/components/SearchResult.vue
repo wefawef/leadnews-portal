@@ -13,7 +13,7 @@
       <el-table-column
         label="创建时间">
         <template slot-scope="scope">
-          <span>{{ dateFormat(scope.row.created_time) }}</span>
+          <span>{{ dateFormat(scope.row.createdTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作"
@@ -43,7 +43,7 @@
 
 <script>
 import DateUtil from '@/utils/date'
-import {updateData,deleteData} from '@/api/common'
+import { deleteSensitive } from '@/api/sensitive'
 const avatar = require('@/assets/avatar.jpg')
 export default {
   props: ['host','list','table','pageSize','total','changePage','editData','deleteData'],
@@ -78,20 +78,19 @@ export default {
     },
     //重新设置页码
     dateFormat (time) {
-      return DateUtil.format13(time)
+      if(!time) return ''
+      const t = typeof time === 'number' ? time : new Date(time).getTime()
+      return DateUtil.format13(t)
     },
     async doDelete(id,status,index) {
-      this.id.value = id;
-      let params = {
-        name:this.table,
-        where:[this.id]
-      }
-      let res = await deleteData(params)
-      if(res.code==0){
+      let res = await deleteSensitive(id)
+      if(Number(res.code)===200){
         this.deleteData(id);
         this.$message({type:'success',message:'操作成功！'});
       }else{
-        this.$message({type:'error',message:res.errorMessage});
+        const code = Number(res && res.code)
+        const msg = code===404 ? '未找到' : (res && (res.error_message || '操作失败'))
+        this.$message({type:'error',message: msg});
       }
     },
     operateForEditor(item) {

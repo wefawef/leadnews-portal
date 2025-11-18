@@ -63,15 +63,11 @@ Api.prototype = {
     },
     // 获取频道列表
     loadChannels : function(){
-        // 直接使用完整的URL地址，避免路径拼接
-        let url = 'http://127.0.0.1:8081/article/article/api/v1/article/channels'
-        console.log('请求频道列表URL:', url);
+        let url = this.vue.$config.urls.get('load_channels')
         return new Promise((resolve, reject) => {
             this.vue.$request.get(url).then((d)=>{
-                console.log('频道列表API返回:', d);
                 resolve(d);
             }).catch((e)=>{
-                console.error('频道列表API请求失败:', e);
                 reject(e);
             })
         })

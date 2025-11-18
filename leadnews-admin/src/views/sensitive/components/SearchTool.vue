@@ -27,12 +27,8 @@
     },
     methods:{
       queryData() {
-        let params = {
-          filed:'sensitives',
-          type:'like',
-          value: this.name
-        }
-        this.changeParam(params)
+        const keyword = this.name && this.name.length ? this.name : 'all'
+        this.changeParam(keyword)
       }
     }
   }

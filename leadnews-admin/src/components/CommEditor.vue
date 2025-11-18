@@ -30,9 +30,10 @@
 
 <script>
   import {updateData} from '@/api/common'
+  import { saveSensitive, updateSensitive } from '@/api/sensitive'
   export default {
     name: 'commn-editor',
-    props: ['title', 'fileds','table','submitSuccess'],
+    props: ['title', 'fileds','table','submitSuccess','submitApiType'],
     data() {
       return {
         disable:false,
@@ -114,6 +115,39 @@
         });
       },
       async submitToBack(param){
+        // 针对敏感词模块，改为实体传参
+        if(this.submitApiType === 'sensitive'){
+          let res
+          if(this.model === 'add'){
+            res = await saveSensitive({ id: null, sensitives: this.form['sensitives'], createdTime: null })
+            const code = Number(res && res.code)
+            if(code===201 || code===200){
+              this.dialogFormVisible=false
+              this.submitSuccess()
+              this.$message({type:'success',message:(code===201?'创建成功':'操作成功')});
+              return
+            }
+          }else if(this.model === 'edit'){
+            res = await updateSensitive({ id: this.entry.id, sensitives: this.form['sensitives'], createdTime: this.entry.createdTime || null })
+            const code = Number(res && res.code)
+            if(code===200){
+              this.dialogFormVisible=false
+              this.submitSuccess()
+              this.$message({type:'success',message:'操作成功'});
+              return
+            }
+          }else{
+            // view 不提交
+            return
+          }
+          // 异常提示
+          const code = Number(res && res.code)
+          const msg = code===404 ? '未找到' : (res && (res.error_message || '操作失败'))
+          this.$message({type:'error',message: msg});
+          return
+        }
+
+        // 默认通用接口
         let res = await updateData(param)
         if(res.code==0){
           this.dialogFormVisible=false
