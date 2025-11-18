@@ -43,20 +43,38 @@
         </template>
       </el-table-column>
       <el-table-column label="操作"
-         width="200" >
+         width="260" >
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            @click="operateForEditor(scope.row)">编辑</el-button>
-          <el-button
-            size="mini"
-            type="danger"
-            v-if="scope.row.status == 1"
-            @click="operateForDisable(scope.row.id,0,scope.$index )">无效</el-button>
-          <el-button
-            size="mini"
-            v-else
-            @click="operateForDisable(scope.row.id,1,scope.$index )">有效</el-button>
+          <div class="ops">
+            <el-button
+              size="mini"
+              type="primary"
+              plain
+              icon="el-icon-edit"
+              @click="operateForEditor(scope.row)">编辑</el-button>
+            <el-button
+              class="btn-delete"
+              size="mini"
+              type="danger"
+              plain
+              icon="el-icon-delete"
+              @click="operateForDelete(scope.row.id,0,scope.$index )">删除</el-button>
+            <el-button
+              class="btn-disable"
+              size="mini"
+              type="warning"
+              plain
+              icon="el-icon-close"
+              v-if="scope.row.status == 1"
+              @click="operateForDisable(scope.row.id,0,scope.$index )">无效</el-button>
+            <el-button
+              size="mini"
+              type="success"
+              plain
+              icon="el-icon-check"
+              v-else
+              @click="operateForDisable(scope.row.id,1,scope.$index )">有效</el-button>
+          </div>
         </template>
       </el-table-column>
     </el-table>
@@ -74,10 +92,11 @@
 
 <script>
 import DateUtil from '@/utils/date'
-import {updateData} from '@/api/common'
+import { updateChannel } from '@/api/channel'
+import { deleteChannel } from '@/api/channel'
 const avatar = require('@/assets/avatar.jpg')
 export default {
-  props: ['host','list','table','pageSize','total','changePage','changeStatus','editData'],
+  props: ['host','list','table','pageSize','total','changePage','changeStatus','editData','deleteData'],
   data() {
     return {
        listPage:{
@@ -112,22 +131,49 @@ export default {
       return DateUtil.format13(time)
     },
     async operateForDisable(id,status,index) {
-      this.id.value = id;
-      let params = {
-        name:this.table,
-        where:[this.id],
-        sets:[{filed:'status',value:status}]
+      const row = this.list[index] || {}
+      const entity = {
+        id: id,
+        name: row.name,
+        description: row.description,
+        isDefault: row.is_default==1 || row.is_default===true,
+        status: status==1,
+        ord: row.ord || 0,
+        createdTime: new Date()
       }
-      let res = await updateData(params)
-      if(res.code==0){
+      let res = await updateChannel(entity)
+      const code = Number(res && res.code)
+      if(code===200){
         this.changeStatus(index,status);
         this.$message({type:'success',message:'操作成功！'});
       }else{
-        this.$message({type:'error',message:res.errorMessage});
+        const msg = code===404 ? '未找到' : (res && (res.error_message || '操作失败'))
+        this.$message({type:'error',message: msg});
       }
     },
     operateForEditor(item) {
       this.editData(item)
+    },
+    async doDelete(id,status,index) {
+      let res = await deleteChannel(id)
+      const code = Number(res && res.code)
+      if(code===200){
+        this.deleteData && this.deleteData(id)
+        this.$message({type:'success',message:'操作成功！'});
+      }else{
+        const msg = code===404 ? '未找到' : (res && (res.error_message || '操作失败'))
+        this.$message({type:'error',message: msg});
+      }
+    },
+    operateForDelete(id,status,index) {
+      this.$confirm('确定要删除吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+      }).then(({ value }) => {
+        this.doDelete(id,status,index)
+      }).catch(() => {
+
+      });
     },
     open(msg) {
       this.$prompt(msg, '提示', {
@@ -227,5 +273,21 @@ export default {
   .el-pagination {
     text-align: center;
     margin: 20px 0 40px;
+  }
+  .ops {
+    display: flex;
+    align-items: center;
+  }
+  .ops .el-button {
+    margin-right: 8px;
+  }
+  .ops .el-button:last-child {
+    margin-right: 0;
+  }
+  .ops .btn-delete {
+    margin-left: -4px;
+  }
+  .ops .btn-disable {
+    margin-left: -4px;
   }
 </style>

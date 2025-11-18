@@ -31,6 +31,7 @@
 <script>
   import {updateData} from '@/api/common'
   import { saveSensitive, updateSensitive } from '@/api/sensitive'
+  import { saveChannel, updateChannel } from '@/api/channel'
   export default {
     name: 'commn-editor',
     props: ['title', 'fileds','table','submitSuccess','submitApiType'],
@@ -141,6 +142,44 @@
             return
           }
           // 异常提示
+          const code = Number(res && res.code)
+          const msg = code===404 ? '未找到' : (res && (res.error_message || '操作失败'))
+          this.$message({type:'error',message: msg});
+          return
+        }
+
+        if(this.submitApiType === 'channel'){
+          let entity = {
+            id: this.entry && this.entry.id != undefined ? this.entry.id : null,
+            name: this.form['name'],
+            description: this.form['description'],
+            isDefault: this.form['is_default']==1 || this.form['is_default']===true,
+            status: this.form['status']==1 || this.form['status']===true,
+            ord: this.form['ord'] || 0,
+            createdTime: new Date()
+          }
+          let res
+          if(this.model === 'add'){
+            res = await saveChannel(entity)
+            const code = Number(res && res.code)
+            if(code===201 || code===200){
+              this.dialogFormVisible=false
+              this.submitSuccess()
+              this.$message({type:'success',message:(code===201?'创建成功':'操作成功')});
+              return
+            }
+          }else if(this.model === 'edit'){
+            res = await updateChannel(entity)
+            const code = Number(res && res.code)
+            if(code===200){
+              this.dialogFormVisible=false
+              this.submitSuccess()
+              this.$message({type:'success',message:'操作成功'});
+              return
+            }
+          }else{
+            return
+          }
           const code = Number(res && res.code)
           const msg = code===404 ? '未找到' : (res && (res.error_message || '操作失败'))
           this.$message({type:'error',message: msg});

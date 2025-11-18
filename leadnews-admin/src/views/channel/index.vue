@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Editor ref="editor" :fileds="fileds" title="频道" :table="this.params.name" :submitSuccess="submitSuccess"/>
+    <Editor ref="editor" :fileds="fileds" title="频道" :table="'AD_CHANNEL'" submitApiType="channel" :submitSuccess="submitSuccess"/>
     <search-tool :changeParam="changeParam" :addData="addData" />
     <search-result
       ref='mySearchResult'
@@ -9,6 +9,7 @@
       :total="total"
       :table="this.params.name"
       :editData="editData"
+      :deleteData="deleteData"
       :changePage="changePage"
       :changeStatus="changeStatus"
       :pageSize="params.size"/>
@@ -19,18 +20,18 @@
   import SearchTool from './components/SearchTool.vue'
   import SearchResult from './components/SearchResult.vue'
   import Editor from '@/components/CommEditor.vue'
-  import {loadList} from '@/api/common'
+  import { getAllChannels, listChannels } from '@/api/channel'
   import DateUtil from '@/utils/date'
   export default {
     name: "ChannelManager",
     data() {
       return {
         params:{
-          name:'AD_CHANNEL',
           page:1,
           size:10,
           where:[]
         },
+        searchName:'',
         total:0,
         host:'',
         list:[],
@@ -64,12 +65,19 @@
       submitSuccess:function(){
         this.loadData()
       },
+      deleteData:function(id){
+        this.loadData()
+      },
       changeStatus:function(index,status){
         this.$set(this.list[index],'status',status)
       },
       changeParam :function(e){
         this.params.page=1
-        this.params.where[0]=e
+        if(e && e.filed==='name'){
+          this.searchName = e.value || ''
+        }else{
+          this.searchName = ''
+        }
         this.loadData()
       },
       changePage :function(e){
@@ -77,13 +85,50 @@
         this.loadData()
       },
       async loadData() {
-        let res = await loadList({...this.params});
-        if (res.code == 0) {
-          this.list = res.data.list
-          this.host = res.host
-          this.total = res.data.total //总记录数
-        } else {
-          this.$message({type: 'error', message: res.error_message})
+        let res
+        if(this.searchName && this.searchName.length){
+          res = await listChannels({ page: this.params.page, size: this.params.size, name: this.searchName })
+        }else{
+          res = await getAllChannels()
+        }
+        const code = Number(res && res.code)
+        if(code===200){
+          let data = res.data || []
+          if(Array.isArray(data)){
+            this.list = data.map(this.normalizeChannel)
+            this.total = data.length
+          }else if(Array.isArray(data.list)){
+            this.list = data.list.map(this.normalizeChannel)
+            this.total = Number(data.total || data.list.length)
+          }else{
+            this.list = []
+            this.total = 0
+          }
+        }else if(code===404){
+          this.list = []
+          this.total = 0
+        }else if(code===201){
+          let data = res.data || []
+          if(Array.isArray(data)){
+            this.list = data.map(this.normalizeChannel)
+            this.total = data.length
+          }else{
+            this.list = []
+            this.total = 0
+          }
+        }else{
+          this.$message({type: 'error', message: res && res.error_message})
+        }
+      },
+      normalizeChannel(item){
+        return {
+          id: item.id,
+          name: item.name,
+          description: item.description,
+          is_default: item.isDefault ? 1 : 0,
+          status: item.status ? 1 : 0,
+          ord: item.ord,
+          created_time: item.createdTime ? new Date(item.createdTime).getTime() : new Date().getTime()
         }
       }
     }

@@ -7,11 +7,19 @@ Api.prototype = {
     },
     // 加载数据
     loaddata : function(params){
-        let dir = params.loaddir
+        let dir = params && params.loaddir
         let url = this.getLoadUrl(dir)
+        // 构造请求负载，移除 index 与 loaddir 两个不需要的参数，其余保持不变
+        let payload = {}
+        if(params){
+            for(let k in params){
+                if(k === 'index' || k === 'loaddir') continue;
+                payload[k] = params[k]
+            }
+        }
         return this.vue.$store.getEquipmentId().then(equipmentId=> {
             return new Promise((resolve, reject) => {
-                this.vue.$request.post(url,params,{}).then((d)=>{
+                this.vue.$request.post(url,payload,{}).then((d)=>{
                     resolve(d);
                 }).catch((e)=>{
                     reject(e);

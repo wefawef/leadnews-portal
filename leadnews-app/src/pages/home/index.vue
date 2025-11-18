@@ -18,10 +18,13 @@
               <Item3 v-if="item.type==3" :data="item"/>
             </wxc-pan-item>
           </cell>
-          <!-- 上拉加载更多 -->
-          <loading @loading="loadmore" style="background-color: white; height: 100px;" :display="showmore?'show':'hide'" class="loading">
-            <loading-indicator class="loading-icon"></loading-indicator>
-            <text class="loading-text">{{load_more_text}}</text>
+          <cell v-if="shouldShowNoMore" class="cell no-more-cell">
+            <text class="no-more-text">已无更多内容</text>
+          </cell>
+          
+          <loading @loading="loadmore" :style="loadMoreStyle" :display="(shouldShowLoadMore && showmore)?'show':'hide'" class="loading">
+            <loading-indicator v-if="shouldShowLoadMore" class="loading-icon"></loading-indicator>
+            <text v-if="shouldShowLoadMore" class="loading-text">{{load_more_text}}</text>
           </loading>
         </list>
         <text slot="rightIcon">1212</text>
@@ -56,7 +59,7 @@
       tabPageHeight: 1334,//列表总高度
       hasMoreData: {},//记录每个频道是否还有更多数据
       params:{
-        loaddir:1,
+        loaddir:0,
         index:0,
         tag:"__all__",
         size:10,
@@ -75,7 +78,29 @@
     computed:{
       // 渲染加载最新和更多的国际化语言
       load_new_text:function(){return this.$lang.load_new_text},
-      load_more_text:function(){return this.$lang.load_more_text}
+      load_more_text:function(){return this.$lang.load_more_text},
+      shouldShowLoadMore:function(){
+        const idx = this.params.index;
+        const list = this.tabList[idx] || [];
+        const more = this.hasMoreData && this.hasMoreData[idx] !== false;
+        return more && list.length >= this.params.size;
+      },
+      loadMoreStyle:function(){
+        return {
+          backgroundColor: '#ffffff',
+          height: this.shouldShowLoadMore ? '100px' : '24px',
+          minHeight: this.shouldShowLoadMore ? '100px' : '24px',
+          margin: this.shouldShowLoadMore ? '0' : '0',
+          padding: this.shouldShowLoadMore ? '0' : '0',
+          overflow: 'hidden',
+          opacity: this.shouldShowLoadMore ? 1 : 0
+        };
+      },
+      shouldShowNoMore:function(){
+        const idx = this.params.index;
+        const list = this.tabList[idx] || [];
+        return this.hasMoreData && this.hasMoreData[idx] === false && list.length > 0;
+      }
     },
     mounted(){
       // 频道加载和页面激活已在created中的loadChannels方法处理
@@ -175,8 +200,14 @@
           this.loadingChannels = true;
           Api.loadChannels().then((d)=>{
               if(d.code==200){
-                  // 转换频道数据格式
-                  let arr = d.data;
+                  let arr = Array.isArray(d.data) ? d.data.slice() : [];
+                  arr.sort(function(a,b){
+                      var ao = parseInt(a && a.ord, 10);
+                      var bo = parseInt(b && b.ord, 10);
+                      ao = isNaN(ao) ? Number.MAX_SAFE_INTEGER : ao;
+                      bo = isNaN(bo) ? Number.MAX_SAFE_INTEGER : bo;
+                      return ao - bo;
+                  });
                   let temp = [];
                   for(let i=0;i<arr.length;i++){
                       temp.push({
@@ -216,6 +247,8 @@
                       // 确保当前频道的标签正确设置
                       this.params.tag = this.tabTitles[this.params.index] ? this.tabTitles[this.params.index].id : '__all__';
                       console.log('频道标签设置为:', this.params.tag);
+                      // 首次加载按普通加载处理，避免显示加载更多
+                      this.params.loaddir = 0;
                       
                       // 加载数据
                       this.load();
@@ -406,6 +439,10 @@
       },
       // 上拉加载更多
       loadmore:function(){
+          if(this.hasMoreData && this.hasMoreData[this.params.index] === false){
+            this.showmore=false;
+            return;
+          }
           this.showmore=true;
           this.params.loaddir=1;
           this.load();
@@ -492,6 +529,9 @@
               if(this.tabList[this.params.index].length === 0){
                 modal.toast({message:'暂无数据',duration:2});
               }
+              if(this.params.loaddir == 0){
+                this.hasMoreData[this.params.index] = false;
+              }
             }
             return;
           }
@@ -501,8 +541,7 @@
             this.tabList[this.params.index] = [];
           }
           
-          // 如果返回的数据少于请求的size，说明没有更多数据了（仅在加载更多时判断）
-          if(this.params.loaddir == 1 && data.length < this.params.size){
+          if((this.params.loaddir == 1 || this.params.loaddir == 0) && data.length < this.params.size){
             this.hasMoreData[this.params.index] = false;
           }
           
@@ -692,5 +731,15 @@
   }
   .cell {
     background-color: #ffffff;
+  }
+  .no-more-cell{
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0;
+  }
+  .no-more-text{
+    color: #999999;
+    font-size: 24px;
+    text-align: center;
   }
 </style>

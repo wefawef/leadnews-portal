@@ -44,3 +44,10 @@ export const API_SENSITIVE_SAVE = '/api/v1/sensitive/save' // 新增（实体：
 export const API_SENSITIVE_UPDATE = '/api/v1/sensitive/update' // 修改（实体：{id,sensitives}）
 export const API_SENSITIVE_DELETE = '/api/v1/sensitive/del' // 删除（路径参数：/del/{id}）
 
+// Channel module endpoints
+export const API_CHANNEL_LIST_ALL = '/api/v1/channel/channels'
+export const API_CHANNEL_LIST = '/api/v1/channel/list'
+export const API_CHANNEL_SAVE = '/api/v1/channel/save'
+export const API_CHANNEL_UPDATE = '/api/v1/channel/update'
+export const API_CHANNEL_DELETE = '/api/v1/channel/del'
+

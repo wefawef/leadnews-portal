@@ -31363,6 +31363,19 @@ module.exports = {
   },
   "cell": {
     "backgroundColor": "#ffffff"
+  },
+  "no-more-cell": {
+    "alignItems": "center",
+    "justifyContent": "center",
+    "paddingTop": "20",
+    "paddingRight": 0,
+    "paddingBottom": "20",
+    "paddingLeft": 0
+  },
+  "no-more-text": {
+    "color": "#999999",
+    "fontSize": "24",
+    "textAlign": "center"
   }
 }
 
@@ -31443,6 +31456,9 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //
 //
 //
+//
+//
+//
 
 var modal = weex.requireModule("modal");
 
@@ -31461,7 +31477,7 @@ exports.default = {
       tabPageHeight: 1334, //列表总高度
       hasMoreData: {}, //记录每个频道是否还有更多数据
       params: {
-        loaddir: 1,
+        loaddir: 0,
         index: 0,
         tag: "__all__",
         size: 10,
@@ -31485,6 +31501,28 @@ exports.default = {
     },
     load_more_text: function load_more_text() {
       return this.$lang.load_more_text;
+    },
+    shouldShowLoadMore: function shouldShowLoadMore() {
+      var idx = this.params.index;
+      var list = this.tabList[idx] || [];
+      var more = this.hasMoreData && this.hasMoreData[idx] !== false;
+      return more && list.length >= this.params.size;
+    },
+    loadMoreStyle: function loadMoreStyle() {
+      return {
+        backgroundColor: '#ffffff',
+        height: this.shouldShowLoadMore ? '100px' : '24px',
+        minHeight: this.shouldShowLoadMore ? '100px' : '24px',
+        margin: this.shouldShowLoadMore ? '0' : '0',
+        padding: this.shouldShowLoadMore ? '0' : '0',
+        overflow: 'hidden',
+        opacity: this.shouldShowLoadMore ? 1 : 0
+      };
+    },
+    shouldShowNoMore: function shouldShowNoMore() {
+      var idx = this.params.index;
+      var list = this.tabList[idx] || [];
+      return this.hasMoreData && this.hasMoreData[idx] === false && list.length > 0;
     }
   },
   mounted: function mounted() {
@@ -31591,8 +31629,14 @@ exports.default = {
       this.loadingChannels = true;
       _api2.default.loadChannels().then(function (d) {
         if (d.code == 200) {
-          // 转换频道数据格式
-          var arr = d.data;
+          var arr = Array.isArray(d.data) ? d.data.slice() : [];
+          arr.sort(function (a, b) {
+            var ao = parseInt(a && a.ord, 10);
+            var bo = parseInt(b && b.ord, 10);
+            ao = isNaN(ao) ? Number.MAX_SAFE_INTEGER : ao;
+            bo = isNaN(bo) ? Number.MAX_SAFE_INTEGER : bo;
+            return ao - bo;
+          });
           var temp = [];
           for (var i = 0; i < arr.length; i++) {
             temp.push({
@@ -31636,6 +31680,8 @@ exports.default = {
             // 确保当前频道的标签正确设置
             _this2.params.tag = _this2.tabTitles[_this2.params.index] ? _this2.tabTitles[_this2.params.index].id : '__all__';
             console.log('频道标签设置为:', _this2.params.tag);
+            // 首次加载按普通加载处理，避免显示加载更多
+            _this2.params.loaddir = 0;
 
             // 加载数据
             _this2.load();
@@ -31835,6 +31881,10 @@ exports.default = {
     },
     // 上拉加载更多
     loadmore: function loadmore() {
+      if (this.hasMoreData && this.hasMoreData[this.params.index] === false) {
+        this.showmore = false;
+        return;
+      }
       this.showmore = true;
       this.params.loaddir = 1;
       this.load();
@@ -31926,6 +31976,9 @@ exports.default = {
             if (this.tabList[this.params.index].length === 0) {
               modal.toast({ message: '暂无数据', duration: 2 });
             }
+            if (this.params.loaddir == 0) {
+              this.hasMoreData[this.params.index] = false;
+            }
           }
           return;
         }
@@ -31935,8 +31988,7 @@ exports.default = {
           this.tabList[this.params.index] = [];
         }
 
-        // 如果返回的数据少于请求的size，说明没有更多数据了（仅在加载更多时判断）
-        if (this.params.loaddir == 1 && data.length < this.params.size) {
+        if ((this.params.loaddir == 1 || this.params.loaddir == 0) && data.length < this.params.size) {
           this.hasMoreData[this.params.index] = false;
         }
 
@@ -33553,11 +33605,19 @@ Api.prototype = {
     loaddata: function loaddata(params) {
         var _this = this;
 
-        var dir = params.loaddir;
+        var dir = params && params.loaddir;
         var url = this.getLoadUrl(dir);
+        // 构造请求负载，移除 index 与 loaddir 两个不需要的参数，其余保持不变
+        var payload = {};
+        if (params) {
+            for (var k in params) {
+                if (k === 'index' || k === 'loaddir') continue;
+                payload[k] = params[k];
+            }
+        }
         return this.vue.$store.getEquipmentId().then(function (equipmentId) {
             return new Promise(function (resolve, reject) {
-                _this.vue.$request.post(url, params, {}).then(function (d) {
+                _this.vue.$request.post(url, payload, {}).then(function (d) {
                     resolve(d);
                 }).catch(function (e) {
                     reject(e);
@@ -33709,23 +33769,28 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           "data": item
         }
       }) : _vm._e()], 1)], 1)
-    }), _c('loading', {
-      staticClass: ["loading"],
-      staticStyle: {
-        backgroundColor: "white",
-        height: "100px"
-      },
+    }), (_vm.shouldShowNoMore) ? _c('cell', {
+      staticClass: ["cell", "no-more-cell"],
+      appendAsTree: true,
       attrs: {
-        "display": _vm.showmore ? 'show' : 'hide'
+        "append": "tree"
+      }
+    }, [_c('text', {
+      staticClass: ["no-more-text"]
+    }, [_vm._v("已无更多内容")])]) : _vm._e(), _c('loading', {
+      staticClass: ["loading"],
+      style: _vm.loadMoreStyle,
+      attrs: {
+        "display": (_vm.shouldShowLoadMore && _vm.showmore) ? 'show' : 'hide'
       },
       on: {
         "loading": _vm.loadmore
       }
-    }, [_c('loading-indicator', {
+    }, [(_vm.shouldShowLoadMore) ? _c('loading-indicator', {
       staticClass: ["loading-icon"]
-    }), _c('text', {
+    }) : _vm._e(), (_vm.shouldShowLoadMore) ? _c('text', {
       staticClass: ["loading-text"]
-    }, [_vm._v(_vm._s(_vm.load_more_text))])])], 2)
+    }, [_vm._v(_vm._s(_vm.load_more_text))]) : _vm._e()])], 2)
   }), _c('text', {
     attrs: {
       "slot": "rightIcon"
