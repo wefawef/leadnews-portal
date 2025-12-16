@@ -1,58 +1,59 @@
 // 基本样式-颜色
-@body-background        : #fff;
+@body-background        : #f5f7fa;
 @component-background   : #fff;
 // 基本样式-字体
-@font-size              : 12px;
+@font-size              : 14px;
 @font-family            : "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
 @code-family            : Consolas,Menlo,Courier,monospace;
 @icon-font              :fontawesome;
 // 主页文章列表样式 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ START
-@list-0-height          :120px;
-@list-1-height          :160px;
-@list-2-height          :220px;
+@list-0-height          :140px;
+@list-1-height          :180px;
+@list-2-height          :240px;
 // 列表通用参数
-@list-lr-margin         :15px;
-@list-tb-margin         :8px;
+@list-lr-margin         :20px;
+@list-tb-margin         :12px;
 @list-bottom-color      :#f0f0f0;
 @list-loading-color     :#999;
 
-@title-size             :34px;
+@title-size             :32px;
 @title-family           :@font-family;
 @title-color            :#333;
 
-@tag-size               :16px;
+@tag-size               :22px;
 @tag-family             :@font-family;
 @tag-color              :#999;
-@tag-right-margin       :18px;
+@tag-right-margin       :20px;
 
 @tag-icon-color         :#ff4757;
-@tag-icon-size          :20px;
+@tag-icon-size          :24px;
 @tag-icon-font          :@icon-font;
 @tag-icon-bg            :transparent;
 
 .list-item {
-  width: 100%;
-  max-width: 750px;
+  width: 710px;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 20px;
+  margin-bottom: 0;
   flex-direction: column;
-  border-bottom-width: 1px;
-  border-bottom-color: @list-bottom-color;
-  padding-bottom: 12px;
-  padding-left: 8px;
-  padding-right: 8px;
-  padding-top: 12px;
+  padding: 24px;
   box-sizing: border-box;
   background-color: @component-background;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
 }
 .title {
   flex: 1;
-  padding-bottom: 10px;
-  line-height: 36px;
+  padding-bottom: 16px;
+  line-height: 48px;
   font-size: @title-size;
   font-family: @title-family;
   color: @title-color;
+  font-weight: bold;
   justify-content:flex-start;
   align-items: flex-start;
-  margin: @list-tb-margin @list-lr-margin;
+  margin: 0;
   width: 100%;
   word-break: break-all;
   box-sizing: border-box;
@@ -62,8 +63,8 @@
   font-size: @tag-size;
   color: @tag-color;
   font-family: @tag-family;
-  margin-right: 15px;
-  line-height: 20px;
+  margin-right: 20px;
+  line-height: 28px;
 }
 .tags-icon{
   font-family: @tag-icon-font;
@@ -73,11 +74,12 @@
 }
 .tags{
   flex-direction: row;
-  margin: 15px @list-lr-margin @list-tb-margin;
+  margin-top: 10px;
   justify-content: left;
+  align-items: center;
 }
 .date {
-  margin-top: 3px;
+  // margin-top: 3px;
 }
 .line {
   height: 2px;
@@ -92,16 +94,12 @@
   height: 100px;
 }
 .loading-text{
-  font-size: @title-size/1.1;
+  font-size: 28px;
   color: @list-loading-color;
+  margin-left: 10px;
 }
 .loading-icon{
-  width:100px;
-  height: 100px;
-  color:saturate(@list-loading-color,120%);
+  width: 60px;
+  height: 60px;
+  color: @list-loading-color;
 }
-.image{
-  border-radius: 5px;
-  height: 120px;
-}
-// 主页文章列表样式 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ ENT

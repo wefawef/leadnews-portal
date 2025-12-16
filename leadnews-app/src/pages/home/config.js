@@ -11,23 +11,23 @@ export default {
     // ],
     tabStyles: {
         bgColor: '#FFFFFF',
-        titleColor: '#9b9b9b',
-        activeTitleColor: '#3D3D3D',
+        titleColor: '#666666',
+        activeTitleColor: '#3194ff',
         activeBgColor: '#FFFFFF',
         isActiveTitleBold: true,
         iconWidth: 70,
         iconHeight: 70,
-        width: 160,
-        height: 90,
-        fontSize: 22,
+        width: 180, // 这个参数现在不再强制限制宽度，但保留兼容
+        height: 88,
+        fontSize: 28, 
         hasActiveBottom: true,
         activeBottomColor: '#3194ff',
         activeBottomHeight: 6,
-        activeBottomWidth: 120,
-        textPaddingLeft: 8,
-        textPaddingRight: 8,
-        normalBottomColor: 'rgba(0,0,0,0.4)',
-        normalBottomHeight: 2,
+        activeBottomWidth: 30,
+        textPaddingLeft: 20, // 增加内边距
+        textPaddingRight: 20,
+        normalBottomColor: 'rgba(240,240,240,1)',
+        normalBottomHeight: 1,
         hasRightIcon: false,
         rightOffset: 100
     }

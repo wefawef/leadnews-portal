@@ -23,9 +23,10 @@
              :ref="'wxc-tab-title-'+index"
              @click="setPage(index,v.url, clickAnimation)"
              :style="{
-               width: tabStyles.width +'px',
                height: tabStyles.height +'px',
-               backgroundColor: currentPage === index ? tabStyles.activeBgColor : tabStyles.bgColor
+               backgroundColor: currentPage === index ? tabStyles.activeBgColor : tabStyles.bgColor,
+               paddingLeft: (tabStyles.textPaddingLeft?tabStyles.textPaddingLeft:10)+'px',
+               paddingRight: (tabStyles.textPaddingRight?tabStyles.textPaddingRight:10)+'px'
              }"
              :accessible="true"
              :aria-label="`${v.title?v.title:'标签'+index}`">
@@ -40,11 +41,11 @@
 
           <text
             v-if="!titleUseSlot"
-            :style="{ fontSize: tabStyles.fontSize+'px', fontWeight: (currentPage === index && tabStyles.isActiveTitleBold)? 'bold' : 'normal', color: currentPage === index ? tabStyles.activeTitleColor : tabStyles.titleColor, paddingLeft:(tabStyles.textPaddingLeft?tabStyles.textPaddingLeft:10)+'px', paddingRight:(tabStyles.textPaddingRight?tabStyles.textPaddingRight:10)+'px'}"
+            :style="{ fontSize: tabStyles.fontSize+'px', fontWeight: (currentPage === index && tabStyles.isActiveTitleBold)? 'bold' : 'normal', color: currentPage === index ? tabStyles.activeTitleColor : tabStyles.titleColor}"
             class="tab-text">{{v.title}}</text>
           <div class="border-bottom"
                v-if="tabStyles.hasActiveBottom && !titleUseSlot"
-               :style="{ width: tabStyles.activeBottomWidth+'px', left: (tabStyles.width-tabStyles.activeBottomWidth)/2+'px', height: tabStyles.activeBottomHeight+'px', backgroundColor: currentPage === index ? tabStyles.activeBottomColor : 'transparent' }"></div>
+               :style="{ width: tabStyles.activeBottomWidth+'px', height: tabStyles.activeBottomHeight+'px', backgroundColor: currentPage === index ? tabStyles.activeBottomColor : 'transparent', left: '50%', marginLeft: -tabStyles.activeBottomWidth/2+'px' }"></div>
           <slot :name="`tab-title-${index}`" v-if="titleUseSlot"></slot>
         </div>
       </scroller>
@@ -115,7 +116,7 @@
   }
 
   .tab-text {
-    lines: 2;
+    lines: 1;
     text-overflow: ellipsis;
   }
   .icon{

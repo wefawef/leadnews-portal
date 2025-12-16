@@ -727,10 +727,10 @@
   }
   .item-container {
     width: 750px;
-    background-color: #ffffff;
+    background-color: transparent;
   }
   .cell {
-    background-color: #ffffff;
+    background-color: transparent;
   }
   .no-more-cell{
     align-items: center;

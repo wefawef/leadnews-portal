@@ -56,11 +56,10 @@
     }
     .item-image{
         flex-direction: row;
-        padding: 0 10px 15px;
-        justify-content: space-between;
+        justify-content: flex-start;
         align-items: flex-start;
-        width: 95%;
-        margin: 10px auto;
+        width: 100%;
+        margin: 20px 0;
         box-sizing: border-box;
     }
     .image{
@@ -69,13 +68,13 @@
         margin-right: 9px;
         border-radius: 8px;
         overflow: hidden;
+        background-color: #f0f0f0;
     }
     /* 处理只有2张图片的情况 */
     .item-image .image:first-child:nth-last-child(2),
     .item-image .image:last-child:nth-child(2) {
         width: calc(50% - 5px);
         margin-right: 10px;
-        /* 确保高度与默认样式一致 */
         height: 150px;
     }
     /* 最后一张图片去掉右外边距 */

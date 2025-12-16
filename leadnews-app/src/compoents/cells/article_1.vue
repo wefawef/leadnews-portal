@@ -1,14 +1,16 @@
 <template>
     <div class="list-item">
-        <text class="title">{{formatTitle(data.title)}}</text>
+        <div class="content-box">
+            <text class="title">{{formatTitle(data.title)}}</text>
+            <div class="tags">
+                <text class="tags-text tags-icon">{{data.icon}}</text>
+                <text class="tags-text">{{data.source}}</text>
+                <text class="tags-text">评论 {{data.commit}}</text>
+                <text class="tags-text date">{{formatDate(data.date)}}</text>
+            </div>
+        </div>
         <div class="image-container">
             <image class="image" :src="data.image[0]" :key="data.image[0]" @load="onImageLoad"/>
-        </div>
-        <div class="tags">
-            <text class="tags-text tags-icon">{{data.icon}}</text>
-            <text class="tags-text">{{data.source}}</text>
-            <text class="tags-text">评论 {{data.commit}}</text>
-            <text class="tags-text date">{{formatDate(data.date)}}</text>
         </div>
     </div>
 </template>
@@ -42,20 +44,32 @@
 <style lang="less" scoped>
     @import '../../styles/article';
     .list-item{
-        height: auto;
-        min-height: @list-1-height;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+    .content-box {
+        flex: 1;
+        padding-right: 24px;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 160px;
     }
     .image-container{
-        width: calc(33.33% - 6px);
-        margin: 10px 9px 15px 0;
-        padding-left: 10px;
-        box-sizing: border-box;
+        width: 220px;
+        height: 160px;
+        margin: 0;
     }
     .image{
         width: 100%;
-        height: 150px;
+        height: 100%;
         object-fit: cover;
         border-radius: 8px;
         overflow: hidden;
+        background-color: #f0f0f0;
+    }
+    .tags {
+        margin: 0;
+        margin-top: 10px;
     }
 </style>

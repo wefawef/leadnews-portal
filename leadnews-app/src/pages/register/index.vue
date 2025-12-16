@@ -2,35 +2,42 @@
     <div class="login-wapper">
         <div class="log-top"><TopBar :text="'注 册'"/></div>
         <div class="bg-wapper">
-            <div class="input-wapper">
-                <text class="icon">{{userIcon}}</text>
-                <input v-model="params.name" return-key-type="defalut" autocomplete="off" placeholder="请输入用户名" class="input"/>
+            <div class="title-section">
+                <text class="page-title">创建账号</text>
+                <text class="page-subtitle">Create Account</text>
             </div>
-            <div class="input-wapper">
-                <text class="icon">{{userIcon}}</text>
-                <input v-model="params.phone" return-key-type="defalut" autocomplete="off" placeholder="请输入手机号" class="input"/>
-            </div>
-            <div class="input-wapper">
-                <text class="icon">{{passIcon}}</text>
-                <input v-model="params.password" return-key-type="go" autocomplete="off" type="password" placeholder="请输入密码" class="input"/>
-            </div>
-            <div class="input-wapper">
-                <text class="icon">{{passIcon}}</text>
-                <input v-model="params.confirm" return-key-type="go" autocomplete="off" type="password" placeholder="请再次输入密码" class="input"/>
-            </div>
-            <div class="input-wapper captcha-row">
-                <input v-model="params.code" return-key-type="go" autocomplete="off" placeholder="请输入验证码" class="input"/>
-                <div class="captcha" @click="refreshCaptcha">
-                    <image v-if="captchaSrc" class="captcha-img" :src="captchaSrc"></image>
-                    <text v-else class="captcha-text">{{captchaText}}</text>
+            
+            <div class="register-card">
+                <div class="input-wapper">
+                    <text class="icon">{{userIcon}}</text>
+                    <input v-model="params.name" return-key-type="defalut" autocomplete="off" placeholder="请输入用户名" class="input"/>
                 </div>
-            </div>
-            <text class="captcha-refresh" @click="refreshCaptcha">看不清，换一个</text>
-            <text class="button" @click="register"> 注 册 </text>
-            <div class="more">
-                <router-link to="/login">
-                    <text class="go-home" @click="goLogin">已有账号，去登录</text>
-                </router-link>
+                <div class="input-wapper">
+                    <text class="icon">{{userIcon}}</text>
+                    <input v-model="params.phone" return-key-type="defalut" autocomplete="off" placeholder="请输入手机号" class="input"/>
+                </div>
+                <div class="input-wapper">
+                    <text class="icon">{{passIcon}}</text>
+                    <input v-model="params.password" return-key-type="go" autocomplete="off" type="password" placeholder="请输入密码" class="input"/>
+                </div>
+                <div class="input-wapper">
+                    <text class="icon">{{passIcon}}</text>
+                    <input v-model="params.confirm" return-key-type="go" autocomplete="off" type="password" placeholder="请再次输入密码" class="input"/>
+                </div>
+                <div class="input-wapper captcha-row">
+                    <input v-model="params.code" return-key-type="go" autocomplete="off" placeholder="请输入验证码" class="input"/>
+                    <div class="captcha" @click="refreshCaptcha">
+                        <image v-if="captchaSrc" class="captcha-img" :src="captchaSrc"></image>
+                        <text v-else class="captcha-text">{{captchaText}}</text>
+                    </div>
+                </div>
+                <text class="captcha-refresh" @click="refreshCaptcha">看不清，换一个</text>
+                <text class="button" @click="register">立即注册</text>
+                <div class="more">
+                    <router-link to="/login">
+                        <text class="go-home" @click="goLogin">已有账号，去登录</text>
+                    </router-link>
+                </div>
             </div>
         </div>
         <div class="empty"> </div>
@@ -140,60 +147,92 @@
         flex: 1;
         width: 750px;
         flex-direction: column;
-        background-color: #ffffff;
-    }
-    .bg-wapper{
-        margin-top: 35px;
-        margin-bottom: 35px;
-        width: 750px;
-        justify-content: center;
-        align-items: center;
+        background-image: linear-gradient(to bottom, #e0f2ff, #ffffff);
     }
     .log-top{
         width: 750px;
         height: 90px;
     }
-    .empty{
+    .bg-wapper{
         flex: 1;
-        background-color: #f5f7f9;
+        width: 750px;
+        justify-content: center;
+        align-items: center;
+        padding-bottom: 50px;
+    }
+    .empty{
+        height: 0;
+    }
+    .title-section {
+        margin-bottom: 40px;
+        align-items: center;
+    }
+    .page-title{
+        font-size: 60px;
+        color: #333333;
+        font-weight: bold;
+        margin-bottom: 15px;
+        font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    }
+    .page-subtitle{
+        font-size: 28px;
+        color: #888888;
+        letter-spacing: 2px;
+    }
+    .register-card {
+        width: 690px;
+        padding: 40px 30px;
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        align-items: center;
     }
     .icon{
-        color: @icon-color;
-        font-size: 32px;
+        color: #3194ff;
+        font-size: 38px;
+        margin-left: 10px;
     }
     .input-wapper {
         flex-direction: row;
-        width: 700px;
-        border-bottom-width: 1px;
-        border-bottom-color: #eeeeee;
-        padding: 15px 0px;
+        width: 630px;
+        height: 100px;
+        background-color: #ffffff;
+        border-radius: 50px;
+        padding: 0 30px;
         align-items: center;
         margin: 15px 0px;
+        border-width: 2px;
+        border-style: solid;
+        border-color: #f0f0f0;
     }
     .more{
-        margin-top: 35px;
+        width: 630px;
+        margin-top: 50px;
         flex-direction: row;
+        justify-content: center;
+        padding: 0 20px;
     }
     .go-home{
-        font-size: 24px;
-        color: @placeholder-color;
-        text-decoration: underline;
-        margin-right: 35px;
+        font-size: 28px;
+        color: #3194ff;
+        text-decoration: none;
+        font-weight: bold;
     }
     .captcha-row{
         align-items: center;
     }
     .captcha{
         width: 160px;
-        height: 50px;
+        height: 60px;
         background-color: #f5f7f9;
         margin-left: 20px;
         justify-content: center;
         align-items: center;
+        border-radius: 10px;
     }
     .captcha-img{
-        width: 120px;
-        height: 40px;
+        width: 160px;
+        height: 60px;
     }
     .captcha-text{
         font-size: 26px;
@@ -201,30 +240,37 @@
         letter-spacing: 4px;
     }
     .captcha-refresh{
-        font-size: 22px;
-        color: @placeholder-color;
-        text-decoration: underline;
+        font-size: 24px;
+        color: #999999;
+        text-decoration: none;
         margin-top: 15px;
+        margin-bottom: 20px;
     }
     .button{
-        margin-top:60px;
-        background-color: #6db4fb;
-        width: 690px;
-        height: 70px;
-        border-radius: 10px;
-        color: @bg-white;
-        font-size: 32px;
+        margin-top: 20px;
+        background-image: linear-gradient(to right, #3194ff, #50b5ff);
+        width: 630px;
+        height: 100px;
+        line-height: 100px;
+        border-radius: 50px;
+        color: #ffffff;
         text-align: center;
-        line-height: 70px;
+        font-size: 36px;
+        font-weight: bold;
+        box-shadow: 0 10px 25px rgba(49, 148, 255, 0.4);
     }
     .input{
         border: none;
         flex: 1;
-        line-height: 30px;
-        font-size: 28px;
-        color: @title-color;
+        height: 90px;
+        line-height: 90px;
+        font-size: 30px;
+        color: #333333;
         background-color: transparent;
         margin-left: 20px;
-        placeholder-color:@placeholder-color;
+        placeholder-color: #bbbbbb;
+    }
+    .input:active, .input:hover{
+        background-color: transparent;
     }
 </style>

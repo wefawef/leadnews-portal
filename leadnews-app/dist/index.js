@@ -31260,65 +31260,64 @@ module.exports = __vue_exports__
 
 module.exports = {
   "list-item": {
-    "width": 100,
-    "maxWidth": "750",
+    "width": "710",
+    "marginLeft": "20",
+    "marginRight": "20",
+    "marginTop": "20",
+    "marginBottom": 0,
     "flexDirection": "column",
-    "borderBottomWidth": "1",
-    "borderBottomColor": "#f0f0f0",
-    "paddingBottom": "12",
-    "paddingLeft": "8",
-    "paddingRight": "8",
-    "paddingTop": "12",
+    "paddingTop": "24",
+    "paddingRight": "24",
+    "paddingBottom": "24",
+    "paddingLeft": "24",
     "boxSizing": "border-box",
-    "backgroundColor": "#ffffff"
+    "backgroundColor": "#ffffff",
+    "borderRadius": "16",
+    "boxShadow": "0 4px 16px rgba(0, 0, 0, 0.08)"
   },
   "title": {
     "flex": 1,
-    "paddingBottom": "10",
-    "lineHeight": "36",
-    "fontSize": "34",
+    "paddingBottom": "16",
+    "lineHeight": "48",
+    "fontSize": "32",
     "fontFamily": "\"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif",
     "color": "#333333",
+    "fontWeight": "bold",
     "justifyContent": "flex-start",
     "alignItems": "flex-start",
-    "marginTop": "8",
-    "marginRight": "15",
-    "marginBottom": "8",
-    "marginLeft": "15",
+    "marginTop": 0,
+    "marginRight": 0,
+    "marginBottom": 0,
+    "marginLeft": 0,
     "width": 100,
     "wordBreak": "break-all",
     "boxSizing": "border-box"
   },
   "tags-text": {
-    "fontSize": "16",
+    "fontSize": "22",
     "color": "#999999",
     "fontFamily": "\"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif",
-    "marginRight": "15",
-    "lineHeight": "20"
+    "marginRight": "20",
+    "lineHeight": "28"
   },
   "tags-icon": {
     "fontFamily": "fontawesome",
-    "fontSize": "20",
+    "fontSize": "24",
     "color": "#ff4757",
     "backgroundColor": "rgba(0,0,0,0)"
   },
   "tags": {
     "flexDirection": "row",
-    "marginTop": "15",
-    "marginRight": "15",
-    "marginBottom": "8",
-    "marginLeft": "15"
-  },
-  "date": {
-    "marginTop": "3"
+    "marginTop": "10",
+    "alignItems": "center"
   },
   "line": {
     "height": "2",
     "backgroundColor": "#f0f0f0",
-    "marginTop": "15",
-    "marginRight": "15",
-    "marginBottom": "15",
-    "marginLeft": "15"
+    "marginTop": "20",
+    "marginRight": "20",
+    "marginBottom": "20",
+    "marginLeft": "20"
   },
   "loading": {
     "flexDirection": "row",
@@ -31328,21 +31327,18 @@ module.exports = {
     "height": "100"
   },
   "loading-text": {
-    "fontSize": "30.90909091",
-    "color": "#999999"
+    "fontSize": "28",
+    "color": "#999999",
+    "marginLeft": "10"
   },
   "loading-icon": {
-    "width": "100",
-    "height": "100",
-    "color": "#ff3333"
-  },
-  "image": {
-    "borderRadius": "5",
-    "height": "120"
+    "width": "60",
+    "height": "60",
+    "color": "#999999"
   },
   "wrapper": {
-    "backgroundColor": "#ffffff",
-    "fontSize": "12",
+    "backgroundColor": "#f5f7fa",
+    "fontSize": "14",
     "fontFamily": "\"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif",
     "flexDirection": "column",
     "flexWrap": "wrap"
@@ -31359,10 +31355,10 @@ module.exports = {
   },
   "item-container": {
     "width": "750",
-    "backgroundColor": "#ffffff"
+    "backgroundColor": "rgba(0,0,0,0)"
   },
   "cell": {
-    "backgroundColor": "#ffffff"
+    "backgroundColor": "rgba(0,0,0,0)"
   },
   "no-more-cell": {
     "alignItems": "center",
@@ -32501,7 +32497,7 @@ module.exports = {
     "position": "absolute"
   },
   "tab-text": {
-    "lines": 2,
+    "lines": 1,
     "textOverflow": "ellipsis"
   }
 }
@@ -32519,6 +32515,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _weexUi = __webpack_require__(3);
 
+//
 //
 //
 //
@@ -32943,9 +32940,10 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       refInFor: true,
       staticClass: ["title-item"],
       style: {
-        width: _vm.tabStyles.width + 'px',
         height: _vm.tabStyles.height + 'px',
-        backgroundColor: _vm.currentPage === index ? _vm.tabStyles.activeBgColor : _vm.tabStyles.bgColor
+        backgroundColor: _vm.currentPage === index ? _vm.tabStyles.activeBgColor : _vm.tabStyles.bgColor,
+        paddingLeft: (_vm.tabStyles.textPaddingLeft ? _vm.tabStyles.textPaddingLeft : 10) + 'px',
+        paddingRight: (_vm.tabStyles.textPaddingRight ? _vm.tabStyles.textPaddingRight : 10) + 'px'
       },
       attrs: {
         "accessible": true,
@@ -32976,17 +32974,16 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       style: {
         fontSize: _vm.tabStyles.fontSize + 'px',
         fontWeight: (_vm.currentPage === index && _vm.tabStyles.isActiveTitleBold) ? 'bold' : 'normal',
-        color: _vm.currentPage === index ? _vm.tabStyles.activeTitleColor : _vm.tabStyles.titleColor,
-        paddingLeft: (_vm.tabStyles.textPaddingLeft ? _vm.tabStyles.textPaddingLeft : 10) + 'px',
-        paddingRight: (_vm.tabStyles.textPaddingRight ? _vm.tabStyles.textPaddingRight : 10) + 'px'
+        color: _vm.currentPage === index ? _vm.tabStyles.activeTitleColor : _vm.tabStyles.titleColor
       }
     }, [_vm._v(_vm._s(v.title))]) : _vm._e(), (_vm.tabStyles.hasActiveBottom && !_vm.titleUseSlot) ? _c('div', {
       staticClass: ["border-bottom"],
       style: {
         width: _vm.tabStyles.activeBottomWidth + 'px',
-        left: (_vm.tabStyles.width - _vm.tabStyles.activeBottomWidth) / 2 + 'px',
         height: _vm.tabStyles.activeBottomHeight + 'px',
-        backgroundColor: _vm.currentPage === index ? _vm.tabStyles.activeBottomColor : 'transparent'
+        backgroundColor: _vm.currentPage === index ? _vm.tabStyles.activeBottomColor : 'transparent',
+        left: '50%',
+        marginLeft: -_vm.tabStyles.activeBottomWidth / 2 + 'px'
       }
     }) : _vm._e(), (_vm.titleUseSlot) ? _vm._t(("tab-title-" + index)) : _vm._e()], 2)
   }))]), _c('div', {
@@ -33011,65 +33008,64 @@ module.exports.render._withStripped = true
 
 module.exports = {
   "list-item": {
-    "width": 100,
-    "maxWidth": "750",
+    "width": "710",
+    "marginLeft": "20",
+    "marginRight": "20",
+    "marginTop": "20",
+    "marginBottom": 0,
     "flexDirection": "column",
-    "borderBottomWidth": "1",
-    "borderBottomColor": "#f0f0f0",
-    "paddingBottom": "12",
-    "paddingLeft": "8",
-    "paddingRight": "8",
-    "paddingTop": "12",
+    "paddingTop": "24",
+    "paddingRight": "24",
+    "paddingBottom": "24",
+    "paddingLeft": "24",
     "boxSizing": "border-box",
-    "backgroundColor": "#ffffff"
+    "backgroundColor": "#ffffff",
+    "borderRadius": "16",
+    "boxShadow": "0 4px 16px rgba(0, 0, 0, 0.08)"
   },
   "title": {
     "flex": 1,
-    "paddingBottom": "10",
-    "lineHeight": "36",
-    "fontSize": "34",
+    "paddingBottom": "16",
+    "lineHeight": "48",
+    "fontSize": "32",
     "fontFamily": "\"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif",
     "color": "#333333",
+    "fontWeight": "bold",
     "justifyContent": "flex-start",
     "alignItems": "flex-start",
-    "marginTop": "8",
-    "marginRight": "15",
-    "marginBottom": "8",
-    "marginLeft": "15",
+    "marginTop": 0,
+    "marginRight": 0,
+    "marginBottom": 0,
+    "marginLeft": 0,
     "width": 100,
     "wordBreak": "break-all",
     "boxSizing": "border-box"
   },
   "tags-text": {
-    "fontSize": "16",
+    "fontSize": "22",
     "color": "#999999",
     "fontFamily": "\"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif",
-    "marginRight": "15",
-    "lineHeight": "20"
+    "marginRight": "20",
+    "lineHeight": "28"
   },
   "tags-icon": {
     "fontFamily": "fontawesome",
-    "fontSize": "20",
+    "fontSize": "24",
     "color": "#ff4757",
     "backgroundColor": "rgba(0,0,0,0)"
   },
   "tags": {
     "flexDirection": "row",
-    "marginTop": "15",
-    "marginRight": "15",
-    "marginBottom": "8",
-    "marginLeft": "15"
-  },
-  "date": {
-    "marginTop": "3"
+    "marginTop": "10",
+    "alignItems": "center"
   },
   "line": {
     "height": "2",
     "backgroundColor": "#f0f0f0",
-    "marginTop": "15",
-    "marginRight": "15",
-    "marginBottom": "15",
-    "marginLeft": "15"
+    "marginTop": "20",
+    "marginRight": "20",
+    "marginBottom": "20",
+    "marginLeft": "20"
   },
   "loading": {
     "flexDirection": "row",
@@ -33079,17 +33075,14 @@ module.exports = {
     "height": "100"
   },
   "loading-text": {
-    "fontSize": "30.90909091",
-    "color": "#999999"
+    "fontSize": "28",
+    "color": "#999999",
+    "marginLeft": "10"
   },
   "loading-icon": {
-    "width": "100",
-    "height": "100",
-    "color": "#ff3333"
-  },
-  "image": {
-    "borderRadius": "5",
-    "height": "120"
+    "width": "60",
+    "height": "60",
+    "color": "#999999"
   }
 }
 
@@ -33159,66 +33152,69 @@ module.exports.render._withStripped = true
 
 module.exports = {
   "list-item": {
-    "width": 100,
-    "maxWidth": "750",
-    "flexDirection": "column",
-    "borderBottomWidth": "1",
-    "borderBottomColor": "#f0f0f0",
-    "paddingBottom": "12",
-    "paddingLeft": "8",
-    "paddingRight": "8",
-    "paddingTop": "12",
+    "width": "710",
+    "marginLeft": "20",
+    "marginRight": "20",
+    "marginTop": "20",
+    "marginBottom": 0,
+    "flexDirection": "row",
+    "paddingTop": "24",
+    "paddingRight": "24",
+    "paddingBottom": "24",
+    "paddingLeft": "24",
     "boxSizing": "border-box",
     "backgroundColor": "#ffffff",
-    "minHeight": "160"
+    "borderRadius": "16",
+    "boxShadow": "0 4px 16px rgba(0, 0, 0, 0.08)",
+    "justifyContent": "space-between",
+    "alignItems": "flex-start"
   },
   "title": {
     "flex": 1,
-    "paddingBottom": "10",
-    "lineHeight": "36",
-    "fontSize": "34",
+    "paddingBottom": "16",
+    "lineHeight": "48",
+    "fontSize": "32",
     "fontFamily": "\"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif",
     "color": "#333333",
+    "fontWeight": "bold",
     "justifyContent": "flex-start",
     "alignItems": "flex-start",
-    "marginTop": "8",
-    "marginRight": "15",
-    "marginBottom": "8",
-    "marginLeft": "15",
+    "marginTop": 0,
+    "marginRight": 0,
+    "marginBottom": 0,
+    "marginLeft": 0,
     "width": 100,
     "wordBreak": "break-all",
     "boxSizing": "border-box"
   },
   "tags-text": {
-    "fontSize": "16",
+    "fontSize": "22",
     "color": "#999999",
     "fontFamily": "\"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif",
-    "marginRight": "15",
-    "lineHeight": "20"
+    "marginRight": "20",
+    "lineHeight": "28"
   },
   "tags-icon": {
     "fontFamily": "fontawesome",
-    "fontSize": "20",
+    "fontSize": "24",
     "color": "#ff4757",
     "backgroundColor": "rgba(0,0,0,0)"
   },
   "tags": {
     "flexDirection": "row",
-    "marginTop": "15",
-    "marginRight": "15",
-    "marginBottom": "8",
-    "marginLeft": "15"
-  },
-  "date": {
-    "marginTop": "3"
+    "marginTop": "10",
+    "alignItems": "center",
+    "marginRight": 0,
+    "marginBottom": 0,
+    "marginLeft": 0
   },
   "line": {
     "height": "2",
     "backgroundColor": "#f0f0f0",
-    "marginTop": "15",
-    "marginRight": "15",
-    "marginBottom": "15",
-    "marginLeft": "15"
+    "marginTop": "20",
+    "marginRight": "20",
+    "marginBottom": "20",
+    "marginLeft": "20"
   },
   "loading": {
     "flexDirection": "row",
@@ -33228,28 +33224,37 @@ module.exports = {
     "height": "100"
   },
   "loading-text": {
-    "fontSize": "30.90909091",
-    "color": "#999999"
+    "fontSize": "28",
+    "color": "#999999",
+    "marginLeft": "10"
   },
   "loading-icon": {
-    "width": "100",
-    "height": "100",
-    "color": "#ff3333"
+    "width": "60",
+    "height": "60",
+    "color": "#999999"
   },
-  "image": {
-    "borderRadius": "8",
-    "height": "150",
-    "width": 100,
-    "objectFit": "cover",
-    "overflow": "hidden"
+  "content-box": {
+    "flex": 1,
+    "paddingRight": "24",
+    "flexDirection": "column",
+    "justifyContent": "space-between",
+    "minHeight": "160"
   },
   "image-container": {
-    "marginTop": "10",
-    "marginRight": "9",
-    "marginBottom": "15",
-    "marginLeft": 0,
-    "paddingLeft": "10",
-    "boxSizing": "border-box"
+    "width": "220",
+    "height": "160",
+    "marginTop": 0,
+    "marginRight": 0,
+    "marginBottom": 0,
+    "marginLeft": 0
+  },
+  "image": {
+    "width": 100,
+    "height": 100,
+    "objectFit": "cover",
+    "borderRadius": "8",
+    "overflow": "hidden",
+    "backgroundColor": "#f0f0f0"
   }
 }
 
@@ -33263,6 +33268,8 @@ module.exports = {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+//
+//
 //
 //
 //
@@ -33310,9 +33317,21 @@ exports.default = {
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
   return _c('div', {
     staticClass: ["list-item"]
+  }, [_c('div', {
+    staticClass: ["content-box"]
   }, [_c('text', {
     staticClass: ["title"]
   }, [_vm._v(_vm._s(_vm.formatTitle(_vm.data.title)))]), _c('div', {
+    staticClass: ["tags"]
+  }, [_c('text', {
+    staticClass: ["tags-text", "tags-icon"]
+  }, [_vm._v(_vm._s(_vm.data.icon))]), _c('text', {
+    staticClass: ["tags-text"]
+  }, [_vm._v(_vm._s(_vm.data.source))]), _c('text', {
+    staticClass: ["tags-text"]
+  }, [_vm._v("评论 " + _vm._s(_vm.data.commit))]), _c('text', {
+    staticClass: ["tags-text", "date"]
+  }, [_vm._v(_vm._s(_vm.formatDate(_vm.data.date)))])])]), _c('div', {
     staticClass: ["image-container"]
   }, [_c('image', {
     key: _vm.data.image[0],
@@ -33323,17 +33342,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     on: {
       "load": _vm.onImageLoad
     }
-  })]), _c('div', {
-    staticClass: ["tags"]
-  }, [_c('text', {
-    staticClass: ["tags-text", "tags-icon"]
-  }, [_vm._v(_vm._s(_vm.data.icon))]), _c('text', {
-    staticClass: ["tags-text"]
-  }, [_vm._v(_vm._s(_vm.data.source))]), _c('text', {
-    staticClass: ["tags-text"]
-  }, [_vm._v("评论 " + _vm._s(_vm.data.commit))]), _c('text', {
-    staticClass: ["tags-text", "date"]
-  }, [_vm._v(_vm._s(_vm.formatDate(_vm.data.date)))])])])
+  })])])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 
@@ -33343,66 +33352,65 @@ module.exports.render._withStripped = true
 
 module.exports = {
   "list-item": {
-    "width": 100,
-    "maxWidth": "750",
+    "width": "710",
+    "marginLeft": "20",
+    "marginRight": "20",
+    "marginTop": "20",
+    "marginBottom": 0,
     "flexDirection": "column",
-    "borderBottomWidth": "1",
-    "borderBottomColor": "#f0f0f0",
-    "paddingBottom": "12",
-    "paddingLeft": "8",
-    "paddingRight": "8",
-    "paddingTop": "12",
+    "paddingTop": "24",
+    "paddingRight": "24",
+    "paddingBottom": "24",
+    "paddingLeft": "24",
     "boxSizing": "border-box",
     "backgroundColor": "#ffffff",
-    "minHeight": "220"
+    "borderRadius": "16",
+    "boxShadow": "0 4px 16px rgba(0, 0, 0, 0.08)",
+    "minHeight": "240"
   },
   "title": {
     "flex": 1,
-    "paddingBottom": "10",
-    "lineHeight": "36",
-    "fontSize": "34",
+    "paddingBottom": "16",
+    "lineHeight": "48",
+    "fontSize": "32",
     "fontFamily": "\"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif",
     "color": "#333333",
+    "fontWeight": "bold",
     "justifyContent": "flex-start",
     "alignItems": "flex-start",
-    "marginTop": "8",
-    "marginRight": "15",
-    "marginBottom": "8",
-    "marginLeft": "15",
+    "marginTop": 0,
+    "marginRight": 0,
+    "marginBottom": 0,
+    "marginLeft": 0,
     "width": 100,
     "wordBreak": "break-all",
     "boxSizing": "border-box"
   },
   "tags-text": {
-    "fontSize": "16",
+    "fontSize": "22",
     "color": "#999999",
     "fontFamily": "\"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif",
-    "marginRight": "15",
-    "lineHeight": "20"
+    "marginRight": "20",
+    "lineHeight": "28"
   },
   "tags-icon": {
     "fontFamily": "fontawesome",
-    "fontSize": "20",
+    "fontSize": "24",
     "color": "#ff4757",
     "backgroundColor": "rgba(0,0,0,0)"
   },
   "tags": {
     "flexDirection": "row",
-    "marginTop": "15",
-    "marginRight": "15",
-    "marginBottom": "8",
-    "marginLeft": "15"
-  },
-  "date": {
-    "marginTop": "3"
+    "marginTop": "10",
+    "alignItems": "center"
   },
   "line": {
     "height": "2",
     "backgroundColor": "#f0f0f0",
-    "marginTop": "15",
-    "marginRight": "15",
-    "marginBottom": "15",
-    "marginLeft": "15"
+    "marginTop": "20",
+    "marginRight": "20",
+    "marginBottom": "20",
+    "marginLeft": "20"
   },
   "loading": {
     "flexDirection": "row",
@@ -33412,33 +33420,33 @@ module.exports = {
     "height": "100"
   },
   "loading-text": {
-    "fontSize": "30.90909091",
-    "color": "#999999"
+    "fontSize": "28",
+    "color": "#999999",
+    "marginLeft": "10"
   },
   "loading-icon": {
-    "width": "100",
-    "height": "100",
-    "color": "#ff3333"
-  },
-  "image": {
-    "borderRadius": "8",
-    "height": "150",
-    "marginRight": "9",
-    "overflow": "hidden",
-    "marginRight:last-child": 0
+    "width": "60",
+    "height": "60",
+    "color": "#999999"
   },
   "item-image": {
     "flexDirection": "row",
-    "paddingTop": 0,
-    "paddingRight": "10",
-    "paddingBottom": "15",
-    "paddingLeft": "10",
-    "justifyContent": "space-between",
+    "justifyContent": "flex-start",
     "alignItems": "flex-start",
-    "width": 95,
-    "marginTop": "10",
-    "marginBottom": "10",
+    "width": 100,
+    "marginTop": "20",
+    "marginRight": 0,
+    "marginBottom": "20",
+    "marginLeft": 0,
     "boxSizing": "border-box"
+  },
+  "image": {
+    "height": "150",
+    "marginRight": "9",
+    "borderRadius": "8",
+    "overflow": "hidden",
+    "backgroundColor": "#f0f0f0",
+    "marginRight:last-child": 0
   }
 }
 
@@ -33562,23 +33570,23 @@ exports.default = {
     // ],
     tabStyles: {
         bgColor: '#FFFFFF',
-        titleColor: '#9b9b9b',
-        activeTitleColor: '#3D3D3D',
+        titleColor: '#666666',
+        activeTitleColor: '#3194ff',
         activeBgColor: '#FFFFFF',
         isActiveTitleBold: true,
         iconWidth: 70,
         iconHeight: 70,
-        width: 160,
-        height: 90,
-        fontSize: 22,
+        width: 180, // 这个参数现在不再强制限制宽度，但保留兼容
+        height: 88,
+        fontSize: 28,
         hasActiveBottom: true,
         activeBottomColor: '#3194ff',
         activeBottomHeight: 6,
-        activeBottomWidth: 120,
-        textPaddingLeft: 8,
-        textPaddingRight: 8,
-        normalBottomColor: 'rgba(0,0,0,0.4)',
-        normalBottomHeight: 2,
+        activeBottomWidth: 30,
+        textPaddingLeft: 20, // 增加内边距
+        textPaddingRight: 20,
+        normalBottomColor: 'rgba(240,240,240,1)',
+        normalBottomHeight: 1,
         hasRightIcon: false,
         rightOffset: 100
     }
@@ -36734,89 +36742,123 @@ module.exports = __vue_exports__
 
 module.exports = {
   "icon": {
-    "color": "#828282",
+    "color": "#3194ff",
     "fontFamily": "fontawesome",
-    "fontSize": "32"
+    "fontSize": "38",
+    "marginLeft": "10"
   },
   "login-wapper": {
     "flex": 1,
     "width": "750",
     "flexDirection": "column",
-    "backgroundColor": "#ffffff"
-  },
-  "bg-wapper": {
-    "marginTop": "35",
-    "marginBottom": "35",
-    "width": "750",
-    "justifyContent": "center",
-    "alignItems": "center"
+    "backgroundImage": "linear-gradient(to bottom, #e0f2ff, #ffffff)"
   },
   "log-top": {
     "width": "750",
     "height": "90"
   },
-  "empty": {
+  "bg-wapper": {
     "flex": 1,
-    "backgroundColor": "#f5f7f9"
+    "width": "750",
+    "justifyContent": "center",
+    "alignItems": "center",
+    "paddingBottom": "350"
   },
-  "title": {
-    "fontSize": "52",
-    "color": "#666666",
-    "marginTop": "55",
-    "marginRight": "0",
-    "marginBottom": "55",
-    "marginLeft": "0"
+  "empty": {
+    "height": 0
+  },
+  "title-section": {
+    "marginBottom": "60",
+    "alignItems": "center"
+  },
+  "page-title": {
+    "fontSize": "60",
+    "color": "#333333",
+    "fontWeight": "bold",
+    "marginBottom": "15",
+    "fontFamily": "\"Helvetica Neue\", Helvetica, Arial, sans-serif"
+  },
+  "page-subtitle": {
+    "fontSize": "28",
+    "color": "#888888",
+    "letterSpacing": "2"
+  },
+  "login-card": {
+    "width": "690",
+    "paddingTop": "40",
+    "paddingRight": "30",
+    "paddingBottom": "40",
+    "paddingLeft": "30",
+    "backgroundColor": "rgba(255,255,255,0.8)",
+    "borderRadius": "30",
+    "boxShadow": "0 10px 30px rgba(0, 0, 0, 0.05)",
+    "alignItems": "center"
   },
   "input-wapper": {
     "flexDirection": "row",
-    "width": "700",
-    "borderBottomWidth": "1",
-    "borderBottomColor": "#eeeeee",
-    "paddingTop": "15",
-    "paddingRight": "0",
-    "paddingBottom": "15",
-    "paddingLeft": "0",
+    "width": "630",
+    "height": "100",
+    "backgroundColor": "#ffffff",
+    "borderRadius": "50",
+    "paddingTop": 0,
+    "paddingRight": "30",
+    "paddingBottom": 0,
+    "paddingLeft": "30",
     "alignItems": "center",
-    "marginTop": "15",
+    "marginTop": "20",
     "marginRight": "0",
-    "marginBottom": "15",
-    "marginLeft": "0"
+    "marginBottom": "20",
+    "marginLeft": "0",
+    "borderWidth": "2",
+    "borderStyle": "solid",
+    "borderColor": "#f0f0f0"
   },
   "more": {
-    "marginTop": "35",
-    "flexDirection": "row"
+    "width": "630",
+    "marginTop": "50",
+    "flexDirection": "row",
+    "justifyContent": "space-between",
+    "paddingTop": 0,
+    "paddingRight": "20",
+    "paddingBottom": 0,
+    "paddingLeft": "20"
   },
   "go-register": {
-    "fontSize": "24",
-    "color": "#c0c0c0",
-    "textDecoration": "underline",
-    "marginRight": "35"
+    "fontSize": "28",
+    "color": "#3194ff",
+    "textDecoration": "none",
+    "fontWeight": "bold"
   },
   "go-home": {
-    "fontSize": "24",
-    "color": "#c0c0c0",
-    "textDecoration": "underline"
+    "fontSize": "28",
+    "color": "#999999",
+    "textDecoration": "none"
   },
   "input": {
     "border": "none",
     "flex": 1,
-    "lineHeight": "30",
-    "fontSize": "28",
-    "color": "#666666",
+    "height": "90",
+    "lineHeight": "90",
+    "fontSize": "30",
+    "color": "#333333",
     "backgroundColor": "rgba(0,0,0,0)",
     "marginLeft": "20",
-    "placeholderColor": "#c0c0c0"
+    "placeholderColor": "#bbbbbb",
+    "backgroundColor:active": "rgba(0,0,0,0)",
+    "backgroundColor:active:hover": "rgba(0,0,0,0)"
   },
   "button": {
     "marginTop": "60",
-    "backgroundColor": "#6db4fb",
-    "width": "690",
-    "height": "70",
-    "borderRadius": "10",
+    "backgroundImage": "linear-gradient(to right, #3194ff, #50b5ff)",
+    "width": "630",
+    "height": "100",
+    "lineHeight": "100",
+    "borderRadius": "50",
     "color": "#ffffff",
-    "fontSize": "32",
     "textAlign": "center",
-    "lineHeight": "70"
+    "fontSize": "36",
+    "fontWeight": "bold",
+    "boxShadow": "0 10px 25px rgba(49, 148, 255, 0.4)"
   }
 }
 
@@ -36841,6 +36883,13 @@ var _login_top_bar2 = _interopRequireDefault(_login_top_bar);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -37105,6 +37154,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: ["log-top"]
   }, [_c('TopBar')], 1), _c('div', {
     staticClass: ["bg-wapper"]
+  }, [_vm._m(0), _c('div', {
+    staticClass: ["login-card"]
   }, [_c('div', {
     staticClass: ["input-wapper"]
   }, [_c('text', {
@@ -37132,7 +37183,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "returnKeyType": "go",
       "autocomplete": "off",
       "type": "password",
-      "placeholder": "请输密码",
+      "placeholder": "请输入密码",
       "value": (_vm.params.password)
     },
     on: {
@@ -37145,7 +37196,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     on: {
       "click": _vm.login
     }
-  }, [_vm._v(" 登 录 ")]), _c('div', {
+  }, [_vm._v("立即登录")]), _c('div', {
     staticClass: ["more"]
   }, [_c('router-link', {
     attrs: {
@@ -37156,7 +37207,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     on: {
       "click": _vm.goRegister
     }
-  }, [_vm._v("没有账号，去注册")])]), _c('router-link', {
+  }, [_vm._v("注册新账号")])]), _c('router-link', {
     attrs: {
       "to": "/home"
     }
@@ -37165,10 +37216,18 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     on: {
       "click": _vm.see
     }
-  }, [_vm._v("先看看，稍后登录")])])], 1)]), _c('div', {
+  }, [_vm._v("游客试用 >")])])], 1)])]), _c('div', {
     staticClass: ["empty"]
   })])
-},staticRenderFns: []}
+},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: ["title-section"]
+  }, [_c('text', {
+    staticClass: ["page-title"]
+  }, [_vm._v("校园头条")]), _c('text', {
+    staticClass: ["page-subtitle"]
+  }, [_vm._v("Campus Headlines")])])
+}]}
 module.exports.render._withStripped = true
 
 /***/ }),
@@ -37221,70 +37280,108 @@ module.exports = __vue_exports__
 
 module.exports = {
   "icon": {
-    "color": "#828282",
+    "color": "#3194ff",
     "fontFamily": "fontawesome",
-    "fontSize": "32"
+    "fontSize": "38",
+    "marginLeft": "10"
   },
   "login-wapper": {
     "flex": 1,
     "width": "750",
     "flexDirection": "column",
-    "backgroundColor": "#ffffff"
-  },
-  "bg-wapper": {
-    "marginTop": "35",
-    "marginBottom": "35",
-    "width": "750",
-    "justifyContent": "center",
-    "alignItems": "center"
+    "backgroundImage": "linear-gradient(to bottom, #e0f2ff, #ffffff)"
   },
   "log-top": {
     "width": "750",
     "height": "90"
   },
-  "empty": {
+  "bg-wapper": {
     "flex": 1,
-    "backgroundColor": "#f5f7f9"
+    "width": "750",
+    "justifyContent": "center",
+    "alignItems": "center",
+    "paddingBottom": "50"
+  },
+  "empty": {
+    "height": 0
+  },
+  "title-section": {
+    "marginBottom": "40",
+    "alignItems": "center"
+  },
+  "page-title": {
+    "fontSize": "60",
+    "color": "#333333",
+    "fontWeight": "bold",
+    "marginBottom": "15",
+    "fontFamily": "\"Helvetica Neue\", Helvetica, Arial, sans-serif"
+  },
+  "page-subtitle": {
+    "fontSize": "28",
+    "color": "#888888",
+    "letterSpacing": "2"
+  },
+  "register-card": {
+    "width": "690",
+    "paddingTop": "40",
+    "paddingRight": "30",
+    "paddingBottom": "40",
+    "paddingLeft": "30",
+    "backgroundColor": "rgba(255,255,255,0.8)",
+    "borderRadius": "30",
+    "boxShadow": "0 10px 30px rgba(0, 0, 0, 0.05)",
+    "alignItems": "center"
   },
   "input-wapper": {
     "flexDirection": "row",
-    "width": "700",
-    "borderBottomWidth": "1",
-    "borderBottomColor": "#eeeeee",
-    "paddingTop": "15",
-    "paddingRight": "0",
-    "paddingBottom": "15",
-    "paddingLeft": "0",
+    "width": "630",
+    "height": "100",
+    "backgroundColor": "#ffffff",
+    "borderRadius": "50",
+    "paddingTop": 0,
+    "paddingRight": "30",
+    "paddingBottom": 0,
+    "paddingLeft": "30",
     "alignItems": "center",
     "marginTop": "15",
     "marginRight": "0",
     "marginBottom": "15",
-    "marginLeft": "0"
+    "marginLeft": "0",
+    "borderWidth": "2",
+    "borderStyle": "solid",
+    "borderColor": "#f0f0f0"
   },
   "more": {
-    "marginTop": "35",
-    "flexDirection": "row"
+    "width": "630",
+    "marginTop": "50",
+    "flexDirection": "row",
+    "justifyContent": "center",
+    "paddingTop": 0,
+    "paddingRight": "20",
+    "paddingBottom": 0,
+    "paddingLeft": "20"
   },
   "go-home": {
-    "fontSize": "24",
-    "color": "#c0c0c0",
-    "textDecoration": "underline",
-    "marginRight": "35"
+    "fontSize": "28",
+    "color": "#3194ff",
+    "textDecoration": "none",
+    "fontWeight": "bold"
   },
   "captcha-row": {
     "alignItems": "center"
   },
   "captcha": {
     "width": "160",
-    "height": "50",
+    "height": "60",
     "backgroundColor": "#f5f7f9",
     "marginLeft": "20",
     "justifyContent": "center",
-    "alignItems": "center"
+    "alignItems": "center",
+    "borderRadius": "10"
   },
   "captcha-img": {
-    "width": "120",
-    "height": "40"
+    "width": "160",
+    "height": "60"
   },
   "captcha-text": {
     "fontSize": "26",
@@ -37292,31 +37389,37 @@ module.exports = {
     "letterSpacing": "4"
   },
   "captcha-refresh": {
-    "fontSize": "22",
-    "color": "#c0c0c0",
-    "textDecoration": "underline",
-    "marginTop": "15"
+    "fontSize": "24",
+    "color": "#999999",
+    "textDecoration": "none",
+    "marginTop": "15",
+    "marginBottom": "20"
   },
   "button": {
-    "marginTop": "60",
-    "backgroundColor": "#6db4fb",
-    "width": "690",
-    "height": "70",
-    "borderRadius": "10",
+    "marginTop": "20",
+    "backgroundImage": "linear-gradient(to right, #3194ff, #50b5ff)",
+    "width": "630",
+    "height": "100",
+    "lineHeight": "100",
+    "borderRadius": "50",
     "color": "#ffffff",
-    "fontSize": "32",
     "textAlign": "center",
-    "lineHeight": "70"
+    "fontSize": "36",
+    "fontWeight": "bold",
+    "boxShadow": "0 10px 25px rgba(49, 148, 255, 0.4)"
   },
   "input": {
     "border": "none",
     "flex": 1,
-    "lineHeight": "30",
-    "fontSize": "28",
-    "color": "#666666",
+    "height": "90",
+    "lineHeight": "90",
+    "fontSize": "30",
+    "color": "#333333",
     "backgroundColor": "rgba(0,0,0,0)",
     "marginLeft": "20",
-    "placeholderColor": "#c0c0c0"
+    "placeholderColor": "#bbbbbb",
+    "backgroundColor:active": "rgba(0,0,0,0)",
+    "backgroundColor:active:hover": "rgba(0,0,0,0)"
   }
 }
 
@@ -37341,6 +37444,13 @@ var _login_top_bar2 = _interopRequireDefault(_login_top_bar);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -37517,6 +37627,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   })], 1), _c('div', {
     staticClass: ["bg-wapper"]
+  }, [_vm._m(0), _c('div', {
+    staticClass: ["register-card"]
   }, [_c('div', {
     staticClass: ["input-wapper"]
   }, [_c('text', {
@@ -37624,7 +37736,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     on: {
       "click": _vm.register
     }
-  }, [_vm._v(" 注 册 ")]), _c('div', {
+  }, [_vm._v("立即注册")]), _c('div', {
     staticClass: ["more"]
   }, [_c('router-link', {
     attrs: {
@@ -37635,10 +37747,18 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     on: {
       "click": _vm.goLogin
     }
-  }, [_vm._v("已有账号，去登录")])])], 1)]), _c('div', {
+  }, [_vm._v("已有账号，去登录")])])], 1)])]), _c('div', {
     staticClass: ["empty"]
   })])
-},staticRenderFns: []}
+},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: ["title-section"]
+  }, [_c('text', {
+    staticClass: ["page-title"]
+  }, [_vm._v("创建账号")]), _c('text', {
+    staticClass: ["page-subtitle"]
+  }, [_vm._v("Create Account")])])
+}]}
 module.exports.render._withStripped = true
 
 /***/ }),
@@ -37812,65 +37932,64 @@ module.exports = __vue_exports__
 
 module.exports = {
   "list-item": {
-    "width": 100,
-    "maxWidth": "750",
+    "width": "710",
+    "marginLeft": "20",
+    "marginRight": "20",
+    "marginTop": "20",
+    "marginBottom": 0,
     "flexDirection": "column",
-    "borderBottomWidth": "1",
-    "borderBottomColor": "#f0f0f0",
-    "paddingBottom": "12",
-    "paddingLeft": "8",
-    "paddingRight": "8",
-    "paddingTop": "12",
+    "paddingTop": "24",
+    "paddingRight": "24",
+    "paddingBottom": "24",
+    "paddingLeft": "24",
     "boxSizing": "border-box",
-    "backgroundColor": "#ffffff"
+    "backgroundColor": "#ffffff",
+    "borderRadius": "16",
+    "boxShadow": "0 4px 16px rgba(0, 0, 0, 0.08)"
   },
   "title": {
     "flex": 1,
-    "paddingBottom": "10",
-    "lineHeight": "36",
-    "fontSize": "34",
+    "paddingBottom": "16",
+    "lineHeight": "48",
+    "fontSize": "32",
     "fontFamily": "\"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif",
     "color": "#333333",
+    "fontWeight": "bold",
     "justifyContent": "flex-start",
     "alignItems": "flex-start",
-    "marginTop": "8",
-    "marginRight": "15",
-    "marginBottom": "8",
-    "marginLeft": "15",
+    "marginTop": 0,
+    "marginRight": 0,
+    "marginBottom": 0,
+    "marginLeft": 0,
     "width": 100,
     "wordBreak": "break-all",
     "boxSizing": "border-box"
   },
   "tags-text": {
-    "fontSize": "16",
+    "fontSize": "22",
     "color": "#999999",
     "fontFamily": "\"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif",
-    "marginRight": "15",
-    "lineHeight": "20"
+    "marginRight": "20",
+    "lineHeight": "28"
   },
   "tags-icon": {
     "fontFamily": "fontawesome",
-    "fontSize": "20",
+    "fontSize": "24",
     "color": "#ff4757",
     "backgroundColor": "rgba(0,0,0,0)"
   },
   "tags": {
     "flexDirection": "row",
-    "marginTop": "15",
-    "marginRight": "15",
-    "marginBottom": "8",
-    "marginLeft": "15"
-  },
-  "date": {
-    "marginTop": "3"
+    "marginTop": "10",
+    "alignItems": "center"
   },
   "line": {
     "height": "2",
     "backgroundColor": "#f0f0f0",
-    "marginTop": "15",
-    "marginRight": "15",
-    "marginBottom": "15",
-    "marginLeft": "15"
+    "marginTop": "20",
+    "marginRight": "20",
+    "marginBottom": "20",
+    "marginLeft": "20"
   },
   "loading": {
     "flexDirection": "row",
@@ -37880,21 +37999,18 @@ module.exports = {
     "height": "100"
   },
   "loading-text": {
-    "fontSize": "30.90909091",
-    "color": "#999999"
+    "fontSize": "28",
+    "color": "#999999",
+    "marginLeft": "10"
   },
   "loading-icon": {
-    "width": "100",
-    "height": "100",
-    "color": "#ff3333"
-  },
-  "image": {
-    "borderRadius": "5",
-    "height": "120"
+    "width": "60",
+    "height": "60",
+    "color": "#999999"
   },
   "wrapper": {
-    "backgroundColor": "#ffffff",
-    "fontSize": "12",
+    "backgroundColor": "#f5f7fa",
+    "fontSize": "14",
     "fontFamily": "\"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"微软雅黑\", Arial, sans-serif",
     "flexDirection": "column",
     "flexWrap": "wrap"

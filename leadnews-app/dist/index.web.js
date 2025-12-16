@@ -26098,8 +26098,9 @@ var config = {
         user_follow: { url: 'api/v1/user/user_follow/', sv: 'user' },
         // ==========  login
         user_login: { url: 'user/api/v1/login/login_auth', sv: 'login' },
-        // ==========  channel - 确保使用正确的GET路径
-        load_channels: { url: 'http://127.0.0.1:8081/article/article/api/v1/article/channels', sv: 'article', method: 'GET' },
+        user_register: { url: 'user/api/v1/login/register', sv: 'login' },
+        // ==========  channel
+        load_channels: { url: 'article/api/v1/article/channels', sv: 'article', method: 'GET' },
         // 解决多访问地址的问题
         getBase: function getBase(url) {
             var sv = url.sv;
@@ -53512,7 +53513,7 @@ exports = module.exports = __webpack_require__(1)(false);
 
 
 // module
-exports.push([module.i, "\n.list-item[data-v-03825506] {\n  width: 100%;\n  max-width: 10rem;\n  flex-direction: column;\n  border-bottom-width: 1px;\n  border-bottom-color: #f0f0f0;\n  padding-bottom: 0.16rem;\n  padding-left: 0.10667rem;\n  padding-right: 0.10667rem;\n  padding-top: 0.16rem;\n  box-sizing: border-box;\n  background-color: #fff;\n}\n.title[data-v-03825506] {\n  flex: 1;\n  padding-bottom: 0.13333rem;\n  line-height: 0.48rem;\n  font-size: 0.45333rem;\n  font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE\\8F6F\\96C5\\9ED1\", Arial, sans-serif;\n  color: #333;\n  justify-content: flex-start;\n  align-items: flex-start;\n  margin: 0.10667rem 0.2rem;\n  width: 100%;\n  word-break: break-all;\n  box-sizing: border-box;\n}\n.tags-text[data-v-03825506] {\n  font-size: 0.21333rem;\n  color: #999;\n  font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE\\8F6F\\96C5\\9ED1\", Arial, sans-serif;\n  margin-right: 0.2rem;\n  line-height: 0.26667rem;\n}\n.tags-icon[data-v-03825506] {\n  font-family: fontawesome;\n  font-size: 0.26667rem;\n  color: #ff4757;\n  background-color: transparent;\n}\n.tags[data-v-03825506] {\n  flex-direction: row;\n  margin: 0.2rem 0.2rem 0.10667rem;\n  justify-content: left;\n}\n.date[data-v-03825506] {\n  margin-top: 0.04rem;\n}\n.line[data-v-03825506] {\n  height: 0.02667rem;\n  background-color: #f0f0f0;\n  margin: 0.2rem;\n}\n.loading[data-v-03825506] {\n  flex-direction: row;\n  justify-content: center;\n  align-items: center;\n  width: 10rem;\n  height: 1.33333rem;\n}\n.loading-text[data-v-03825506] {\n  font-size: 0.41212rem;\n  color: #999;\n}\n.loading-icon[data-v-03825506] {\n  width: 1.33333rem;\n  height: 1.33333rem;\n  color: #ff3333;\n}\n.image[data-v-03825506] {\n  border-radius: 0.06667rem;\n  height: 1.6rem;\n}\n.wrapper[data-v-03825506] {\n  background-color: #fff;\n  font-size: 0.16rem;\n  font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE\\8F6F\\96C5\\9ED1\", Arial, sans-serif;\n  flex-direction: column;\n  flex-wrap: wrap;\n}\n.top-body[data-v-03825506] {\n  position: fixed;\n  left: 0;\n  top: 0;\n}\n.content-body[data-v-03825506] {\n  flex: 1;\n  flex-direction: column;\n  margin-top: 1.2rem;\n}\n.item-container[data-v-03825506] {\n  width: 10rem;\n  background-color: #ffffff;\n}\n.cell[data-v-03825506] {\n  background-color: #ffffff;\n}\n", ""]);
+exports.push([module.i, "\n.list-item[data-v-03825506] {\n  width: 9.46667rem;\n  margin-left: 0.26667rem;\n  margin-right: 0.26667rem;\n  margin-top: 0.26667rem;\n  margin-bottom: 0;\n  flex-direction: column;\n  padding: 0.32rem;\n  box-sizing: border-box;\n  background-color: #fff;\n  border-radius: 0.21333rem;\n  box-shadow: 0 0.05333rem 0.21333rem rgba(0, 0, 0, 0.08);\n}\n.title[data-v-03825506] {\n  flex: 1;\n  padding-bottom: 0.21333rem;\n  line-height: 0.64rem;\n  font-size: 0.42667rem;\n  font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE\\8F6F\\96C5\\9ED1\", Arial, sans-serif;\n  color: #333;\n  font-weight: bold;\n  justify-content: flex-start;\n  align-items: flex-start;\n  margin: 0;\n  width: 100%;\n  word-break: break-all;\n  box-sizing: border-box;\n}\n.tags-text[data-v-03825506] {\n  font-size: 0.29333rem;\n  color: #999;\n  font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE\\8F6F\\96C5\\9ED1\", Arial, sans-serif;\n  margin-right: 0.26667rem;\n  line-height: 0.37333rem;\n}\n.tags-icon[data-v-03825506] {\n  font-family: fontawesome;\n  font-size: 0.32rem;\n  color: #ff4757;\n  background-color: transparent;\n}\n.tags[data-v-03825506] {\n  flex-direction: row;\n  margin-top: 0.13333rem;\n  justify-content: left;\n  align-items: center;\n}\n.line[data-v-03825506] {\n  height: 0.02667rem;\n  background-color: #f0f0f0;\n  margin: 0.26667rem;\n}\n.loading[data-v-03825506] {\n  flex-direction: row;\n  justify-content: center;\n  align-items: center;\n  width: 10rem;\n  height: 1.33333rem;\n}\n.loading-text[data-v-03825506] {\n  font-size: 0.37333rem;\n  color: #999;\n  margin-left: 0.13333rem;\n}\n.loading-icon[data-v-03825506] {\n  width: 0.8rem;\n  height: 0.8rem;\n  color: #999;\n}\n.wrapper[data-v-03825506] {\n  background-color: #f5f7fa;\n  font-size: 0.18667rem;\n  font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE\\8F6F\\96C5\\9ED1\", Arial, sans-serif;\n  flex-direction: column;\n  flex-wrap: wrap;\n}\n.top-body[data-v-03825506] {\n  position: fixed;\n  left: 0;\n  top: 0;\n}\n.content-body[data-v-03825506] {\n  flex: 1;\n  flex-direction: column;\n  margin-top: 1.2rem;\n}\n.item-container[data-v-03825506] {\n  width: 10rem;\n  background-color: transparent;\n}\n.cell[data-v-03825506] {\n  background-color: transparent;\n}\n.no-more-cell[data-v-03825506] {\n  align-items: center;\n  justify-content: center;\n  padding: 0.26667rem 0;\n}\n.no-more-text[data-v-03825506] {\n  color: #999999;\n  font-size: 0.32rem;\n  text-align: center;\n}\n", ""]);
 
 // exports
 
@@ -53594,6 +53595,9 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //
 //
 //
+//
+//
+//
 
 var modal = weex.requireModule("modal");
 
@@ -53612,7 +53616,7 @@ exports.default = {
       tabPageHeight: 1334, //列表总高度
       hasMoreData: {}, //记录每个频道是否还有更多数据
       params: {
-        loaddir: 1,
+        loaddir: 0,
         index: 0,
         tag: "__all__",
         size: 10,
@@ -53624,7 +53628,9 @@ exports.default = {
       loadingChannels: false, //是否正在加载频道
       needRestoreScroll: false, // 是否需要恢复滚动位置
       savedScrollPosition: 0, // 保存的滚动位置
-      savedArticleId: null // 保存的文章ID
+      savedArticleId: null,
+      savedItemIndex: null,
+      restoreAttempts: 0
     };
   },
   computed: {
@@ -53634,6 +53640,28 @@ exports.default = {
     },
     load_more_text: function load_more_text() {
       return this.$lang.load_more_text;
+    },
+    shouldShowLoadMore: function shouldShowLoadMore() {
+      var idx = this.params.index;
+      var list = this.tabList[idx] || [];
+      var more = this.hasMoreData && this.hasMoreData[idx] !== false;
+      return more && list.length >= this.params.size;
+    },
+    loadMoreStyle: function loadMoreStyle() {
+      return {
+        backgroundColor: '#ffffff',
+        height: this.shouldShowLoadMore ? '100px' : '24px',
+        minHeight: this.shouldShowLoadMore ? '100px' : '24px',
+        margin: this.shouldShowLoadMore ? '0' : '0',
+        padding: this.shouldShowLoadMore ? '0' : '0',
+        overflow: 'hidden',
+        opacity: this.shouldShowLoadMore ? 1 : 0
+      };
+    },
+    shouldShowNoMore: function shouldShowNoMore() {
+      var idx = this.params.index;
+      var list = this.tabList[idx] || [];
+      return this.hasMoreData && this.hasMoreData[idx] === false && list.length > 0;
     }
   },
   mounted: function mounted() {
@@ -53649,21 +53677,26 @@ exports.default = {
 
     // 检查是否需要恢复滚动位置（从文章详情页返回）
     if (typeof sessionStorage !== 'undefined') {
+      var itemIndexStr = sessionStorage.getItem('listItemIndex');
       var scrollPosition = sessionStorage.getItem('listScrollPosition');
       var lastChannelIndex = sessionStorage.getItem('lastChannelIndex');
       var lastChannelTag = sessionStorage.getItem('lastChannelTag');
+      var lastArticleId = sessionStorage.getItem('lastArticleId');
 
-      if (scrollPosition && lastChannelIndex !== null) {
+      if ((itemIndexStr !== null || scrollPosition || lastArticleId) && lastChannelIndex !== null) {
         this.needRestoreScroll = true;
-        this.savedScrollPosition = parseInt(scrollPosition);
+        this.savedItemIndex = itemIndexStr !== null ? parseInt(itemIndexStr) : null;
+        this.savedScrollPosition = scrollPosition ? parseInt(scrollPosition) : 0;
+        this.savedArticleId = lastArticleId || null;
         this.params.index = parseInt(lastChannelIndex);
         this.params.tag = lastChannelTag || '__all__';
-        console.log('检测到需要恢复滚动位置:', this.savedScrollPosition, '频道索引:', this.params.index);
+        console.log('检测到需要恢复浏览位置: itemIndex=', this.savedItemIndex, 'px=', this.savedScrollPosition, '频道索引=', this.params.index, '文章ID=', this.savedArticleId);
 
-        // 清除保存的滚动位置信息，避免重复使用
+        sessionStorage.removeItem('listItemIndex');
         sessionStorage.removeItem('listScrollPosition');
         sessionStorage.removeItem('lastChannelIndex');
         sessionStorage.removeItem('lastChannelTag');
+        sessionStorage.removeItem('lastArticleId');
       }
     }
 
@@ -53735,8 +53768,14 @@ exports.default = {
       this.loadingChannels = true;
       _api2.default.loadChannels().then(function (d) {
         if (d.code == 200) {
-          // 转换频道数据格式
-          var arr = d.data;
+          var arr = Array.isArray(d.data) ? d.data.slice() : [];
+          arr.sort(function (a, b) {
+            var ao = parseInt(a && a.ord, 10);
+            var bo = parseInt(b && b.ord, 10);
+            ao = isNaN(ao) ? Number.MAX_SAFE_INTEGER : ao;
+            bo = isNaN(bo) ? Number.MAX_SAFE_INTEGER : bo;
+            return ao - bo;
+          });
           var temp = [];
           for (var i = 0; i < arr.length; i++) {
             temp.push({
@@ -53780,6 +53819,8 @@ exports.default = {
             // 确保当前频道的标签正确设置
             _this2.params.tag = _this2.tabTitles[_this2.params.index] ? _this2.tabTitles[_this2.params.index].id : '__all__';
             console.log('频道标签设置为:', _this2.params.tag);
+            // 首次加载按普通加载处理，避免显示加载更多
+            _this2.params.loaddir = 0;
 
             // 加载数据
             _this2.load();
@@ -53831,38 +53872,100 @@ exports.default = {
     restoreScrollPosition: function restoreScrollPosition() {
       var _this3 = this;
 
-      if (!this.needRestoreScroll || this.savedScrollPosition === 0) {
+      if (!this.needRestoreScroll) {
         return;
       }
-
-      console.log('开始恢复滚动位置:', this.savedScrollPosition, 'px');
-
-      // 等待DOM更新和数据加载完成
+      console.log('开始恢复浏览位置: itemIndex=', this.savedItemIndex, 'px=', this.savedScrollPosition);
       setTimeout(function () {
         try {
-          // 获取当前频道的列表容器
           var currentList = _this3.tabList[_this3.params.index];
           if (currentList && currentList.length > 0) {
-            // 查找滚动容器并设置滚动位置
-            _this3.setScrollPosition(_this3.savedScrollPosition);
-
-            modal.toast({
-              message: "\u5DF2\u6062\u590D\u5230\u4E4B\u524D\u7684\u6D4F\u89C8\u4F4D\u7F6E",
-              duration: 2
-            });
-
-            console.log('滚动位置恢复完成:', _this3.savedScrollPosition);
-          } else {
-            console.log('当前频道列表为空，无法恢复位置');
+            if (_this3.savedArticleId) {
+              var idx = _this3.findItemIndexById(_this3.savedArticleId);
+              if (idx !== -1) {
+                _this3.scrollToItemIndex(idx);
+              } else {
+                _this3.loadMoreUntilFound();
+                return;
+              }
+            } else if (_this3.savedItemIndex !== null) {
+              _this3.scrollToItemIndex(_this3.savedItemIndex);
+            } else if (_this3.savedScrollPosition > 0) {
+              _this3.setScrollPosition(_this3.savedScrollPosition);
+            }
+            modal.toast({ message: '已恢复到之前的浏览位置', duration: 2 });
+            console.log('浏览位置恢复完成');
           }
         } catch (error) {
           console.error('恢复滚动位置时出错:', error);
         }
-
-        // 重置恢复标记
         _this3.needRestoreScroll = false;
         _this3.savedScrollPosition = 0;
+        _this3.savedItemIndex = null;
+        _this3.savedArticleId = null;
+        _this3.restoreAttempts = 0;
       }, 1000);
+    },
+    findItemIndexById: function findItemIndexById(id) {
+      try {
+        var list = this.tabList[this.params.index] || [];
+        for (var i = 0; i < list.length; i++) {
+          var it = list[i];
+          if (it && (it.id === id || it.id + '' === id + '')) {
+            return i;
+          }
+        }
+      } catch (e) {}
+      return -1;
+    },
+    loadMoreUntilFound: function loadMoreUntilFound() {
+      var _this4 = this;
+
+      var maxAttempts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 5;
+
+      var tryFind = function tryFind() {
+        var idx = _this4.findItemIndexById(_this4.savedArticleId);
+        if (idx !== -1) {
+          _this4.scrollToItemIndex(idx);
+          modal.toast({ message: '已恢复到之前的浏览位置', duration: 2 });
+          _this4.needRestoreScroll = false;
+          _this4.savedArticleId = null;
+          _this4.restoreAttempts = 0;
+          return;
+        }
+        if (_this4.restoreAttempts >= maxAttempts) {
+          if (_this4.savedItemIndex !== null) {
+            _this4.scrollToItemIndex(_this4.savedItemIndex);
+          } else if (_this4.savedScrollPosition > 0) {
+            _this4.setScrollPosition(_this4.savedScrollPosition);
+          }
+          _this4.needRestoreScroll = false;
+          _this4.savedArticleId = null;
+          _this4.restoreAttempts = 0;
+          return;
+        }
+        _this4.restoreAttempts++;
+        _this4.params.loaddir = 1;
+        _this4.load();
+        setTimeout(tryFind, 600);
+      };
+      tryFind();
+    },
+    scrollToItemIndex: function scrollToItemIndex(targetIndex) {
+      try {
+        if (typeof weex !== 'undefined' && weex.requireModule) {
+          var domModule = weex.requireModule('dom');
+          if (domModule && domModule.scrollToElement) {
+            var targetRef = 'itemref-' + this.params.index + '-' + targetIndex;
+            var elArr = this.$refs[targetRef];
+            var el = elArr && elArr[0] ? elArr[0] : null;
+            if (el) {
+              domModule.scrollToElement(el, { offset: 0, animated: false });
+              return;
+            }
+          }
+        }
+      } catch (error) {}
     },
 
 
@@ -53917,6 +54020,10 @@ exports.default = {
     },
     // 上拉加载更多
     loadmore: function loadmore() {
+      if (this.hasMoreData && this.hasMoreData[this.params.index] === false) {
+        this.showmore = false;
+        return;
+      }
       this.showmore = true;
       this.params.loaddir = 1;
       this.load();
@@ -53931,7 +54038,7 @@ exports.default = {
     },
     // 正常加载数据
     load: function load() {
-      var _this4 = this;
+      var _this5 = this;
 
       // 避免重复加载
       if (this.loading) {
@@ -53959,7 +54066,7 @@ exports.default = {
       _api2.default.loaddata(this.params).then(function (d) {
         try {
           if (d.code === 200 && d.data) {
-            _this4.tanfer(d.data);
+            _this5.tanfer(d.data);
           } else {
             modal.toast({
               message: d.errorMessage || '加载失败',
@@ -53974,9 +54081,9 @@ exports.default = {
           });
         } finally {
           // 无论成功失败都重置加载状态
-          _this4.showmore = false;
-          _this4.shownew = false;
-          _this4.loading = false;
+          _this5.showmore = false;
+          _this5.shownew = false;
+          _this5.loading = false;
         }
       }).catch(function (e) {
         console.error('加载数据失败:', e);
@@ -53985,9 +54092,9 @@ exports.default = {
           duration: 2
         });
         // 无论成功失败都重置加载状态
-        _this4.showmore = false;
-        _this4.shownew = false;
-        _this4.loading = false;
+        _this5.showmore = false;
+        _this5.shownew = false;
+        _this5.loading = false;
       });
     },
     // 列表数据转换成View需要的Model对象
@@ -54008,6 +54115,9 @@ exports.default = {
             if (this.tabList[this.params.index].length === 0) {
               modal.toast({ message: '暂无数据', duration: 2 });
             }
+            if (this.params.loaddir == 0) {
+              this.hasMoreData[this.params.index] = false;
+            }
           }
           return;
         }
@@ -54017,8 +54127,7 @@ exports.default = {
           this.tabList[this.params.index] = [];
         }
 
-        // 如果返回的数据少于请求的size，说明没有更多数据了（仅在加载更多时判断）
-        if (this.params.loaddir == 1 && data.length < this.params.size) {
+        if ((this.params.loaddir == 1 || this.params.loaddir == 0) && data.length < this.params.size) {
           this.hasMoreData[this.params.index] = false;
         }
 
@@ -54118,7 +54227,7 @@ exports.default = {
     },
     // 频道页切换事件
     wxcTabPageCurrentTabSelected: function wxcTabPageCurrentTabSelected(e) {
-      var _this5 = this;
+      var _this6 = this;
 
       console.log('切换到频道:', e.page, this.tabTitles[e.page] && this.tabTitles[e.page]['title'] || '未知');
 
@@ -54145,7 +54254,7 @@ exports.default = {
 
       // 使用setTimeout确保DOM更新后再加载数据
       setTimeout(function () {
-        _this5.load();
+        _this6.load();
       }, 50);
     },
 
@@ -54166,9 +54275,8 @@ exports.default = {
       if (typeof sessionStorage !== 'undefined') {
         sessionStorage.setItem('lastChannelIndex', this.params.index.toString());
         sessionStorage.setItem('lastChannelTag', this.params.tag || '');
-        var averageItemHeight = 250;
-        var approxPosition = averageItemHeight * (key || 0);
-        sessionStorage.setItem('listScrollPosition', approxPosition.toString());
+        sessionStorage.setItem('listItemIndex', (key || 0).toString());
+        sessionStorage.setItem('lastArticleId', (item.id || '').toString());
         console.log('已保存当前频道信息，索引:', this.params.index, '标签:', this.params.tag);
       }
 
@@ -55156,7 +55264,7 @@ exports = module.exports = __webpack_require__(1)(false);
 
 
 // module
-exports.push([module.i, "\n.list-item[data-v-3e76c299] {\n  width: 100%;\n  max-width: 10rem;\n  flex-direction: column;\n  border-bottom-width: 1px;\n  border-bottom-color: #f0f0f0;\n  padding-bottom: 0.16rem;\n  padding-left: 0.10667rem;\n  padding-right: 0.10667rem;\n  padding-top: 0.16rem;\n  box-sizing: border-box;\n  background-color: #fff;\n}\n.title[data-v-3e76c299] {\n  flex: 1;\n  padding-bottom: 0.13333rem;\n  line-height: 0.48rem;\n  font-size: 0.45333rem;\n  font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE\\8F6F\\96C5\\9ED1\", Arial, sans-serif;\n  color: #333;\n  justify-content: flex-start;\n  align-items: flex-start;\n  margin: 0.10667rem 0.2rem;\n  width: 100%;\n  word-break: break-all;\n  box-sizing: border-box;\n}\n.tags-text[data-v-3e76c299] {\n  font-size: 0.21333rem;\n  color: #999;\n  font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE\\8F6F\\96C5\\9ED1\", Arial, sans-serif;\n  margin-right: 0.2rem;\n  line-height: 0.26667rem;\n}\n.tags-icon[data-v-3e76c299] {\n  font-family: fontawesome;\n  font-size: 0.26667rem;\n  color: #ff4757;\n  background-color: transparent;\n}\n.tags[data-v-3e76c299] {\n  flex-direction: row;\n  margin: 0.2rem 0.2rem 0.10667rem;\n  justify-content: left;\n}\n.date[data-v-3e76c299] {\n  margin-top: 0.04rem;\n}\n.line[data-v-3e76c299] {\n  height: 0.02667rem;\n  background-color: #f0f0f0;\n  margin: 0.2rem;\n}\n.loading[data-v-3e76c299] {\n  flex-direction: row;\n  justify-content: center;\n  align-items: center;\n  width: 10rem;\n  height: 1.33333rem;\n}\n.loading-text[data-v-3e76c299] {\n  font-size: 0.41212rem;\n  color: #999;\n}\n.loading-icon[data-v-3e76c299] {\n  width: 1.33333rem;\n  height: 1.33333rem;\n  color: #ff3333;\n}\n.image[data-v-3e76c299] {\n  border-radius: 0.06667rem;\n  height: 1.6rem;\n}\n", ""]);
+exports.push([module.i, "\n.list-item[data-v-3e76c299] {\n  width: 9.46667rem;\n  margin-left: 0.26667rem;\n  margin-right: 0.26667rem;\n  margin-top: 0.26667rem;\n  margin-bottom: 0;\n  flex-direction: column;\n  padding: 0.32rem;\n  box-sizing: border-box;\n  background-color: #fff;\n  border-radius: 0.21333rem;\n  box-shadow: 0 0.05333rem 0.21333rem rgba(0, 0, 0, 0.08);\n}\n.title[data-v-3e76c299] {\n  flex: 1;\n  padding-bottom: 0.21333rem;\n  line-height: 0.64rem;\n  font-size: 0.42667rem;\n  font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE\\8F6F\\96C5\\9ED1\", Arial, sans-serif;\n  color: #333;\n  font-weight: bold;\n  justify-content: flex-start;\n  align-items: flex-start;\n  margin: 0;\n  width: 100%;\n  word-break: break-all;\n  box-sizing: border-box;\n}\n.tags-text[data-v-3e76c299] {\n  font-size: 0.29333rem;\n  color: #999;\n  font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE\\8F6F\\96C5\\9ED1\", Arial, sans-serif;\n  margin-right: 0.26667rem;\n  line-height: 0.37333rem;\n}\n.tags-icon[data-v-3e76c299] {\n  font-family: fontawesome;\n  font-size: 0.32rem;\n  color: #ff4757;\n  background-color: transparent;\n}\n.tags[data-v-3e76c299] {\n  flex-direction: row;\n  margin-top: 0.13333rem;\n  justify-content: left;\n  align-items: center;\n}\n.line[data-v-3e76c299] {\n  height: 0.02667rem;\n  background-color: #f0f0f0;\n  margin: 0.26667rem;\n}\n.loading[data-v-3e76c299] {\n  flex-direction: row;\n  justify-content: center;\n  align-items: center;\n  width: 10rem;\n  height: 1.33333rem;\n}\n.loading-text[data-v-3e76c299] {\n  font-size: 0.37333rem;\n  color: #999;\n  margin-left: 0.13333rem;\n}\n.loading-icon[data-v-3e76c299] {\n  width: 0.8rem;\n  height: 0.8rem;\n  color: #999;\n}\n", ""]);
 
 // exports
 
@@ -55283,7 +55391,7 @@ exports = module.exports = __webpack_require__(1)(false);
 
 
 // module
-exports.push([module.i, "\n.list-item[data-v-3e84da1a] {\n  width: 100%;\n  max-width: 10rem;\n  flex-direction: column;\n  border-bottom-width: 1px;\n  border-bottom-color: #f0f0f0;\n  padding-bottom: 0.16rem;\n  padding-left: 0.10667rem;\n  padding-right: 0.10667rem;\n  padding-top: 0.16rem;\n  box-sizing: border-box;\n  background-color: #fff;\n}\n.title[data-v-3e84da1a] {\n  flex: 1;\n  padding-bottom: 0.13333rem;\n  line-height: 0.48rem;\n  font-size: 0.45333rem;\n  font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE\\8F6F\\96C5\\9ED1\", Arial, sans-serif;\n  color: #333;\n  justify-content: flex-start;\n  align-items: flex-start;\n  margin: 0.10667rem 0.2rem;\n  width: 100%;\n  word-break: break-all;\n  box-sizing: border-box;\n}\n.tags-text[data-v-3e84da1a] {\n  font-size: 0.21333rem;\n  color: #999;\n  font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE\\8F6F\\96C5\\9ED1\", Arial, sans-serif;\n  margin-right: 0.2rem;\n  line-height: 0.26667rem;\n}\n.tags-icon[data-v-3e84da1a] {\n  font-family: fontawesome;\n  font-size: 0.26667rem;\n  color: #ff4757;\n  background-color: transparent;\n}\n.tags[data-v-3e84da1a] {\n  flex-direction: row;\n  margin: 0.2rem 0.2rem 0.10667rem;\n  justify-content: left;\n}\n.date[data-v-3e84da1a] {\n  margin-top: 0.04rem;\n}\n.line[data-v-3e84da1a] {\n  height: 0.02667rem;\n  background-color: #f0f0f0;\n  margin: 0.2rem;\n}\n.loading[data-v-3e84da1a] {\n  flex-direction: row;\n  justify-content: center;\n  align-items: center;\n  width: 10rem;\n  height: 1.33333rem;\n}\n.loading-text[data-v-3e84da1a] {\n  font-size: 0.41212rem;\n  color: #999;\n}\n.loading-icon[data-v-3e84da1a] {\n  width: 1.33333rem;\n  height: 1.33333rem;\n  color: #ff3333;\n}\n.image[data-v-3e84da1a] {\n  border-radius: 0.06667rem;\n  height: 1.6rem;\n}\n.list-item[data-v-3e84da1a] {\n  height: auto;\n  min-height: 2.13333rem;\n}\n.image-container[data-v-3e84da1a] {\n  width: calc(33.33% - 0.08rem);\n  margin: 0.13333rem 0.12rem 0.2rem 0;\n  padding-left: 0.13333rem;\n  box-sizing: border-box;\n}\n.image[data-v-3e84da1a] {\n  width: 100%;\n  height: 2rem;\n  -o-object-fit: cover;\n     object-fit: cover;\n  border-radius: 0.10667rem;\n  overflow: hidden;\n}\n", ""]);
+exports.push([module.i, "\n.list-item[data-v-3e84da1a] {\n  width: 9.46667rem;\n  margin-left: 0.26667rem;\n  margin-right: 0.26667rem;\n  margin-top: 0.26667rem;\n  margin-bottom: 0;\n  flex-direction: column;\n  padding: 0.32rem;\n  box-sizing: border-box;\n  background-color: #fff;\n  border-radius: 0.21333rem;\n  box-shadow: 0 0.05333rem 0.21333rem rgba(0, 0, 0, 0.08);\n}\n.title[data-v-3e84da1a] {\n  flex: 1;\n  padding-bottom: 0.21333rem;\n  line-height: 0.64rem;\n  font-size: 0.42667rem;\n  font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE\\8F6F\\96C5\\9ED1\", Arial, sans-serif;\n  color: #333;\n  font-weight: bold;\n  justify-content: flex-start;\n  align-items: flex-start;\n  margin: 0;\n  width: 100%;\n  word-break: break-all;\n  box-sizing: border-box;\n}\n.tags-text[data-v-3e84da1a] {\n  font-size: 0.29333rem;\n  color: #999;\n  font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE\\8F6F\\96C5\\9ED1\", Arial, sans-serif;\n  margin-right: 0.26667rem;\n  line-height: 0.37333rem;\n}\n.tags-icon[data-v-3e84da1a] {\n  font-family: fontawesome;\n  font-size: 0.32rem;\n  color: #ff4757;\n  background-color: transparent;\n}\n.tags[data-v-3e84da1a] {\n  flex-direction: row;\n  margin-top: 0.13333rem;\n  justify-content: left;\n  align-items: center;\n}\n.line[data-v-3e84da1a] {\n  height: 0.02667rem;\n  background-color: #f0f0f0;\n  margin: 0.26667rem;\n}\n.loading[data-v-3e84da1a] {\n  flex-direction: row;\n  justify-content: center;\n  align-items: center;\n  width: 10rem;\n  height: 1.33333rem;\n}\n.loading-text[data-v-3e84da1a] {\n  font-size: 0.37333rem;\n  color: #999;\n  margin-left: 0.13333rem;\n}\n.loading-icon[data-v-3e84da1a] {\n  width: 0.8rem;\n  height: 0.8rem;\n  color: #999;\n}\n.list-item[data-v-3e84da1a] {\n  flex-direction: row;\n  justify-content: space-between;\n  align-items: flex-start;\n}\n.content-box[data-v-3e84da1a] {\n  flex: 1;\n  padding-right: 0.32rem;\n  flex-direction: column;\n  justify-content: space-between;\n  min-height: 2.13333rem;\n}\n.image-container[data-v-3e84da1a] {\n  width: 2.93333rem;\n  height: 2.13333rem;\n  margin: 0;\n}\n.image[data-v-3e84da1a] {\n  width: 100%;\n  height: 100%;\n  -o-object-fit: cover;\n     object-fit: cover;\n  border-radius: 0.10667rem;\n  overflow: hidden;\n  background-color: #f0f0f0;\n}\n.tags[data-v-3e84da1a] {\n  margin: 0;\n  margin-top: 0.13333rem;\n}\n", ""]);
 
 // exports
 
@@ -55298,6 +55406,8 @@ exports.push([module.i, "\n.list-item[data-v-3e84da1a] {\n  width: 100%;\n  max-
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+//
+//
 //
 //
 //
@@ -55348,29 +55458,17 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "weex-type": "div"
     }
+  }, [_c('div', {
+    staticClass: "content-box weex-ct weex-div",
+    attrs: {
+      "weex-type": "div"
+    }
   }, [_c('p', {
     staticClass: "title weex-el weex-text",
     attrs: {
       "weex-type": "text"
     }
   }, [_vm._v(_vm._s(_vm.formatTitle(_vm.data.title)))]), _vm._v(" "), _c('div', {
-    staticClass: "image-container weex-ct weex-div",
-    attrs: {
-      "weex-type": "div"
-    }
-  }, [_c('figure', {
-    key: _vm.data.image[0],
-    staticClass: "image weex-el weex-image",
-    attrs: {
-      "src": _vm.data.image[0],
-      "data-img-src": _vm.data.image[0],
-      "weex-type": "image",
-      "data-evt-load": ""
-    },
-    on: {
-      "load": _vm.onImageLoad
-    }
-  })]), _vm._v(" "), _c('div', {
     staticClass: "tags weex-ct weex-div",
     attrs: {
       "weex-type": "div"
@@ -55395,7 +55493,24 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     attrs: {
       "weex-type": "text"
     }
-  }, [_vm._v(_vm._s(_vm.formatDate(_vm.data.date)))])])])
+  }, [_vm._v(_vm._s(_vm.formatDate(_vm.data.date)))])])]), _vm._v(" "), _c('div', {
+    staticClass: "image-container weex-ct weex-div",
+    attrs: {
+      "weex-type": "div"
+    }
+  }, [_c('figure', {
+    key: _vm.data.image[0],
+    staticClass: "image weex-el weex-image",
+    attrs: {
+      "src": _vm.data.image[0],
+      "data-img-src": _vm.data.image[0],
+      "weex-type": "image",
+      "data-evt-load": ""
+    },
+    on: {
+      "load": _vm.onImageLoad
+    }
+  })])])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
@@ -55440,7 +55555,7 @@ exports = module.exports = __webpack_require__(1)(false);
 
 
 // module
-exports.push([module.i, "\n.list-item[data-v-3ea1091c] {\n  width: 100%;\n  max-width: 10rem;\n  flex-direction: column;\n  border-bottom-width: 1px;\n  border-bottom-color: #f0f0f0;\n  padding-bottom: 0.16rem;\n  padding-left: 0.10667rem;\n  padding-right: 0.10667rem;\n  padding-top: 0.16rem;\n  box-sizing: border-box;\n  background-color: #fff;\n}\n.title[data-v-3ea1091c] {\n  flex: 1;\n  padding-bottom: 0.13333rem;\n  line-height: 0.48rem;\n  font-size: 0.45333rem;\n  font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE\\8F6F\\96C5\\9ED1\", Arial, sans-serif;\n  color: #333;\n  justify-content: flex-start;\n  align-items: flex-start;\n  margin: 0.10667rem 0.2rem;\n  width: 100%;\n  word-break: break-all;\n  box-sizing: border-box;\n}\n.tags-text[data-v-3ea1091c] {\n  font-size: 0.21333rem;\n  color: #999;\n  font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE\\8F6F\\96C5\\9ED1\", Arial, sans-serif;\n  margin-right: 0.2rem;\n  line-height: 0.26667rem;\n}\n.tags-icon[data-v-3ea1091c] {\n  font-family: fontawesome;\n  font-size: 0.26667rem;\n  color: #ff4757;\n  background-color: transparent;\n}\n.tags[data-v-3ea1091c] {\n  flex-direction: row;\n  margin: 0.2rem 0.2rem 0.10667rem;\n  justify-content: left;\n}\n.date[data-v-3ea1091c] {\n  margin-top: 0.04rem;\n}\n.line[data-v-3ea1091c] {\n  height: 0.02667rem;\n  background-color: #f0f0f0;\n  margin: 0.2rem;\n}\n.loading[data-v-3ea1091c] {\n  flex-direction: row;\n  justify-content: center;\n  align-items: center;\n  width: 10rem;\n  height: 1.33333rem;\n}\n.loading-text[data-v-3ea1091c] {\n  font-size: 0.41212rem;\n  color: #999;\n}\n.loading-icon[data-v-3ea1091c] {\n  width: 1.33333rem;\n  height: 1.33333rem;\n  color: #ff3333;\n}\n.image[data-v-3ea1091c] {\n  border-radius: 0.06667rem;\n  height: 1.6rem;\n}\n.list-item[data-v-3ea1091c] {\n  height: auto;\n  min-height: 2.93333rem;\n}\n.item-image[data-v-3ea1091c] {\n  flex-direction: row;\n  padding: 0 0.13333rem 0.2rem;\n  justify-content: space-between;\n  align-items: flex-start;\n  width: 95%;\n  margin: 0.13333rem auto;\n  box-sizing: border-box;\n}\n.image[data-v-3ea1091c] {\n  width: calc(33.33% - 0.08rem);\n  height: 2rem;\n  margin-right: 0.12rem;\n  border-radius: 0.10667rem;\n  overflow: hidden;\n}\n/* 处理只有2张图片的情况 */\n.item-image .image[data-v-3ea1091c]:first-child:nth-last-child(2),\n.item-image .image[data-v-3ea1091c]:last-child:nth-child(2) {\n  width: calc(50% - 0.06667rem);\n  margin-right: 0.13333rem;\n  /* 确保高度与默认样式一致 */\n  height: 2rem;\n}\n/* 最后一张图片去掉右外边距 */\n.image[data-v-3ea1091c]:last-child {\n  margin-right: 0;\n}\n", ""]);
+exports.push([module.i, "\n.list-item[data-v-3ea1091c] {\n  width: 9.46667rem;\n  margin-left: 0.26667rem;\n  margin-right: 0.26667rem;\n  margin-top: 0.26667rem;\n  margin-bottom: 0;\n  flex-direction: column;\n  padding: 0.32rem;\n  box-sizing: border-box;\n  background-color: #fff;\n  border-radius: 0.21333rem;\n  box-shadow: 0 0.05333rem 0.21333rem rgba(0, 0, 0, 0.08);\n}\n.title[data-v-3ea1091c] {\n  flex: 1;\n  padding-bottom: 0.21333rem;\n  line-height: 0.64rem;\n  font-size: 0.42667rem;\n  font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE\\8F6F\\96C5\\9ED1\", Arial, sans-serif;\n  color: #333;\n  font-weight: bold;\n  justify-content: flex-start;\n  align-items: flex-start;\n  margin: 0;\n  width: 100%;\n  word-break: break-all;\n  box-sizing: border-box;\n}\n.tags-text[data-v-3ea1091c] {\n  font-size: 0.29333rem;\n  color: #999;\n  font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE\\8F6F\\96C5\\9ED1\", Arial, sans-serif;\n  margin-right: 0.26667rem;\n  line-height: 0.37333rem;\n}\n.tags-icon[data-v-3ea1091c] {\n  font-family: fontawesome;\n  font-size: 0.32rem;\n  color: #ff4757;\n  background-color: transparent;\n}\n.tags[data-v-3ea1091c] {\n  flex-direction: row;\n  margin-top: 0.13333rem;\n  justify-content: left;\n  align-items: center;\n}\n.line[data-v-3ea1091c] {\n  height: 0.02667rem;\n  background-color: #f0f0f0;\n  margin: 0.26667rem;\n}\n.loading[data-v-3ea1091c] {\n  flex-direction: row;\n  justify-content: center;\n  align-items: center;\n  width: 10rem;\n  height: 1.33333rem;\n}\n.loading-text[data-v-3ea1091c] {\n  font-size: 0.37333rem;\n  color: #999;\n  margin-left: 0.13333rem;\n}\n.loading-icon[data-v-3ea1091c] {\n  width: 0.8rem;\n  height: 0.8rem;\n  color: #999;\n}\n.list-item[data-v-3ea1091c] {\n  height: auto;\n  min-height: 3.2rem;\n}\n.item-image[data-v-3ea1091c] {\n  flex-direction: row;\n  justify-content: flex-start;\n  align-items: flex-start;\n  width: 100%;\n  margin: 0.26667rem 0;\n  box-sizing: border-box;\n}\n.image[data-v-3ea1091c] {\n  width: calc(33.33% - 0.08rem);\n  height: 2rem;\n  margin-right: 0.12rem;\n  border-radius: 0.10667rem;\n  overflow: hidden;\n  background-color: #f0f0f0;\n}\n/* 处理只有2张图片的情况 */\n.item-image .image[data-v-3ea1091c]:first-child:nth-last-child(2),\n.item-image .image[data-v-3ea1091c]:last-child:nth-child(2) {\n  width: calc(50% - 0.06667rem);\n  margin-right: 0.13333rem;\n  height: 2rem;\n}\n/* 最后一张图片去掉右外边距 */\n.image[data-v-3ea1091c]:last-child {\n  margin-right: 0;\n}\n", ""]);
 
 // exports
 
@@ -55641,11 +55756,19 @@ Api.prototype = {
     loaddata: function loaddata(params) {
         var _this = this;
 
-        var dir = params.loaddir;
+        var dir = params && params.loaddir;
         var url = this.getLoadUrl(dir);
+        // 构造请求负载，移除 index 与 loaddir 两个不需要的参数，其余保持不变
+        var payload = {};
+        if (params) {
+            for (var k in params) {
+                if (k === 'index' || k === 'loaddir') continue;
+                payload[k] = params[k];
+            }
+        }
         return this.vue.$store.getEquipmentId().then(function (equipmentId) {
             return new Promise(function (resolve, reject) {
-                _this.vue.$request.post(url, params, {}).then(function (d) {
+                _this.vue.$request.post(url, payload, {}).then(function (d) {
                     resolve(d);
                 }).catch(function (e) {
                     reject(e);
@@ -55698,15 +55821,11 @@ Api.prototype = {
     loadChannels: function loadChannels() {
         var _this3 = this;
 
-        // 直接使用完整的URL地址，避免路径拼接
-        var url = 'http://127.0.0.1:8081/article/article/api/v1/article/channels';
-        console.log('请求频道列表URL:', url);
+        var url = this.vue.$config.urls.get('load_channels');
         return new Promise(function (resolve, reject) {
             _this3.vue.$request.get(url).then(function (d) {
-                console.log('频道列表API返回:', d);
                 resolve(d);
             }).catch(function (e) {
-                console.error('频道列表API请求失败:', e);
                 reject(e);
             });
         });
@@ -55824,14 +55943,21 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           "data": item
         }
       }) : _vm._e()], 1)], 1)
-    }), _vm._v(" "), _c('loading', {
-      staticClass: "loading",
-      staticStyle: {
-        "background-color": "white",
-        "height": "1.33333rem"
-      },
+    }), _vm._v(" "), (_vm.shouldShowNoMore) ? _c('section', {
+      staticClass: "cell no-more-cell weex-ct weex-cell",
       attrs: {
-        "display": _vm.showmore ? 'show' : 'hide',
+        "weex-type": "cell"
+      }
+    }, [_c('p', {
+      staticClass: "no-more-text weex-el weex-text",
+      attrs: {
+        "weex-type": "text"
+      }
+    }, [_vm._v("已无更多内容")])]) : _vm._e(), _vm._v(" "), _c('loading', {
+      staticClass: "loading",
+      style: (_vm._px2rem(_vm.loadMoreStyle, 75)),
+      attrs: {
+        "display": (_vm.shouldShowLoadMore && _vm.showmore) ? 'show' : 'hide',
         "data-evt-loading": ""
       },
       nativeOn: {
@@ -55840,15 +55966,15 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           return _vm.loadmore.apply(null, arguments)
         }
       }
-    }, [_c('loading-indicator', {
+    }, [(_vm.shouldShowLoadMore) ? _c('loading-indicator', {
       staticClass: "loading-icon",
       attrs: {}
-    }), _vm._v(" "), _c('p', {
+    }) : _vm._e(), _vm._v(" "), (_vm.shouldShowLoadMore) ? _c('p', {
       staticClass: "loading-text weex-el weex-text",
       attrs: {
         "weex-type": "text"
       }
-    }, [_vm._v(_vm._s(_vm.load_more_text))])], 1)], 2)
+    }, [_vm._v(_vm._s(_vm.load_more_text))]) : _vm._e()], 1)], 2)
   }), _vm._v(" "), _c('p', {
     staticClass: " weex-el weex-text",
     attrs: {
@@ -59935,7 +60061,7 @@ Api.prototype = {
         this.vue = vue;
     },
     register: function register(data) {
-        var url = 'http://127.0.0.1:8081/login/user/api/v1/login/register';
+        var url = this.vue.$config.urls.get('user_register');
         return this.vue.$request.postByEquipmentId(url, data);
     }
 };
@@ -60447,7 +60573,7 @@ exports = module.exports = __webpack_require__(1)(false);
 
 
 // module
-exports.push([module.i, "\n.list-item[data-v-70f29b3a] {\n  width: 100%;\n  max-width: 10rem;\n  flex-direction: column;\n  border-bottom-width: 1px;\n  border-bottom-color: #f0f0f0;\n  padding-bottom: 0.16rem;\n  padding-left: 0.10667rem;\n  padding-right: 0.10667rem;\n  padding-top: 0.16rem;\n  box-sizing: border-box;\n  background-color: #fff;\n}\n.title[data-v-70f29b3a] {\n  flex: 1;\n  padding-bottom: 0.13333rem;\n  line-height: 0.48rem;\n  font-size: 0.45333rem;\n  font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE\\8F6F\\96C5\\9ED1\", Arial, sans-serif;\n  color: #333;\n  justify-content: flex-start;\n  align-items: flex-start;\n  margin: 0.10667rem 0.2rem;\n  width: 100%;\n  word-break: break-all;\n  box-sizing: border-box;\n}\n.tags-text[data-v-70f29b3a] {\n  font-size: 0.21333rem;\n  color: #999;\n  font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE\\8F6F\\96C5\\9ED1\", Arial, sans-serif;\n  margin-right: 0.2rem;\n  line-height: 0.26667rem;\n}\n.tags-icon[data-v-70f29b3a] {\n  font-family: fontawesome;\n  font-size: 0.26667rem;\n  color: #ff4757;\n  background-color: transparent;\n}\n.tags[data-v-70f29b3a] {\n  flex-direction: row;\n  margin: 0.2rem 0.2rem 0.10667rem;\n  justify-content: left;\n}\n.date[data-v-70f29b3a] {\n  margin-top: 0.04rem;\n}\n.line[data-v-70f29b3a] {\n  height: 0.02667rem;\n  background-color: #f0f0f0;\n  margin: 0.2rem;\n}\n.loading[data-v-70f29b3a] {\n  flex-direction: row;\n  justify-content: center;\n  align-items: center;\n  width: 10rem;\n  height: 1.33333rem;\n}\n.loading-text[data-v-70f29b3a] {\n  font-size: 0.41212rem;\n  color: #999;\n}\n.loading-icon[data-v-70f29b3a] {\n  width: 1.33333rem;\n  height: 1.33333rem;\n  color: #ff3333;\n}\n.image[data-v-70f29b3a] {\n  border-radius: 0.06667rem;\n  height: 1.6rem;\n}\n.wrapper[data-v-70f29b3a] {\n  background-color: #fff;\n  font-size: 0.16rem;\n  font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE\\8F6F\\96C5\\9ED1\", Arial, sans-serif;\n  flex-direction: column;\n  flex-wrap: wrap;\n}\n.top-body[data-v-70f29b3a] {\n  position: fixed;\n  left: 0;\n  top: 0;\n}\n.content-body[data-v-70f29b3a] {\n  flex: 1;\n  flex-direction: column;\n  margin-top: 1.2rem;\n}\n.item-container[data-v-70f29b3a] {\n  width: 10rem;\n  background-color: #ffffff;\n}\n.cell[data-v-70f29b3a] {\n  background-color: #ffffff;\n}\n", ""]);
+exports.push([module.i, "\n.list-item[data-v-70f29b3a] {\n  width: 9.46667rem;\n  margin-left: 0.26667rem;\n  margin-right: 0.26667rem;\n  margin-top: 0.26667rem;\n  margin-bottom: 0;\n  flex-direction: column;\n  padding: 0.32rem;\n  box-sizing: border-box;\n  background-color: #fff;\n  border-radius: 0.21333rem;\n  box-shadow: 0 0.05333rem 0.21333rem rgba(0, 0, 0, 0.08);\n}\n.title[data-v-70f29b3a] {\n  flex: 1;\n  padding-bottom: 0.21333rem;\n  line-height: 0.64rem;\n  font-size: 0.42667rem;\n  font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE\\8F6F\\96C5\\9ED1\", Arial, sans-serif;\n  color: #333;\n  font-weight: bold;\n  justify-content: flex-start;\n  align-items: flex-start;\n  margin: 0;\n  width: 100%;\n  word-break: break-all;\n  box-sizing: border-box;\n}\n.tags-text[data-v-70f29b3a] {\n  font-size: 0.29333rem;\n  color: #999;\n  font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE\\8F6F\\96C5\\9ED1\", Arial, sans-serif;\n  margin-right: 0.26667rem;\n  line-height: 0.37333rem;\n}\n.tags-icon[data-v-70f29b3a] {\n  font-family: fontawesome;\n  font-size: 0.32rem;\n  color: #ff4757;\n  background-color: transparent;\n}\n.tags[data-v-70f29b3a] {\n  flex-direction: row;\n  margin-top: 0.13333rem;\n  justify-content: left;\n  align-items: center;\n}\n.line[data-v-70f29b3a] {\n  height: 0.02667rem;\n  background-color: #f0f0f0;\n  margin: 0.26667rem;\n}\n.loading[data-v-70f29b3a] {\n  flex-direction: row;\n  justify-content: center;\n  align-items: center;\n  width: 10rem;\n  height: 1.33333rem;\n}\n.loading-text[data-v-70f29b3a] {\n  font-size: 0.37333rem;\n  color: #999;\n  margin-left: 0.13333rem;\n}\n.loading-icon[data-v-70f29b3a] {\n  width: 0.8rem;\n  height: 0.8rem;\n  color: #999;\n}\n.wrapper[data-v-70f29b3a] {\n  background-color: #f5f7fa;\n  font-size: 0.18667rem;\n  font-family: \"Helvetica Neue\", Helvetica, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", \"\\5FAE\\8F6F\\96C5\\9ED1\", Arial, sans-serif;\n  flex-direction: column;\n  flex-wrap: wrap;\n}\n.top-body[data-v-70f29b3a] {\n  position: fixed;\n  left: 0;\n  top: 0;\n}\n.content-body[data-v-70f29b3a] {\n  flex: 1;\n  flex-direction: column;\n  margin-top: 1.2rem;\n}\n.item-container[data-v-70f29b3a] {\n  width: 10rem;\n  background-color: #ffffff;\n}\n.cell[data-v-70f29b3a] {\n  background-color: #ffffff;\n}\n", ""]);
 
 // exports
 
