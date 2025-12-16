@@ -345,6 +345,10 @@
             this.$message({ type: "warning", message: "文章频道不能为空" });
             return;
           }
+          if (!data.publish_time) {
+            this.$message({ type: "warning", message: "定时发布时间不能为空" });
+            return;
+          }
           if (
             (data.type == "1" && data.images.length != 1) ||
             (data.type == "3" && data.images.length != 3)
@@ -492,4 +496,3 @@
   }
   }
 </style>
-
