@@ -5478,7 +5478,7 @@ Vue.prototype.$request = _request2.default;
 var _require = __webpack_require__(62),
     router = _require.router;
 
-var App = __webpack_require__(410);
+var App = __webpack_require__(415);
 /* eslint-disable no-new */
 new Vue(Vue.util.extend({ el: '#root', router: router }, App));
 router.push('/screen');
@@ -9362,7 +9362,7 @@ var _index = __webpack_require__(64);
 
 var _index2 = _interopRequireDefault(_index);
 
-var _navigator = __webpack_require__(409);
+var _navigator = __webpack_require__(414);
 
 var _navigator2 = _interopRequireDefault(_navigator);
 
@@ -12632,9 +12632,12 @@ var _index13 = __webpack_require__(399);
 
 var _index14 = _interopRequireDefault(_index13);
 
+var _index15 = __webpack_require__(409);
+
+var _index16 = _interopRequireDefault(_index15);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// ============  主页路由MODEL  ==================
 var routes = [{
     path: '/',
     component: _layout_main2.default,
@@ -12656,6 +12659,10 @@ var routes = [{
     name: 'register',
     component: _index10.default
 }, {
+    path: '/user',
+    name: 'user',
+    component: _index16.default
+}, {
     path: '/article',
     name: 'article-info',
     component: _index4.default,
@@ -12669,8 +12676,7 @@ var routes = [{
     name: 'search_result',
     component: _index14.default,
     props: true
-}];
-
+}]; // ============  主页路由MODEL  ==================
 exports.default = routes;
 
 /***/ }),
@@ -13048,6 +13054,10 @@ exports.default = {
             var url = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
             var animated = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 
+            if (page === 3) {
+                this.$router.push('/user');
+                return;
+            }
             this.currentPage = page;
             if (page > 0) {
                 this.$config.noAction();
@@ -31386,6 +31396,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _home_bar = __webpack_require__(310);
@@ -32124,6 +32136,8 @@ exports.default = {
 
     // 列表项点击事件
     wxcPanItemClicked: function wxcPanItemClicked(item, index, key) {
+      var _this7 = this;
+
       console.log('点击文章，文章ID:', item.id);
       console.log('当前频道索引:', this.params.index);
       console.log('当前频道标签:', this.params.tag);
@@ -32137,21 +32151,74 @@ exports.default = {
         console.log('已保存当前频道信息，索引:', this.params.index, '标签:', this.params.tag);
       }
 
-      // 只传递必要的参数，避免URL过长
-      this.$router.push({
-        name: 'article-info',
-        params: {
-          id: item.id,
-          staticUrl: item.staticUrl,
-          title: item.title,
-          createdTime: item.createdTime,
-          authorId: item.authorId
-        },
-        // 不再将整个对象放入query参数
-        query: {}
-      });
+      // 获取token和equipmentId并拼接到url
+      Promise.all([this.$store.getToken(), this.$store.getEquipmentId()]).then(function (_ref) {
+        var _ref2 = _slicedToArray(_ref, 2),
+            token = _ref2[0],
+            equipmentId = _ref2[1];
 
-      console.log('路由跳转已执行');
+        var url = item.staticUrl;
+        if (url) {
+          var separator = url.indexOf('?') !== -1 ? '&' : '?';
+
+          var pubTime = item.publishTime || item.createdTime || '';
+          if (pubTime) {
+            // 尝试转换为毫秒值
+            var date = new Date(pubTime);
+            // 兼容iOS等环境，尝试将 - 替换为 /
+            if (isNaN(date.getTime()) && typeof pubTime === 'string') {
+              date = new Date(pubTime.replace(/-/g, '/'));
+            }
+            if (!isNaN(date.getTime())) {
+              pubTime = date.getTime();
+            }
+          }
+
+          var params = {
+            token: token || '',
+            equipmentId: equipmentId || '',
+            articleId: item.id || '',
+            title: encodeURIComponent(item.title || ''),
+            authorId: item.authorId || 0,
+            authorName: encodeURIComponent(item.authorName || ''),
+            publishTime: pubTime
+          };
+          var queryString = Object.keys(params).map(function (key) {
+            return key + "=" + params[key];
+          }).join('&');
+          url = "" + url + separator + queryString;
+        }
+
+        // 只传递必要的参数，避免URL过长
+        _this7.$router.push({
+          name: 'article-info',
+          params: {
+            id: item.id,
+            staticUrl: url,
+            title: item.title,
+            createdTime: item.createdTime,
+            authorId: item.authorId
+          },
+          // 不再将整个对象放入query参数
+          query: {}
+        });
+
+        console.log('路由跳转已执行');
+      }).catch(function (e) {
+        console.error('获取Token或设备ID失败', e);
+        // 降级处理：直接跳转
+        _this7.$router.push({
+          name: 'article-info',
+          params: {
+            id: item.id,
+            staticUrl: item.staticUrl,
+            title: item.title,
+            createdTime: item.createdTime,
+            authorId: item.authorId
+          },
+          query: {}
+        });
+      });
     }
   }
 };
@@ -33882,13 +33949,11 @@ module.exports = {
     "flexDirection": "column",
     "width": "750",
     "paddingTop": "0",
-    "paddingRight": "20",
+    "paddingRight": "0",
     "paddingBottom": "0",
-    "paddingLeft": "20",
+    "paddingLeft": "0",
     "marginTop": "90",
-    "marginRight": "0",
-    "marginBottom": "90",
-    "marginLeft": "0"
+    "marginBottom": "0"
   },
   "title": {
     "fontSize": "48",
@@ -34273,7 +34338,7 @@ exports.default = {
                     var pageHeight = _weexUi.Utils.env.getPageHeight();
                     // 减去固定元素高度
                     var fixedElementsHeight = 90; // 顶部标题栏高度
-                    var contentAboveIframeHeight = 180; // 文章标题和作者信息高度
+                    var contentAboveIframeHeight = 0; // 文章标题和作者信息高度(已隐藏)
                     var totalFixedHeight = fixedElementsHeight + contentAboveIframeHeight;
 
                     // 设置最小高度为页面高度减去固定元素
@@ -35251,42 +35316,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     on: {
       "scroll": _vm.scroller
     }
-  }, [_c('text', {
-    staticClass: ["title"]
-  }, [_vm._v(_vm._s(_vm.title))]), _c('div', {
-    staticClass: ["info"]
-  }, [_c('image', {
-    staticClass: ["head"],
-    attrs: {
-      "src": "https://p3.pstatp.com/thumb/1480/7186611868"
-    }
-  }), _c('div', {
-    staticClass: ["more"]
-  }, [_c('text', {
-    staticClass: ["author"]
-  }, [_vm._v(_vm._s(_vm.authorId))]), _c('text', {
-    staticClass: ["time"]
-  }, [_vm._v(_vm._s(_vm.formatDate(_vm.createdTime)))])]), _c('div', {
-    staticClass: ["empty"]
-  }), (_vm.relation.isfollow) ? _c('wxc-button', {
-    staticClass: ["button"],
-    attrs: {
-      "text": "取消关注",
-      "size": "small"
-    },
-    on: {
-      "wxcButtonClicked": _vm.follow
-    }
-  }) : _vm._e(), (!_vm.relation.isfollow) ? _c('wxc-button', {
-    staticClass: ["button"],
-    attrs: {
-      "text": "+ 关注",
-      "size": "small"
-    },
-    on: {
-      "wxcButtonClicked": _vm.follow
-    }
-  }) : _vm._e()], 1), _c('div', {
+  }, [_c('div', {
     staticClass: ["news-container"]
   }, [_c('iframe', {
     ref: "articleIframe",
@@ -36836,6 +36866,7 @@ module.exports = {
   },
   "input": {
     "border": "none",
+    "outline": "none",
     "flex": 1,
     "height": "90",
     "lineHeight": "90",
@@ -36844,6 +36875,7 @@ module.exports = {
     "backgroundColor": "rgba(0,0,0,0)",
     "marginLeft": "20",
     "placeholderColor": "#bbbbbb",
+    "outline:focus": "none",
     "backgroundColor:active": "rgba(0,0,0,0)",
     "backgroundColor:active:hover": "rgba(0,0,0,0)"
   },
@@ -37410,6 +37442,7 @@ module.exports = {
   },
   "input": {
     "border": "none",
+    "outline": "none",
     "flex": 1,
     "height": "90",
     "lineHeight": "90",
@@ -37418,6 +37451,7 @@ module.exports = {
     "backgroundColor": "rgba(0,0,0,0)",
     "marginLeft": "20",
     "placeholderColor": "#bbbbbb",
+    "outline:focus": "none",
     "backgroundColor:active": "rgba(0,0,0,0)",
     "backgroundColor:active:hover": "rgba(0,0,0,0)"
   }
@@ -38561,6 +38595,333 @@ module.exports.render._withStripped = true
 /* 409 */
 /***/ (function(module, exports, __webpack_require__) {
 
+var __vue_exports__, __vue_options__
+var __vue_styles__ = []
+
+/* styles */
+__vue_styles__.push(__webpack_require__(410)
+)
+
+/* script */
+__vue_exports__ = __webpack_require__(411)
+
+/* template */
+var __vue_template__ = __webpack_require__(413)
+__vue_options__ = __vue_exports__ = __vue_exports__ || {}
+if (
+  typeof __vue_exports__.default === "object" ||
+  typeof __vue_exports__.default === "function"
+) {
+if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
+__vue_options__ = __vue_exports__ = __vue_exports__.default
+}
+if (typeof __vue_options__ === "function") {
+  __vue_options__ = __vue_options__.options
+}
+__vue_options__.__file = "D:\\ideajava\\myProject\\leadnews-portal\\leadnews-app\\src\\pages\\user\\index.vue"
+__vue_options__.render = __vue_template__.render
+__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
+__vue_options__._scopeId = "data-v-59b560c2"
+__vue_options__.style = __vue_options__.style || {}
+__vue_styles__.forEach(function (module) {
+  for (var name in module) {
+    __vue_options__.style[name] = module[name]
+  }
+})
+if (typeof __register_static_styles__ === "function") {
+  __register_static_styles__(__vue_options__._scopeId, __vue_styles__)
+}
+
+module.exports = __vue_exports__
+
+
+/***/ }),
+/* 410 */
+/***/ (function(module, exports) {
+
+module.exports = {
+  "user-wrapper": {
+    "flex": 1,
+    "backgroundColor": "#f5f7fa"
+  },
+  "scroller": {
+    "flex": 1
+  },
+  "header": {
+    "backgroundColor": "#ffffff",
+    "alignItems": "center",
+    "paddingTop": "50",
+    "paddingRight": 0,
+    "paddingBottom": "50",
+    "paddingLeft": 0,
+    "marginBottom": "20"
+  },
+  "avatar": {
+    "width": "150",
+    "height": "150",
+    "borderRadius": "75",
+    "marginBottom": "20"
+  },
+  "username": {
+    "fontSize": "36",
+    "color": "#333333",
+    "fontWeight": "bold"
+  },
+  "info-cell": {
+    "backgroundColor": "#ffffff",
+    "flexDirection": "row",
+    "justifyContent": "space-between",
+    "alignItems": "center",
+    "paddingTop": "30",
+    "paddingRight": "20",
+    "paddingBottom": "30",
+    "paddingLeft": "20",
+    "borderBottomWidth": "1",
+    "borderBottomColor": "#eeeeee"
+  },
+  "label": {
+    "fontSize": "30",
+    "color": "#666666"
+  },
+  "value": {
+    "fontSize": "30",
+    "color": "#333333"
+  },
+  "icon": {
+    "fontFamily": "fontawesome",
+    "color": "#ffffff",
+    "fontSize": "36"
+  }
+}
+
+/***/ }),
+/* 411 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _weexUi = __webpack_require__(3);
+
+var _api = __webpack_require__(412);
+
+var _api2 = _interopRequireDefault(_api);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+var modal = weex.requireModule('modal');
+
+exports.default = {
+    name: 'UserInfo',
+    components: { WxcMinibar: _weexUi.WxcMinibar },
+    data: function data() {
+        return {
+            userInfo: {},
+            defaultAvatar: 'http://192.168.3.133:9000/leadnews/2025/12/17/2c98fd9bfda44e6bb40f9ea356c7e5bd.jpg'
+        };
+    },
+    created: function created() {
+        _api2.default.setVue(this);
+        this.loadUserInfo();
+    },
+
+    methods: {
+        minibarLeftButtonClick: function minibarLeftButtonClick() {
+            this.$router.back();
+        },
+        loadUserInfo: function loadUserInfo() {
+            var _this = this;
+
+            _api2.default.getUserInfo({}).then(function (d) {
+                if (d.code == 200) {
+                    _this.userInfo = d.data;
+                } else {
+                    modal.toast({
+                        message: d.errorMessage || '获取用户信息失败',
+                        duration: 2
+                    });
+                }
+            }).catch(function (err) {
+                console.error('获取用户信息失败', err);
+                modal.toast({
+                    message: '获取用户信息失败',
+                    duration: 2
+                });
+            });
+        },
+        getSex: function getSex(sex) {
+            if (sex === false || sex === 0) return '男';
+            if (sex === true || sex === 1) return '女';
+            return '未知';
+        },
+        getFlag: function getFlag(flag) {
+            var flags = {
+                0: '普通用户',
+                1: '自媒体人',
+                2: '大V'
+            };
+            return flags[flag] || '普通用户';
+        },
+        formatDate: function formatDate(time) {
+            if (!time) return '';
+            var date = new Date(time);
+            return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
+        }
+    }
+};
+
+/***/ }),
+/* 412 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+function Api() {
+    this.vue;
+}
+Api.prototype = {
+    setVue: function setVue(vue) {
+        this.vue = vue;
+    },
+    getUserInfo: function getUserInfo(params) {
+        var _this = this;
+
+        var url = 'http://127.0.0.1:8081/user/user/api/v1/personal/user_self';
+        return new Promise(function (resolve, reject) {
+            _this.vue.$request.get(url, params).then(function (d) {
+                resolve(d);
+            }).catch(function (e) {
+                reject(e);
+            });
+        });
+    }
+};
+
+exports.default = new Api();
+
+/***/ }),
+/* 413 */
+/***/ (function(module, exports) {
+
+module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', {
+    staticClass: ["user-wrapper"]
+  }, [_c('wxc-minibar', {
+    attrs: {
+      "title": "个人信息",
+      "backgroundColor": "#3194ff",
+      "textColor": "#FFFFFF",
+      "useDefaultReturn": false
+    },
+    on: {
+      "wxcMinibarLeftButtonClicked": _vm.minibarLeftButtonClick
+    }
+  }, [_c('text', {
+    staticClass: ["icon"],
+    staticStyle: {
+      textAlign: "left"
+    },
+    attrs: {
+      "slot": "left"
+    },
+    slot: "left"
+  }, [_vm._v("")])]), _c('scroller', {
+    staticClass: ["scroller"]
+  }, [_c('div', {
+    staticClass: ["header"]
+  }, [_c('image', {
+    staticClass: ["avatar"],
+    attrs: {
+      "src": _vm.userInfo.image || _vm.defaultAvatar,
+      "placeholder": "http://192.168.3.133:9000/leadnews/2025/12/17/2c98fd9bfda44e6bb40f9ea356c7e5bd.jpg"
+    }
+  }), _c('text', {
+    staticClass: ["username"]
+  }, [_vm._v(_vm._s(_vm.userInfo.name || '未知用户'))])]), _c('div', {
+    staticClass: ["info-cell"]
+  }, [_c('text', {
+    staticClass: ["label"]
+  }, [_vm._v("手机号码")]), _c('text', {
+    staticClass: ["value"]
+  }, [_vm._v(_vm._s(_vm.userInfo.phone || '未绑定'))])]), _c('div', {
+    staticClass: ["info-cell"]
+  }, [_c('text', {
+    staticClass: ["label"]
+  }, [_vm._v("性别")]), _c('text', {
+    staticClass: ["value"]
+  }, [_vm._v(_vm._s(_vm.getSex(_vm.userInfo.sex)))])]), _c('div', {
+    staticClass: ["info-cell"]
+  }, [_c('text', {
+    staticClass: ["label"]
+  }, [_vm._v("用户身份")]), _c('text', {
+    staticClass: ["value"]
+  }, [_vm._v(_vm._s(_vm.getFlag(_vm.userInfo.flag)))])]), _c('div', {
+    staticClass: ["info-cell"]
+  }, [_c('text', {
+    staticClass: ["label"]
+  }, [_vm._v("实名认证")]), _c('text', {
+    staticClass: ["value"]
+  }, [_vm._v(_vm._s(_vm.userInfo.identityAuthentication ? '已认证' : '未认证'))])]), _c('div', {
+    staticClass: ["info-cell"]
+  }, [_c('text', {
+    staticClass: ["label"]
+  }, [_vm._v("创建时间")]), _c('text', {
+    staticClass: ["value"]
+  }, [_vm._v(_vm._s(_vm.formatDate(_vm.userInfo.createdTime)))])])])], 1)
+},staticRenderFns: []}
+module.exports.render._withStripped = true
+
+/***/ }),
+/* 414 */
+/***/ (function(module, exports, __webpack_require__) {
+
 "use strict";
 
 
@@ -38595,17 +38956,17 @@ Navigator.prototype = {
 exports.default = new Navigator();
 
 /***/ }),
-/* 410 */
+/* 415 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __vue_exports__, __vue_options__
 var __vue_styles__ = []
 
 /* script */
-__vue_exports__ = __webpack_require__(411)
+__vue_exports__ = __webpack_require__(416)
 
 /* template */
-var __vue_template__ = __webpack_require__(413)
+var __vue_template__ = __webpack_require__(418)
 __vue_options__ = __vue_exports__ = __vue_exports__ || {}
 if (
   typeof __vue_exports__.default === "object" ||
@@ -38634,7 +38995,7 @@ module.exports = __vue_exports__
 
 
 /***/ }),
-/* 411 */
+/* 416 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -38644,7 +39005,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _font = __webpack_require__(412);
+var _font = __webpack_require__(417);
 
 var _font2 = _interopRequireDefault(_font);
 
@@ -38663,7 +39024,7 @@ exports.default = {
 //
 
 /***/ }),
-/* 412 */
+/* 417 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -38685,7 +39046,7 @@ var utilFunc = {
 exports.default = utilFunc;
 
 /***/ }),
-/* 413 */
+/* 418 */
 /***/ (function(module, exports) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;

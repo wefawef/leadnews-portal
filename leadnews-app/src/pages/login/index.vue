@@ -213,6 +213,7 @@
     }
     .input{
         border: none;
+        outline: none;
         flex: 1;
         height: 90px;
         line-height: 90px;
@@ -221,6 +222,9 @@
         background-color: transparent;
         margin-left: 20px;
         placeholder-color: #bbbbbb;
+    }
+    .input:focus {
+        outline: none;
     }
     .input:active, .input:hover{
         background-color: transparent;

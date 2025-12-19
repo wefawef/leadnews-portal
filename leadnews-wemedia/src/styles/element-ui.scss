@@ -1,10 +1,23 @@
 //覆盖一些element-ui样式
 
+// Global Transition
+* {
+  transition: all 0.2s ease-in-out;
+  transition-property: color, background-color, border-color, box-shadow;
+}
+
+// Breadcrumb
 .el-breadcrumb__inner,
 .el-breadcrumb__inner a {
   font-weight: 400 !important;
+  color: #8c8c8c;
+}
+.el-breadcrumb__item:last-child .el-breadcrumb__inner {
+  color: #303133;
+  font-weight: 600 !important;
 }
 
+// Upload
 .el-upload {
   input[type="file"] {
     display: none !important;
@@ -13,6 +26,24 @@
 
 .el-upload__input {
   display: none;
+}
+
+// Table
+.el-table {
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+
+  th {
+    background-color: #fafafa !important;
+    color: #333;
+    font-weight: 600;
+    height: 50px;
+  }
+  
+  tr:hover > td {
+    background-color: #f5f7fa !important;
+  }
 }
 
 .cell {
@@ -46,15 +77,31 @@
   }
 }
 
-//暂时性解决dialog 问题 https://github.com/ElemeFE/element/issues/2461
+// Dialog
 .el-dialog {
   transform: none;
   left: 0;
   position: relative;
   margin: 0 auto;
+  border-radius: 8px;
+  box-shadow: 0 12px 32px 4px rgba(0, 0, 0, .04), 0 8px 20px rgba(0, 0, 0, .08);
+  
+  .el-dialog__header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .el-dialog__body {
+    padding: 24px;
+  }
+  
+  .el-dialog__footer {
+    padding: 16px 24px;
+    border-top: 1px solid #f0f0f0;
+  }
 }
 
-//文章页textarea修改样式
+// Article Textarea
 .article-textarea {
   textarea {
     padding-right: 40px;
@@ -65,7 +112,7 @@
   }
 }
 
-//element ui upload
+// Upload Container
 .upload-container {
   .el-upload {
     width: 100%;
@@ -73,54 +120,109 @@
     .el-upload-dragger {
       width: 100%;
       height: 200px;
+      border-radius: 6px;
+      &:hover {
+        border-color: #409EFF;
+      }
     }
   }
 }
 
-//dropdown
+// Dropdown
 .el-dropdown-menu {
+  border-radius: 6px;
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
   a {
     display: block
   }
 }
 
-
+// Form
 .el-form-item {
-  margin: 0;
+  margin-bottom: 22px;
 }
 .filter-container .filter-item {
-  margin-bottom: 0!important;
+  margin-bottom: 10px !important;
+  margin-right: 10px;
 }
 .el-form-item__label {
-  // text-align: left!important;
-  font-weight: normal!important;
-  color: #333333!important;
+  font-weight: 500 !important;
+  color: #606266 !important;
 }
 
+// Input
+.el-input__inner {
+  border-radius: 4px;
+  &:focus {
+    border-color: #409EFF;
+    box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.2);
+  }
+}
+
+// Button
+.el-button {
+  border-radius: 4px;
+  font-weight: 500;
+  
+  &.el-button--primary {
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
+  }
+}
+
+// Pagination
+.el-pagination {
+  margin-top: 20px;
+  text-align: right;
+}
 
 .el-pager li {
   border: 1px solid #d9d9d9 !important;
   color: #666666;
   font-weight: normal;
-  border-radius: 5px;
-  margin-right: 5px;
-  font-size: 12px;
+  border-radius: 4px;
+  margin-right: 8px;
+  font-size: 13px;
+  min-width: 32px;
+  height: 32px;
+  line-height: 32px;
+  background: #fff;
+  transition: all .3s;
+  
+  &:hover {
+    color: #409EFF;
+    border-color: #409EFF !important;
+  }
 }
+
 .el-pager li.active {
   color: #ffffff;
-  background-color: #108ee9;
-  border: none !important;
+  background-color: #409EFF;
+  border-color: #409EFF !important;
+  box-shadow: 0 2px 6px rgba(64, 158, 255, 0.3);
 }
 
 .tox-tinymce {
-  border: none !important;
+  border: 1px solid #dcdfe6 !important;
+  border-radius: 4px;
 }
 
-
+// Progress
 .el-progress-bar__outer {
   border-radius: 10px !important;
-  background-color: #fa8665 !important;
+  background-color: #ebeef5 !important;
 }
 .el-progress-bar__inner {
-  border-radius: 0 !important;
+  border-radius: 10px !important;
+}
+
+// Card
+.el-card {
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px -2px rgba(0, 0, 0, 0.16), 0 3px 6px 0 rgba(0, 0, 0, 0.12), 0 5px 12px 4px rgba(0, 0, 0, 0.09) !important;
+  transition: all 0.3s;
+  
+  &:hover {
+    box-shadow: 0 6px 16px -8px rgba(0,0,0,0.08), 0 9px 28px 0 rgba(0,0,0,0.05), 0 12px 48px 16px rgba(0,0,0,0.03) !important;
+  }
 }

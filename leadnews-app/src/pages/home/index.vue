@@ -673,35 +673,85 @@
       },
       // 列表项点击事件
       wxcPanItemClicked(item, index, key){
-      console.log('点击文章，文章ID:', item.id);
-      console.log('当前频道索引:', this.params.index);
-      console.log('当前频道标签:', this.params.tag);
+        console.log('点击文章，文章ID:', item.id);
+        console.log('当前频道索引:', this.params.index);
+        console.log('当前频道标签:', this.params.tag);
 
-      // 简化实现：只保存必要的频道信息
-      if (typeof sessionStorage !== 'undefined') {
-        sessionStorage.setItem('lastChannelIndex', this.params.index.toString());
-        sessionStorage.setItem('lastChannelTag', this.params.tag || '');
-        sessionStorage.setItem('listItemIndex', (key || 0).toString());
-        sessionStorage.setItem('lastArticleId', (item.id || '').toString());
-        console.log('已保存当前频道信息，索引:', this.params.index, '标签:', this.params.tag);
+        // 简化实现：只保存必要的频道信息
+        if (typeof sessionStorage !== 'undefined') {
+          sessionStorage.setItem('lastChannelIndex', this.params.index.toString());
+          sessionStorage.setItem('lastChannelTag', this.params.tag || '');
+          sessionStorage.setItem('listItemIndex', (key || 0).toString());
+          sessionStorage.setItem('lastArticleId', (item.id || '').toString());
+          console.log('已保存当前频道信息，索引:', this.params.index, '标签:', this.params.tag);
+        }
+
+        // 获取token和equipmentId并拼接到url
+        Promise.all([
+          this.$store.getToken(),
+          this.$store.getEquipmentId()
+        ]).then(([token, equipmentId]) => {
+          let url = item.staticUrl;
+          if (url) {
+            const separator = url.indexOf('?') !== -1 ? '&' : '?';
+            
+            let pubTime = item.publishTime || item.createdTime || '';
+            if (pubTime) {
+              // 尝试转换为毫秒值
+              let date = new Date(pubTime);
+              // 兼容iOS等环境，尝试将 - 替换为 /
+              if (isNaN(date.getTime()) && typeof pubTime === 'string') {
+                 date = new Date(pubTime.replace(/-/g, '/'));
+              }
+              if (!isNaN(date.getTime())) {
+                pubTime = date.getTime();
+              }
+            }
+
+            const params = {
+              token: token || '',
+              equipmentId: equipmentId || '',
+              articleId: item.id || '',
+              title: encodeURIComponent(item.title || ''),
+              authorId: item.authorId || 0,
+              authorName: encodeURIComponent(item.authorName || ''),
+              publishTime: pubTime
+            };
+            const queryString = Object.keys(params).map(key => `${key}=${params[key]}`).join('&');
+            url = `${url}${separator}${queryString}`;
+          }
+
+          // 只传递必要的参数，避免URL过长
+          this.$router.push({
+            name:'article-info',
+            params:{
+              id: item.id,
+              staticUrl: url,
+              title: item.title,
+              createdTime: item.createdTime,
+              authorId: item.authorId
+            },
+            // 不再将整个对象放入query参数
+            query: {}
+          });
+          
+          console.log('路由跳转已执行');
+        }).catch(e => {
+          console.error('获取Token或设备ID失败', e);
+          // 降级处理：直接跳转
+          this.$router.push({
+            name:'article-info',
+            params:{
+              id: item.id,
+              staticUrl: item.staticUrl,
+              title: item.title,
+              createdTime: item.createdTime,
+              authorId: item.authorId
+            },
+            query: {}
+          });
+        });
       }
-
-      // 只传递必要的参数，避免URL过长
-      this.$router.push({
-        name:'article-info',
-        params:{
-          id: item.id,
-          staticUrl: item.staticUrl,
-          title: item.title,
-          createdTime: item.createdTime,
-          authorId: item.authorId
-        },
-        // 不再将整个对象放入query参数
-        query: {}
-      });
-      
-      console.log('路由跳转已执行');
-    }
     }
   };
 </script>

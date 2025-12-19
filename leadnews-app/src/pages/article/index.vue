@@ -2,17 +2,17 @@
     <div class="art-page">
         <div class="art-top"><TopBar :text="title" :show-back="true" @back="goBack"/></div>
         <scroller class="scroller" ref="scroller" @scroll="scroller" show-scrollbar="true">
-            <text class="title">{{title}}</text>
-            <div class="info">
-                <image src="https://p3.pstatp.com/thumb/1480/7186611868" class="head"></image>
-                <div class="more">
-                    <text class="author">{{authorId}}</text>
-                    <text class="time">{{formatDate(createdTime)}}</text>
-                </div>
-                <div class="empty"></div>
-                <wxc-button class="button" v-if="relation.isfollow" @wxcButtonClicked="follow" text="取消关注" size="small"></wxc-button>
-                <wxc-button class="button" v-if="!relation.isfollow" @wxcButtonClicked="follow" text="+ 关注" size="small"></wxc-button>
-            </div>
+<!--            <text class="title">{{title}}</text>-->
+<!--            <div class="info">-->
+<!--                <image src="https://p3.pstatp.com/thumb/1480/7186611868" class="head"></image>-->
+<!--                <div class="more">-->
+<!--                    <text class="author">{{authorId}}</text>-->
+<!--                    <text class="time">{{formatDate(createdTime)}}</text>-->
+<!--                </div>-->
+<!--                <div class="empty"></div>-->
+<!--                <wxc-button class="button" v-if="relation.isfollow" @wxcButtonClicked="follow" text="取消关注" size="small"></wxc-button>-->
+<!--                <wxc-button class="button" v-if="!relation.isfollow" @wxcButtonClicked="follow" text="+ 关注" size="small"></wxc-button>-->
+<!--            </div>-->
 <!--            <div class="content">-->
 <!--                <template v-for="item in content">-->
 <!--                    <text class="text" :style="getStyle(item.style)" v-if="item.type=='text'">{{item.value}}</text>-->
@@ -271,7 +271,7 @@
                         const pageHeight = Utils.env.getPageHeight();
                         // 减去固定元素高度
                         const fixedElementsHeight = 90; // 顶部标题栏高度
-                        const contentAboveIframeHeight = 180; // 文章标题和作者信息高度
+                        const contentAboveIframeHeight = 0; // 文章标题和作者信息高度(已隐藏)
                         const totalFixedHeight = fixedElementsHeight + contentAboveIframeHeight;
                         
                         // 设置最小高度为页面高度减去固定元素
@@ -347,8 +347,9 @@
         flex: 1;
         flex-direction: column;
         width: 750px;
-        padding: 0px 20px;
-        margin: 90px 0px;
+        padding: 0px;
+        margin-top: 90px;
+        margin-bottom: 0px;
     }
     .title{
         font-size: 48px;

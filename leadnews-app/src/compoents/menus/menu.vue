@@ -142,6 +142,10 @@
                 }
             },
             setPage(page, url = null, animated = true) {
+                if(page === 3){
+                    this.$router.push('/user');
+                    return;
+                }
                 this.currentPage = page;
                 if(page>0){
                     this.$config.noAction();

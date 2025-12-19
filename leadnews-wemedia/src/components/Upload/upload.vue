@@ -3,7 +3,7 @@
               <el-form  status-icon label-width="100px">
                 <img :src="upload_img_url" class="upload_pic_show" />
                 <el-form-item label="用户图片" prop="logo">
-                  <el-upload ref="myUpload" action="" :auto-upload="false">
+                  <el-upload ref="myUpload" action="" :auto-upload="false" multiple>
                     <el-button size="small" type="primary">点击选择图片</el-button>
                   </el-upload>
                 </el-form-item>
@@ -28,20 +28,22 @@ export default {
      async fnUpload () {
         let files = document.querySelector('.el-upload .el-upload__input').files ;
         if(files && files.length) {
-          let fd = new FormData();
-          fd.append('multipartFile', files[0],files[0].name);
-          try {
-            let result = await uploadImg(fd)
-            if(result.code == "200"){
-            this.$message({ message: '上传成功', type: 'success' });
-            this.upload_img_url = result.data.url;
-            // 通知父组件刷新数据
-            this.imgChange && this.imgChange(result.data.url);
-            }else {
-              this.$message({ message: '上传失败: ' + result.errorMessage});
+          for(let i = 0; i < files.length; i++) {
+            let fd = new FormData();
+            fd.append('multipartFile', files[i],files[i].name);
+            try {
+              let result = await uploadImg(fd)
+              if(result.code == "200"){
+                this.$message({ message: '上传成功', type: 'success' });
+                this.upload_img_url = result.data.url;
+                // 通知父组件刷新数据
+                this.imgChange && this.imgChange(result.data.url);
+              }else {
+                this.$message({ message: '上传失败: ' + result.errorMessage});
+              }
+            } catch (error) {
+              this.$message({ message: '上传失败: ' + error.message, type: 'error' });
             }
-          } catch (error) {
-            this.$message({ message: '上传失败: ' + error.message, type: 'error' });
           }
         }else{
            this.$message({message:"请选择一张图片",type:"warning"})

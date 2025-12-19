@@ -7,6 +7,7 @@ import Login from '@/pages/login/index'
 import Register from '@/pages/register/index'
 import Screen from '@/pages/load_screen/index'
 import SearchResult from '@/pages/search_result/index'
+import UserInfo from '@/pages/user/index'
 
 let routes = [
     {
@@ -31,6 +32,10 @@ let routes = [
         path:'/register',
         name: 'register',
         component:Register
+    },{
+        path:'/user',
+        name: 'user',
+        component:UserInfo
     },{
         path:'/article',
         name: 'article-info',

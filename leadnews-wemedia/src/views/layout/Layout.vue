@@ -1,7 +1,7 @@
 <template>
-  <div class="app-wrapper">
-    <sidebar :collapse="collapse" :class="['sidebar-container',collapse ? 'hidden-slidecontainer': '']"/>
-    <div :class="['main-container',collapse ? 'hidden-container': '']">
+  <div class="app-wrapper" :class="{hideSidebar: collapse}">
+    <sidebar :collapse="collapse" class="sidebar-container"/>
+    <div class="main-container">
       <navbar />
       <app-main/>
     </div>
@@ -32,14 +32,6 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-  .hidden-container {
-     margin-left: 50px !important;
-  }
-  .hidden-slidecontainer {
-    width:50px !important;
-   .logo img{
-        display: none;
-    }
-  }
+
 </style>
 

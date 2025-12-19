@@ -91,17 +91,34 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" scoped>
 .navbar {
-  height: 50px;
-  line-height: 50px;
+  height: 60px;
+  line-height: 60px;
+  border-radius: 0px !important;
+  background-color: #fff;
+  box-shadow: 0 1px 4px rgba(0,21,41,.08);
+  position: relative;
+  z-index: 10;
+
   .hamburger-container {
+    line-height: 66px;
+    height: 60px;
     float: left;
-    padding-top: 5px;
-    margin-left: 10px;
+    padding: 0 15px;
+    cursor: pointer;
+    transition: background .3s;
+
+    &:hover {
+      background: rgba(0, 0, 0, .025)
+    }
   }
   .company-container {
-    height: 50px;
+    height: 60px;
+    line-height: 60px;
     float: left;
     padding: 0 10px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
   }
   .breadcrumb-container{
     float: left;
@@ -130,26 +147,32 @@ export default {
       vertical-align: 15px;
     }
     .avatar-container {
-      height: 50px;
+      height: 60px;
       margin-right: 30px;
       .avatar-wrapper {
         cursor: pointer;
         position: relative;
+        display: flex;
+        align-items: center;
+        
         .user-avatar {
-          width: 35px;
-          height: 35px;
+          width: 36px;
+          height: 36px;
           border-radius: 50%;
-          vertical-align: middle;
+          border: 1px solid #f0f0f0;
         }
         .user-name {
           margin-left: 10px;
+          font-weight: 500;
+          color: #606266;
         }
         .el-icon-caret-bottom {
           cursor: pointer;
           position: absolute;
           right: -20px;
-          top: 20px;
+          top: 25px;
           font-size: 12px;
+          color: #909399;
         }
       }
     }
