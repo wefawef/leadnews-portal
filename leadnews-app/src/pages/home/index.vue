@@ -317,7 +317,7 @@
               } else if (this.savedScrollPosition > 0) {
                 this.setScrollPosition(this.savedScrollPosition);
               }
-              modal.toast({ message: '已恢复到之前的浏览位置', duration: 2 });
+              // modal.toast({ message: '已恢复到之前的浏览位置', duration: 2 });
               console.log('浏览位置恢复完成');
             }
           } catch (error) {
@@ -347,7 +347,7 @@
           const idx = this.findItemIndexById(this.savedArticleId);
           if (idx !== -1) {
             this.scrollToItemIndex(idx);
-            modal.toast({ message: '已恢复到之前的浏览位置', duration: 2 });
+            // modal.toast({ message: '已恢复到之前的浏览位置', duration: 2 });
             this.needRestoreScroll = false;
             this.savedArticleId = null;
             this.restoreAttempts = 0;
@@ -414,7 +414,7 @@
                       offset: position - (targetIndex * averageItemHeight),
                       animated: false
                     });
-                    modal.toast({ message: '已恢复浏览位置', duration: 1 });
+                    // modal.toast({ message: '已恢复浏览位置', duration: 1 });
                     return;
                   }
                 }

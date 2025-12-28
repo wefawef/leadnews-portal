@@ -31762,7 +31762,7 @@ exports.default = {
             } else if (_this3.savedScrollPosition > 0) {
               _this3.setScrollPosition(_this3.savedScrollPosition);
             }
-            modal.toast({ message: '已恢复到之前的浏览位置', duration: 2 });
+            // modal.toast({ message: '已恢复到之前的浏览位置', duration: 2 });
             console.log('浏览位置恢复完成');
           }
         } catch (error) {
@@ -31796,7 +31796,7 @@ exports.default = {
         var idx = _this4.findItemIndexById(_this4.savedArticleId);
         if (idx !== -1) {
           _this4.scrollToItemIndex(idx);
-          modal.toast({ message: '已恢复到之前的浏览位置', duration: 2 });
+          // modal.toast({ message: '已恢复到之前的浏览位置', duration: 2 });
           _this4.needRestoreScroll = false;
           _this4.savedArticleId = null;
           _this4.restoreAttempts = 0;
@@ -31864,7 +31864,7 @@ exports.default = {
                     offset: position - targetIndex * averageItemHeight,
                     animated: false
                   });
-                  modal.toast({ message: '已恢复浏览位置', duration: 1 });
+                  // modal.toast({ message: '已恢复浏览位置', duration: 1 });
                   return;
                 }
               }
@@ -34338,7 +34338,7 @@ exports.default = {
                     var pageHeight = _weexUi.Utils.env.getPageHeight();
                     // 减去固定元素高度
                     var fixedElementsHeight = 90; // 顶部标题栏高度
-                    var contentAboveIframeHeight = 0; // 文章标题和作者信息高度(已隐藏)
+                    var contentAboveIframeHeight = 0; // 文章标题和作者信息高度
                     var totalFixedHeight = fixedElementsHeight + contentAboveIframeHeight;
 
                     // 设置最小高度为页面高度减去固定元素

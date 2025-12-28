@@ -271,7 +271,7 @@
                         const pageHeight = Utils.env.getPageHeight();
                         // 减去固定元素高度
                         const fixedElementsHeight = 90; // 顶部标题栏高度
-                        const contentAboveIframeHeight = 0; // 文章标题和作者信息高度(已隐藏)
+                        const contentAboveIframeHeight = 0; // 文章标题和作者信息高度
                         const totalFixedHeight = fixedElementsHeight + contentAboveIframeHeight;
                         
                         // 设置最小高度为页面高度减去固定元素
@@ -347,7 +347,7 @@
         flex: 1;
         flex-direction: column;
         width: 750px;
-        padding: 0px;
+        padding: 0px 0px;
         margin-top: 90px;
         margin-bottom: 0px;
     }
