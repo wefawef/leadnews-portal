@@ -33933,94 +33933,9 @@ module.exports = {
     "width": "750",
     "flexDirection": "column"
   },
-  "art-top": {
-    "top": 0,
-    "height": "90",
-    "position": "fixed",
-    "zIndex": 999
-  },
-  "art-bottom": {
-    "bottom": 0,
-    "position": "fixed",
-    "width": "750"
-  },
-  "scroller": {
+  "news-container": {
     "flex": 1,
-    "flexDirection": "column",
-    "width": "750",
-    "paddingTop": "0",
-    "paddingRight": "0",
-    "paddingBottom": "0",
-    "paddingLeft": "0",
-    "marginTop": "90",
-    "marginBottom": "0"
-  },
-  "title": {
-    "fontSize": "48",
-    "fontWeight": "bold",
-    "marginTop": "10",
-    "marginRight": "0",
-    "marginBottom": "10",
-    "marginLeft": "0"
-  },
-  "info": {
-    "marginTop": "20",
-    "lineHeight": "48",
-    "alignItems": "center",
-    "flexDirection": "row"
-  },
-  "head": {
-    "width": "48",
-    "height": "48",
-    "borderRadius": "48"
-  },
-  "more": {
-    "flexDirection": "column"
-  },
-  "author": {
-    "fontSize": "25",
-    "color": "#383839",
-    "marginLeft": "15"
-  },
-  "time": {
-    "fontSize": "21",
-    "color": "#b5b5b5",
-    "marginLeft": "15"
-  },
-  "empty": {
-    "flex": 1
-  },
-  "content": {
-    "flexDirection": "column",
-    "fontSize": "30",
-    "justifyContent": "flex-start",
-    "marginTop": "20",
-    "color": "#222222",
-    "wordWrap": "break-word"
-  },
-  "text": {
-    "marginTop": "15",
-    "marginRight": "0",
-    "marginBottom": "15",
-    "marginLeft": "0"
-  },
-  "image": {
-    "display": "inline-block",
-    "marginTop": "15",
-    "marginRight": "0",
-    "marginBottom": "15",
-    "marginLeft": "0",
-    "borderRadius": "5",
-    "height": "300"
-  },
-  "tools": {
-    "marginTop": "20",
-    "marginRight": "0",
-    "marginBottom": "30",
-    "marginLeft": "0",
-    "flexDirection": "row",
-    "height": "60",
-    "justifyContent": "center"
+    "width": "750"
   }
 }
 
@@ -34035,18 +33950,6 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _article_top_bar = __webpack_require__(336);
-
-var _article_top_bar2 = _interopRequireDefault(_article_top_bar);
-
-var _article_bottom_bar = __webpack_require__(340);
-
-var _article_bottom_bar2 = _interopRequireDefault(_article_bottom_bar);
-
-var _button = __webpack_require__(347);
-
-var _button2 = _interopRequireDefault(_button);
-
 var _weexUi = __webpack_require__(3);
 
 var _api = __webpack_require__(351);
@@ -34055,34 +33958,6 @@ var _api2 = _interopRequireDefault(_api);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var modal = weex.requireModule("modal"); //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -34099,29 +33974,14 @@ var modal = weex.requireModule("modal"); //
 //
 //
 
+var modal = weex.requireModule("modal");
+
 exports.default = {
     name: "index",
-    components: { TopBar: _article_top_bar2.default, BottomBar: _article_bottom_bar2.default, WxcButton: _weexUi.WxcButton, Button: _button2.default },
     props: ['id', 'title', 'staticUrl', 'createdTime', 'authorId'],
     data: function data() {
-        return { scrollerHeight: '500px', iframeStyle: { height: '600px', width: '100%', border: 'none', overflow: 'hidden' },
-            scrollPosition: 0, // 记录滚动位置
-            icon: {
-                like: '\uF164',
-                unlike: '\uF1F6',
-                wechat: '\uF086',
-                friend: '\uF268'
-            },
-            imageHeight: {},
-            config: {}, //文章配置
-            content: {}, //文章内容
-            relation: {
-                islike: false,
-                isunlike: false,
-                iscollection: false,
-                isfollow: false,
-                isforward: false
-            }, //关系
+        return {
+            iframeStyle: { height: '600px', width: '100%', border: 'none', overflow: 'hidden' },
             time: {
                 timer: null, //定时器
                 timerStep: 100, //定时器步长
@@ -34129,16 +33989,12 @@ exports.default = {
                 percentage: 0, //阅读比例
                 loadDuration: 0, //加载时长
                 loadOff: true //加载完成控制
-            }, //时间相关属性
-            test: {
-                isforward: false
             }
         };
     },
     created: function created() {
         _api2.default.setVue(this);
-        this.loadInfo();
-        this.loadBehavior();
+        // 保持阅读行为记录逻辑
         var _this = this;
         this.time.timer = setInterval(function () {
             _this.time.readDuration += _this.time.timerStep;
@@ -34153,7 +34009,6 @@ exports.default = {
         window.removeEventListener('resize', this.updateIframeSize);
     },
     mounted: function mounted() {
-        this.scrollerHeight = _weexUi.Utils.env.getPageHeight() - 180 + 'px';
         // 初始化iframe高度
         this.updateIframeSize();
         // 监听窗口大小变化
@@ -34161,514 +34016,41 @@ exports.default = {
     },
 
     methods: {
-        // 返回上一页
-        goBack: function goBack() {
-            this.$router.back();
-        },
-        // 滚动事件处理
-        scroller: function scroller(e) {
-            // 记录滚动位置
-            this.scrollPosition = e.contentOffset.y;
-            console.log('滚动位置:', this.scrollPosition);
-
-            if (typeof sessionStorage !== 'undefined') {
-                sessionStorage.setItem('articleDetailScrollPosition', this.scrollPosition.toString());
-            }
-
-            // 计算阅读进度
-            var y = Math.abs(e.contentOffset.y) + (_weexUi.Utils.env.getPageHeight() - 180);
-            var height = e.contentSize.height;
-            this.time.percentage = Math.max(parseInt(y * 100 / height), this.time.percentage);
-        },
-        imageLoad: function imageLoad(item, e) {
-            console.log(item);
-            console.log(e);
-            if (e.success) {
-                if (e.size.naturalWidth > 150) {
-                    var height = parseInt(e.size.naturalHeight * (750 / e.size.naturalWidth)) + 'px';
-                    this.$set(this.imageHeight, item.value, height);
-                } else {
-                    this.$set(e.target, 'resize', 'contain');
-                }
-            }
-        },
-        loadInfo: function loadInfo() {
-            var _this2 = this;
-
-            _api2.default.loadinfo(this.id).then(function (d) {
-                if (d.code == 0) {
-                    _this2.config = d.data['config'];
-                    var temp = d.data['content'];
-                    if (temp) {
-                        temp = temp.content;
-                        _this2.content = eval("(" + temp + ")");
-                        _this2.time.loadOff = false; //关闭加载时间的记录
-                    } else {
-                        modal.toast({ message: '文章已被删除', duration: 3 });
-                    }
-                } else {
-                    modal.toast({ message: d.error_message, duration: 3 });
-                }
-            }).catch(function (e) {
-                console.log(e);
-            });
-        },
-        loadBehavior: function loadBehavior() {
-            var _this3 = this;
-
-            _api2.default.loadbehavior(this.id, this.authorId).then(function (d) {
-                if (d.code == 0) {
-                    _this3.relation = d.data;
-                } else {
-                    modal.toast({ message: d.error_message, duration: 3 });
-                }
-            }).catch(function (e) {
-                console.log(e);
-            });
-        },
-        // 点赞
-        like: function like() {
-            var _this4 = this;
-
-            _api2.default.like({ articleId: this.id, operation: this.relation.islike ? 1 : 0 }).then(function (d) {
-                if (d.code == 0) {
-                    _this4.relation.islike = !_this4.relation.islike;
-                } else {
-                    modal.toast({ message: d.error_message, duration: 3 });
-                }
-            }).catch(function (e) {
-                console.log(e);
-            });
-        },
-        // 不喜欢
-        unlike: function unlike() {
-            var _this5 = this;
-
-            _api2.default.unlike({ articleId: this.id, type: this.relation.isunlike ? 1 : 0 }).then(function (d) {
-                if (d.code == 0) {
-                    _this5.relation.isunlike = !_this5.relation.isunlike;
-                } else {
-                    modal.toast({ message: d.error_message, duration: 3 });
-                }
-            }).catch(function (e) {
-                console.log(e);
-            });
-        },
-        // 分享
-        share: function share(type) {
-            _api2.default.share({ articleId: this.id, type: type }).then(function (d) {
-                if (d.code == 0) {
-                    modal.toast({ message: '分享成功', duration: 3 });
-                } else {
-                    modal.toast({ message: d.error_message, duration: 3 });
-                }
-            }).catch(function (e) {
-                console.log(e);
-            });
-        },
-        // 收藏
-        collection: function collection() {
-            var _this6 = this;
-
-            _api2.default.collection({ articleId: this.id, publishedTime: this.date, operation: this.relation.iscollection ? 1 : 0 }).then(function (d) {
-                if (d.code == 0) {
-                    _this6.relation.iscollection = !_this6.relation.iscollection;
-                } else {
-                    modal.toast({ message: d.error_message, duration: 3 });
-                }
-            }).catch(function (e) {
-                console.log(e);
-            });
-        },
-        // 转发
-        forward: function forward() {
-            var _this7 = this;
-
-            _api2.default.forward({ articleId: this.id }).then(function (d) {
-                _this7.test.isforward = !_this7.test.isforward;
-            }).catch(function (e) {
-                console.log(e);
-            });
-        },
-        // 关注
-        follow: function follow() {
-            var _this8 = this;
-
-            _api2.default.follow({ articleId: this.id, authorId: this.authorId, operation: this.relation.isfollow ? 1 : 0 }).then(function (d) {
-                if (d.code == 0) {
-                    _this8.relation.isfollow = !_this8.relation.isfollow;
-                    modal.toast({ message: _this8.relation.isfollow ? '成功关注' : '成功取消关注', duration: 3 });
-                } else {
-                    modal.toast({ message: d.error_message, duration: 3 });
-                }
-            }).catch(function (e) {
-                console.log(e);
-            });
-        },
         // 阅读行为
         read: function read() {
             clearInterval(this.time.timer);
+            // 由于移除了scroller，percentage可能无法准确计算，这里设为100或者保持0
+            this.time.percentage = 100;
             _api2.default.read({ articleId: this.id, readDuration: this.time.readDuration, percentage: this.time.percentage, loadDuration: this.time.loadDuration });
-        },
-        formatDate: function formatDate(time) {
-            return this.$date.format13(time);
-        },
-        getStyle: function getStyle(item) {
-            if (item) {
-                if (typeof item == 'string') {
-                    try {
-                        item = item.replace(/(-.)/g, function ($1) {
-                            return $1.replace('-', '').toLocaleUpperCase();
-                        });
-                        item = eval('({' + item.replace(/-/ig, '') + '})');
-                    } catch (e) {
-                        console.log(e);
-                    }
-                }
-                return item;
-            } else {
-                return {};
-            }
         },
         updateIframeSize: function updateIframeSize() {
             try {
-                var iframe = this.$refs.articleIframe;
-                if (iframe) {
-                    // 计算可用视口高度
-                    var pageHeight = _weexUi.Utils.env.getPageHeight();
-                    // 减去固定元素高度
-                    var fixedElementsHeight = 90; // 顶部标题栏高度
-                    var contentAboveIframeHeight = 0; // 文章标题和作者信息高度
-                    var totalFixedHeight = fixedElementsHeight + contentAboveIframeHeight;
-
-                    // 设置最小高度为页面高度减去固定元素
-                    var iframeHeight = pageHeight - totalFixedHeight;
-
-                    // 如果iframe已经加载完成，尝试获取内容实际高度
-                    if (iframe.contentWindow && iframe.contentWindow.document) {
-                        var contentHeight = iframe.contentWindow.document.body.scrollHeight;
-                        // 取实际内容高度和最小高度的较大值
-                        iframeHeight = Math.max(iframeHeight, contentHeight + 50); // 加50px作为安全边距
-                    }
-
-                    this.iframeStyle = {
-                        height: iframeHeight + 'px',
-                        width: '100%',
-                        border: 'none',
-                        overflow: 'hidden'
-                    };
-                    console.log('更新iframe高度:', iframeHeight + 'px');
-                }
+                var pageHeight = _weexUi.Utils.env.getPageHeight();
+                this.iframeStyle = {
+                    height: pageHeight + 'px',
+                    width: '100%',
+                    border: 'none',
+                    overflow: 'hidden'
+                };
             } catch (error) {
                 console.error('更新iframe高度时出错:', error);
             }
         },
         onIframeLoad: function onIframeLoad() {
-            var _this9 = this;
-
-            // iframe加载完成后更新大小
-            setTimeout(function () {
-                _this9.updateIframeSize();
-                // 添加一个小延迟再次更新，确保内容完全渲染
-                setTimeout(function () {
-                    _this9.updateIframeSize();
-                }, 500);
-            }, 100);
-        },
-
-        getImgStyle: function getImgStyle(item) {
-            item = this.getStyle();
-            item['width'] = '750px';
-            item['height'] = '1px';
-            // 处理动态图片高度
-            var temp = this.imageHeight[item.value];
-            if (temp) {
-                item['height'] = temp;
-            }
-            return item;
+            this.time.loadOff = false;
+            this.updateIframeSize();
         }
-
     }
 };
 
 /***/ }),
-/* 336 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __vue_exports__, __vue_options__
-var __vue_styles__ = []
-
-/* styles */
-__vue_styles__.push(__webpack_require__(337)
-)
-
-/* script */
-__vue_exports__ = __webpack_require__(338)
-
-/* template */
-var __vue_template__ = __webpack_require__(339)
-__vue_options__ = __vue_exports__ = __vue_exports__ || {}
-if (
-  typeof __vue_exports__.default === "object" ||
-  typeof __vue_exports__.default === "function"
-) {
-if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
-__vue_options__ = __vue_exports__ = __vue_exports__.default
-}
-if (typeof __vue_options__ === "function") {
-  __vue_options__ = __vue_options__.options
-}
-__vue_options__.__file = "D:\\ideajava\\myProject\\leadnews-portal\\leadnews-app\\src\\compoents\\bars\\article_top_bar.vue"
-__vue_options__.render = __vue_template__.render
-__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
-__vue_options__._scopeId = "data-v-39d170fe"
-__vue_options__.style = __vue_options__.style || {}
-__vue_styles__.forEach(function (module) {
-  for (var name in module) {
-    __vue_options__.style[name] = module[name]
-  }
-})
-if (typeof __register_static_styles__ === "function") {
-  __register_static_styles__(__vue_options__._scopeId, __vue_styles__)
-}
-
-module.exports = __vue_exports__
-
-
-/***/ }),
-/* 337 */
-/***/ (function(module, exports) {
-
-module.exports = {
-  "icon": {
-    "color": "#ffffff",
-    "fontFamily": "fontawesome",
-    "fontSize": "36"
-  }
-}
-
-/***/ }),
-/* 338 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _weexUi = __webpack_require__(3);
-
-exports.default = {
-    name: "article_top_bar",
-    components: { WxcMinibar: _weexUi.WxcMinibar },
-    props: {
-        text: {
-            type: String,
-            default: '文章标题'
-        }
-    },
-    data: function data() {
-        return {
-            backgroundColor: '#3296fa',
-            useDefaultReturn: false
-        };
-    },
-    mounted: function mounted() {
-        this.backgroundColor = this.$config.style.main_bg;
-    },
-
-    computed: {
-        getText: function getText() {
-            var temp = this.text;
-            if (this.text.length > 12) {
-                temp = this.text.substring(0, 11) + '...';
-            }
-            return temp;
-        }
-    },
-    methods: {
-        noAction: function noAction() {
-            this.$config.noAction();
-        },
-        minibarLeftButtonClick: function minibarLeftButtonClick() {
-            this.$router.back();
-        },
-        minibarRightButtonClick: function minibarRightButtonClick() {}
-    }
-}; //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-/***/ }),
-/* 339 */
-/***/ (function(module, exports) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('wxc-minibar', {
-    attrs: {
-      "title": "",
-      "backgroundColor": _vm.backgroundColor,
-      "textColor": "#FFFFFF",
-      "useDefaultReturn": _vm.useDefaultReturn
-    },
-    on: {
-      "wxcMinibarLeftButtonClicked": _vm.minibarLeftButtonClick,
-      "wxcMinibarRightButtonClicked": _vm.minibarRightButtonClick
-    }
-  }, [_c('text', {
-    staticClass: ["icon"],
-    staticStyle: {
-      textAlign: "left"
-    },
-    attrs: {
-      "slot": "left"
-    },
-    slot: "left"
-  }, [_vm._v("")]), _c('text', {
-    staticClass: ["icon"],
-    staticStyle: {
-      textAlign: "left"
-    },
-    attrs: {
-      "slot": "right"
-    },
-    on: {
-      "click": _vm.noAction
-    },
-    slot: "right"
-  }, [_vm._v("···")])])
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-
-/***/ }),
-/* 340 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __vue_exports__, __vue_options__
-var __vue_styles__ = []
-
-/* styles */
-__vue_styles__.push(__webpack_require__(341)
-)
-
-/* script */
-__vue_exports__ = __webpack_require__(342)
-
-/* template */
-var __vue_template__ = __webpack_require__(346)
-__vue_options__ = __vue_exports__ = __vue_exports__ || {}
-if (
-  typeof __vue_exports__.default === "object" ||
-  typeof __vue_exports__.default === "function"
-) {
-if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
-__vue_options__ = __vue_exports__ = __vue_exports__.default
-}
-if (typeof __vue_options__ === "function") {
-  __vue_options__ = __vue_options__.options
-}
-__vue_options__.__file = "D:\\ideajava\\myProject\\leadnews-portal\\leadnews-app\\src\\compoents\\bars\\article_bottom_bar.vue"
-__vue_options__.render = __vue_template__.render
-__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
-__vue_options__._scopeId = "data-v-0fc37d3a"
-__vue_options__.style = __vue_options__.style || {}
-__vue_styles__.forEach(function (module) {
-  for (var name in module) {
-    __vue_options__.style[name] = module[name]
-  }
-})
-if (typeof __register_static_styles__ === "function") {
-  __register_static_styles__(__vue_options__._scopeId, __vue_styles__)
-}
-
-module.exports = __vue_exports__
-
-
-/***/ }),
-/* 341 */
-/***/ (function(module, exports) {
-
-module.exports = {
-  "icon": {
-    "color": "#a5a5a5",
-    "fontFamily": "fontawesome",
-    "fontSize": "48",
-    "width": "80"
-  },
-  "bar_bg": {
-    "width": "750",
-    "flexDirection": "row",
-    "alignItems": "center",
-    "borderWidth": "1",
-    "borderColor": "#efefef",
-    "backgroundColor": "#ffffff",
-    "borderStyle": "solid",
-    "height": "90",
-    "paddingTop": "4",
-    "paddingLeft": "5"
-  }
-}
-
-/***/ }),
-/* 342 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _search = __webpack_require__(15);
-
-var _search2 = _interopRequireDefault(_search);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = {
-    name: "article_bottom_bar",
-    components: { Search: _search2.default },
-    props: {
-        collection: {
-            type: Boolean,
-            default: false
-        },
-        forward: {
-            type: Boolean,
-            default: false
-        }
-    },
-    methods: {
-        clickCollection: function clickCollection() {
-            this.$emit("clickCollection", {});
-        },
-        clickForward: function clickForward() {
-            this.$emit("clickForward", {});
-        }
-    }
-}; //
-//
-//
-//
-//
-//
-//
-//
-//
-
-/***/ }),
+/* 336 */,
+/* 337 */,
+/* 338 */,
+/* 339 */,
+/* 340 */,
+/* 341 */,
+/* 342 */,
 /* 343 */
 /***/ (function(module, exports) {
 
@@ -34892,200 +34274,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
 module.exports.render._withStripped = true
 
 /***/ }),
-/* 346 */
-/***/ (function(module, exports) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticClass: ["bar_bg"]
-  }, [_c('Search', {
-    attrs: {
-      "icon": "",
-      "rightWidth": "25",
-      "placeholder": "写评论"
-    }
-  }), _c('text', {
-    staticClass: ["icon"]
-  }, [_vm._v("")]), _c('text', {
-    staticClass: ["icon"],
-    style: {
-      color: _vm.collection ? '#3296fa' : '#a5a5a5'
-    },
-    on: {
-      "click": _vm.clickCollection
-    }
-  }, [_vm._v("")]), _c('text', {
-    staticClass: ["icon"],
-    style: {
-      color: _vm.forward ? '#3296fa' : '#a5a5a5'
-    },
-    on: {
-      "click": _vm.clickForward
-    }
-  }, [_vm._v("")])], 1)
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-
-/***/ }),
-/* 347 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __vue_exports__, __vue_options__
-var __vue_styles__ = []
-
-/* styles */
-__vue_styles__.push(__webpack_require__(348)
-)
-
-/* script */
-__vue_exports__ = __webpack_require__(349)
-
-/* template */
-var __vue_template__ = __webpack_require__(350)
-__vue_options__ = __vue_exports__ = __vue_exports__ || {}
-if (
-  typeof __vue_exports__.default === "object" ||
-  typeof __vue_exports__.default === "function"
-) {
-if (Object.keys(__vue_exports__).some(function (key) { return key !== "default" && key !== "__esModule" })) {console.error("named exports are not supported in *.vue files.")}
-__vue_options__ = __vue_exports__ = __vue_exports__.default
-}
-if (typeof __vue_options__ === "function") {
-  __vue_options__ = __vue_options__.options
-}
-__vue_options__.__file = "D:\\ideajava\\myProject\\leadnews-portal\\leadnews-app\\src\\compoents\\buttons\\button.vue"
-__vue_options__.render = __vue_template__.render
-__vue_options__.staticRenderFns = __vue_template__.staticRenderFns
-__vue_options__._scopeId = "data-v-6d366b27"
-__vue_options__.style = __vue_options__.style || {}
-__vue_styles__.forEach(function (module) {
-  for (var name in module) {
-    __vue_options__.style[name] = module[name]
-  }
-})
-if (typeof __register_static_styles__ === "function") {
-  __register_static_styles__(__vue_options__._scopeId, __vue_styles__)
-}
-
-module.exports = __vue_exports__
-
-
-/***/ }),
-/* 348 */
-/***/ (function(module, exports) {
-
-module.exports = {
-  "icon": {
-    "color": "#636363",
-    "fontFamily": "fontawesome",
-    "fontSize": "32",
-    "width": "38",
-    "marginLeft": "10",
-    "marginRight": "6"
-  },
-  "botton": {
-    "borderWidth": "1",
-    "borderRadius": "30",
-    "borderColor": "#efefef",
-    "lineHeight": "60",
-    "flexDirection": "row",
-    "alignItems": "center",
-    "verticalAlign": "center",
-    "paddingTop": "10",
-    "paddingRight": "15",
-    "paddingBottom": "10",
-    "paddingLeft": "15",
-    "marginTop": "0",
-    "marginRight": "10",
-    "marginBottom": "0",
-    "marginLeft": "10"
-  },
-  "text": {
-    "color": "#636363",
-    "fontSize": "24"
-  }
-}
-
-/***/ }),
-/* 349 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-//
-//
-//
-//
-//
-//
-//
-
-exports.default = {
-    name: "button",
-    props: {
-        text: {
-            type: String,
-            default: ''
-        },
-        icon: {
-            type: String,
-            default: '\uF164'
-        },
-        active: {
-            type: Boolean,
-            default: false
-        },
-        activeText: {
-            type: String,
-            default: ''
-        }
-    },
-    data: function data() {
-        return {
-            color: ''
-        };
-    },
-
-    methods: {
-        click: function click() {
-            this.$emit('onClick', {});
-        },
-        getText: function getText() {
-            if (this.active) {
-                return this.activeText == '' ? this.text : this.activeText;
-            } else {
-                return this.text;
-            }
-        }
-    }
-};
-
-/***/ }),
-/* 350 */
-/***/ (function(module, exports) {
-
-module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', {
-    staticClass: ["botton"],
-    on: {
-      "click": _vm.click
-    }
-  }, [(_vm.icon != '') ? _c('text', {
-    staticClass: ["icon"],
-    style: {
-      color: _vm.active ? '#3296fa' : '#636363'
-    }
-  }, [_vm._v(_vm._s(_vm.icon))]) : _vm._e(), _c('text', {
-    staticClass: ["text"]
-  }, [_vm._v(_vm._s(_vm.getText()))])])
-},staticRenderFns: []}
-module.exports.render._withStripped = true
-
-/***/ }),
+/* 346 */,
+/* 347 */,
+/* 348 */,
+/* 349 */,
+/* 350 */,
 /* 351 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -35298,25 +34491,6 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   return _c('div', {
     staticClass: ["art-page"]
   }, [_c('div', {
-    staticClass: ["art-top"]
-  }, [_c('TopBar', {
-    attrs: {
-      "text": _vm.title,
-      "showBack": true
-    },
-    on: {
-      "back": _vm.goBack
-    }
-  })], 1), _c('scroller', {
-    ref: "scroller",
-    staticClass: ["scroller"],
-    attrs: {
-      "showScrollbar": "true"
-    },
-    on: {
-      "scroll": _vm.scroller
-    }
-  }, [_c('div', {
     staticClass: ["news-container"]
   }, [_c('iframe', {
     ref: "articleIframe",
@@ -35329,7 +34503,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     on: {
       "load": _vm.onIframeLoad
     }
-  })], 1)])])
+  })], 1)])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 
