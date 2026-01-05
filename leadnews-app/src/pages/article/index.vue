@@ -157,7 +157,6 @@
             onNativeError (e) {
                 this.time.loadOff = false;
                 console.error('文章详情加载失败', e, this.resolvedStaticUrl)
-                modal.toast({ message: '文章详情加载失败', duration: 2 })
             },
             getNativeOrigin () {
                 let platform = ''
