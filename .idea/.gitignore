@@ -10,4 +10,7 @@ platforms/android/bundlejs/
 platforms/ios/build/
 dist/
 build/
+platforms/android/app/src/main/assets/dist/
+node_modules/
+
 
