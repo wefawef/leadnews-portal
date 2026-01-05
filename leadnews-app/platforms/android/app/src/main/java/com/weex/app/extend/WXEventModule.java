@@ -18,7 +18,14 @@ public class WXEventModule extends WXModule {
     Uri uri = Uri.parse(url);
     String scheme = uri.getScheme();
 
-    if (scheme.equals("http") || scheme.equals("https") || scheme.equals("file")) {
+    if (TextUtils.isEmpty(scheme)) {
+      Intent renderIntent = new Intent(mWXSDKInstance.getContext(), WXPageActivity.class);
+      renderIntent.setData(uri);
+      mWXSDKInstance.getContext().startActivity(renderIntent);
+      return;
+    }
+
+    if ("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme) || "file".equalsIgnoreCase(scheme)) {
       Intent renderIntent = new Intent(mWXSDKInstance.getContext(), WXPageActivity.class);
       renderIntent.setData(uri);
       mWXSDKInstance.getContext().startActivity(renderIntent);

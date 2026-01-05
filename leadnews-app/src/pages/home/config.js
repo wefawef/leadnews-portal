@@ -1,14 +1,5 @@
 export default {
-    // tabTitles: [{title: '动态',id:'__dyna__'},
-    //     {title: '推荐',id:'__all__'},
-    //     { title: 'JAVA',id:1},
-    //     { title: 'Python',id:2},
-    //     {title: 'VUE',id:3},
-    //     {title: 'WEEX',id:4},
-    //     {title: '大数据',id:5},
-    //     {title: 'Docker',id:6},
-    //     {title: '其它',id:0}
-    // ],
+    tabTitles: [],
     tabStyles: {
         bgColor: '#FFFFFF',
         titleColor: '#666666',

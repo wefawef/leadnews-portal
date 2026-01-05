@@ -11,9 +11,13 @@ android {
         targetSdkVersion project.targetSdkVersion
         versionCode 1
         versionName "1.0.0"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                includeCompileClasspath true
+            }
+        }
         ndk {
-            abiFilters "x86"
-            abiFilters "armeabi"
+            abiFilters "x86", "x86_64", "armeabi-v7a", "arm64-v8a"
         }
     }
     applicationVariants.all { variant ->

@@ -8,6 +8,7 @@ import Register from '@/pages/register/index'
 import Screen from '@/pages/load_screen/index'
 import SearchResult from '@/pages/search_result/index'
 import UserInfo from '@/pages/user/index'
+import RealNameAuth from '@/pages/user/realname_auth'
 
 let routes = [
     {
@@ -36,6 +37,10 @@ let routes = [
         path:'/user',
         name: 'user',
         component:UserInfo
+    },{
+        path:'/user/realname_auth',
+        name: 'realname_auth',
+        component:RealNameAuth
     },{
         path:'/article',
         name: 'article-info',

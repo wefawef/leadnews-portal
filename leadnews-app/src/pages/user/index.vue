@@ -24,13 +24,17 @@
                 <text class="label">用户身份</text>
                 <text class="value">{{getFlag(userInfo.flag)}}</text>
             </div>
-            <div class="info-cell">
+            <div class="info-cell" @click="goToRealNameAuth">
                 <text class="label">实名认证</text>
-                <text class="value">{{userInfo.identityAuthentication ? '已认证' : '未认证'}}</text>
+                <text class="value">{{userInfo.identityAuthentication ? '已认证' : '未认证 >'}}</text>
             </div>
              <div class="info-cell">
                 <text class="label">创建时间</text>
                 <text class="value">{{formatDate(userInfo.createdTime)}}</text>
+            </div>
+            
+            <div class="btn-group" v-if="!userInfo.identityAuthentication">
+                <text class="btn" @click="goToRealNameAuth">去实名认证</text>
             </div>
         </scroller>
     </div>
@@ -93,6 +97,13 @@
                 if (!time) return '';
                 const date = new Date(time);
                 return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+            },
+            goToRealNameAuth() {
+                if (!this.userInfo.identityAuthentication) {
+                    this.$router.push('/user/realname_auth');
+                } else {
+                    modal.toast({ message: '您已通过实名认证', duration: 2 });
+                }
             }
         }
     }
@@ -144,5 +155,19 @@
         font-family: fontawesome;
         color: #ffffff;
         font-size: 36px;
+    }
+    .btn-group {
+        margin-top: 50px;
+        padding: 0 30px;
+        margin-bottom: 50px;
+    }
+    .btn {
+        height: 90px;
+        line-height: 90px;
+        text-align: center;
+        background-color: #3194ff;
+        color: #ffffff;
+        font-size: 36px;
+        border-radius: 45px;
     }
 </style>

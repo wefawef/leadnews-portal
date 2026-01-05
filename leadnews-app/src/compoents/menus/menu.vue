@@ -35,9 +35,11 @@
     }
     .wxc-tab-page {
         width: 750px;
-        position: absolute;
+        height: 120px;
+        position: fixed;
         left: 0;
         bottom: 0;
+        z-index: 9999;
         background-color: #ffffff;
         border-top-color: #ebebeb;
         border-top-width: 1px;
@@ -45,6 +47,7 @@
     .tab-title-list {
         flex-direction: row;
         justify-content: space-around;
+        width: 750px;
     }
     .title-item {
         justify-content: center;

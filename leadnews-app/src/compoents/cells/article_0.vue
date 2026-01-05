@@ -1,6 +1,6 @@
 <template>
     <div class="list-item">
-        <text class="title">{{data.title}}</text>
+        <text class="title" :lines="2" :style="titleStyle">{{data.title}}</text>
         <div class="tags">
             <text class="tags-text tags-icon">{{data.icon}}</text>
             <text class="tags-text">{{data.source}}</text>
@@ -16,6 +16,19 @@
         props:{
             data:{
                 type:Object
+            }
+        },
+        data () {
+            return {
+                platform: (typeof weex !== 'undefined' && weex.config && weex.config.env && weex.config.env.platform) ? weex.config.env.platform : 'Web'
+            }
+        },
+        computed: {
+            isWeb () {
+                return String(this.platform).toLowerCase() === 'web'
+            },
+            titleStyle () {
+                return this.isWeb ? {} : { fontSize: '28px', lineHeight: '40px', paddingBottom: '12px' }
             }
         },
         methods : {

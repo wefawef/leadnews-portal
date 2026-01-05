@@ -60,14 +60,10 @@ public class ImageAdapter implements IWXImgLoaderAdapter {
 
 
         if(!TextUtils.isEmpty(strategy.placeHolder)){
-          Picasso.Builder builder=new Picasso.Builder(WXEnvironment.getApplication());
-          Picasso picasso=builder.build();
-          picasso.load(Uri.parse(strategy.placeHolder)).into(view);
-
-          view.setTag(strategy.placeHolder.hashCode(),picasso);
+          Picasso.get().load(Uri.parse(strategy.placeHolder)).into(view);
         }
 
-        Picasso.with(WXEnvironment.getApplication())
+        Picasso.get()
             .load(temp)
             .transform(new BlurTransformation(strategy.blurRadius))
             .into(view, new Callback() {
@@ -76,14 +72,10 @@ public class ImageAdapter implements IWXImgLoaderAdapter {
                 if(strategy.getImageListener()!=null){
                   strategy.getImageListener().onImageFinish(url,view,true,null);
                 }
-
-                if(!TextUtils.isEmpty(strategy.placeHolder)){
-                  ((Picasso) view.getTag(strategy.placeHolder.hashCode())).cancelRequest(view);
-                }
               }
 
               @Override
-              public void onError() {
+              public void onError(Exception e) {
                 if(strategy.getImageListener()!=null){
                   strategy.getImageListener().onImageFinish(url,view,false,null);
                 }

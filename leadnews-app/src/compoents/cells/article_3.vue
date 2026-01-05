@@ -1,8 +1,16 @@
 <template>
     <div class="list-item">
-        <text class="title">{{formatTitle(data.title)}}</text>
+        <text class="title" :lines="2" :style="titleStyle">{{formatTitle(data.title)}}</text>
         <div class="item-image">
-            <image class="image" v-for="(img, index) in displayImages" :key="img + index" :src="img" @load="onImageLoad(img)"></image>
+            <image
+                class="image"
+                resize="cover"
+                v-for="(img, index) in displayImages"
+                :key="img + index"
+                :src="img"
+                :style="{ marginRight: index === displayImages.length - 1 ? '0px' : '9px' }"
+                @load="onImageLoad(img)"
+            ></image>
         </div>
         <div class="tags">
             <text class="tags-text tags-icon">{{data.icon}}</text>
@@ -21,7 +29,18 @@
                 type:Object
             }
         },
+        data () {
+            return {
+                platform: (typeof weex !== 'undefined' && weex.config && weex.config.env && weex.config.env.platform) ? weex.config.env.platform : 'Web'
+            }
+        },
         computed: {
+            isWeb () {
+                return String(this.platform).toLowerCase() === 'web'
+            },
+            titleStyle () {
+                return this.isWeb ? {} : { fontSize: '28px', lineHeight: '40px', paddingBottom: '12px' }
+            },
             // 限制最多显示3张图片
             displayImages: function() {
                 if (!this.data.image || !Array.isArray(this.data.image)) {
@@ -63,22 +82,10 @@
         box-sizing: border-box;
     }
     .image{
-        width: calc(33.33% - 6px);
+        flex: 1;
         height: 150px;
-        margin-right: 9px;
         border-radius: 8px;
         overflow: hidden;
         background-color: #f0f0f0;
-    }
-    /* 处理只有2张图片的情况 */
-    .item-image .image:first-child:nth-last-child(2),
-    .item-image .image:last-child:nth-child(2) {
-        width: calc(50% - 5px);
-        margin-right: 10px;
-        height: 150px;
-    }
-    /* 最后一张图片去掉右外边距 */
-    .image:last-child{
-        margin-right: 0;
     }
 </style>

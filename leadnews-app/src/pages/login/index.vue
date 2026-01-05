@@ -25,14 +25,12 @@
                            class="input"
                     />
                 </div>
-                <text class="button" @click="login">立即登录</text>
+                <div class="button" @click="login">
+                    <text class="button-text">立即登录</text>
+                </div>
                 <div class="more">
-                    <router-link to="/register">
-                        <text class="go-register" @click="goRegister">注册新账号</text>
-                    </router-link>
-                    <router-link to="/home">
-                        <text class="go-home" @click="see">游客试用 ></text>
-                    </router-link>
+                    <text class="go-register" @click="goRegister">注册新账号</text>
+                    <text class="go-home" @click="see">游客试用 ></text>
                 </div>
             </div>
         </div>
@@ -135,7 +133,7 @@
         flex: 1;
         width: 750px;
         flex-direction: column;
-        background-image: linear-gradient(to bottom, #e0f2ff, #ffffff);
+        background-color: #e0f2ff;
     }
     .log-top{
         width: 750px;
@@ -170,15 +168,15 @@
     .login-card {
         width: 690px;
         padding: 40px 30px;
-        background-color: rgba(255, 255, 255, 0.8);
+        background-color: #ffffff;
         border-radius: 30px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
         align-items: center;
     }
     .icon{
         color: #3194ff;
         font-size: 38px;
         margin-left: 10px;
+        font-family: fontawesome;
     }
     .input-wapper {
         flex-direction: row;
@@ -231,15 +229,17 @@
     }
     .button{
         margin-top: 60px;
-        background-image: linear-gradient(to right, #3194ff, #50b5ff);
+        background-color: #3194ff;
         width: 630px;
         height: 100px;
-        line-height: 100px;
         border-radius: 50px;
+        justify-content: center;
+        align-items: center;
+    }
+    .button-text{
         color: #ffffff;
         text-align: center;
         font-size: 36px;
         font-weight: bold;
-        box-shadow: 0 10px 25px rgba(49, 148, 255, 0.4);
     }
 </style>

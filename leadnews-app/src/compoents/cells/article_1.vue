@@ -1,7 +1,7 @@
 <template>
     <div class="list-item">
         <div class="content-box">
-            <text class="title">{{formatTitle(data.title)}}</text>
+            <text class="title" :lines="2" :style="titleStyle">{{formatTitle(data.title)}}</text>
             <div class="tags">
                 <text class="tags-text tags-icon">{{data.icon}}</text>
                 <text class="tags-text">{{data.source}}</text>
@@ -10,7 +10,7 @@
             </div>
         </div>
         <div class="image-container">
-            <image class="image" :src="data.image[0]" :key="data.image[0]" @load="onImageLoad"/>
+            <image class="image" resize="cover" :src="data.image[0]" :key="data.image[0]" @load="onImageLoad"/>
         </div>
     </div>
 </template>
@@ -21,6 +21,19 @@
         props:{
             data:{
                 type:Object
+            }
+        },
+        data () {
+            return {
+                platform: (typeof weex !== 'undefined' && weex.config && weex.config.env && weex.config.env.platform) ? weex.config.env.platform : 'Web'
+            }
+        },
+        computed: {
+            isWeb () {
+                return String(this.platform).toLowerCase() === 'web'
+            },
+            titleStyle () {
+                return this.isWeb ? {} : { fontSize: '28px', lineHeight: '40px', paddingBottom: '12px' }
             }
         },
         methods : {

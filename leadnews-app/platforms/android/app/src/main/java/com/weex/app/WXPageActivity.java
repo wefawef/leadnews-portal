@@ -165,7 +165,8 @@ public class WXPageActivity extends AbsWeexActivity implements
     if (TextUtils.equals(errCode, WXErrorCode.WX_DEGRAD_ERR_NETWORK_CHECK_CONTENT_LENGTH_FAILED.getErrorCode())) {
       mTipView.setText(R.string.index_tip);
     } else {
-      mTipView.setText("render error:" + errCode);
+      String safeMsg = msg == null ? "" : msg;
+      mTipView.setText("render error:" + errCode + "\nurl:" + getUrl() + "\n" + safeMsg);
     }
   }
 
@@ -184,7 +185,6 @@ public class WXPageActivity extends AbsWeexActivity implements
         break;
       case R.id.action_scan:
         IntentIntegrator integrator = new IntentIntegrator(this);
-        integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
         integrator.setPrompt("Scan a barcode");
         //integrator.setCameraId(0);  // Use a specific camera of the device
         integrator.setBeepEnabled(true);

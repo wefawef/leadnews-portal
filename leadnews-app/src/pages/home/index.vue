@@ -138,20 +138,34 @@
       
       // 如果不需要恢复滚动位置，使用正常的频道恢复逻辑
       if (!this.needRestoreScroll) {
-        // 优先从lastChannelIndex获取频道信息（这是点击文章时保存的频道）
-        const lastChannelIndex = sessionStorage.getItem('lastChannelIndex');
-        const lastChannelTag = sessionStorage.getItem('lastChannelTag');
-        
-        if (lastChannelIndex !== null) {
-          this.params.index = parseInt(lastChannelIndex);
-          this.params.tag = lastChannelTag || '__all__';
-          console.log('从lastChannelIndex恢复频道索引:', this.params.index, '标签:', this.params.tag);
+        const hasSessionStorage = typeof sessionStorage !== 'undefined' && sessionStorage;
+        if (hasSessionStorage) {
+          const lastChannelIndex = sessionStorage.getItem('lastChannelIndex');
+          const lastChannelTag = sessionStorage.getItem('lastChannelTag');
           
-          // 清除保存的频道信息，避免重复使用
-          sessionStorage.removeItem('lastChannelIndex');
-          sessionStorage.removeItem('lastChannelTag');
+          if (lastChannelIndex !== null) {
+            this.params.index = parseInt(lastChannelIndex);
+            this.params.tag = lastChannelTag || '__all__';
+            console.log('从lastChannelIndex恢复频道索引:', this.params.index, '标签:', this.params.tag);
+            
+            sessionStorage.removeItem('lastChannelIndex');
+            sessionStorage.removeItem('lastChannelTag');
+          } else {
+            const routeChannelIndex = this.$route.query.channelIndex;
+            const routeChannelTag = this.$route.query.channelTag;
+            
+            if (routeChannelIndex !== undefined) {
+              this.params.index = parseInt(routeChannelIndex);
+              console.log('从路由参数恢复频道索引:', this.params.index);
+              if (routeChannelTag) {
+                this.params.tag = routeChannelTag;
+                console.log('从路由参数恢复频道标签:', this.params.tag);
+              }
+              
+              this.$router.replace({ name: 'Home' });
+            }
+          }
         } else {
-          // 如果lastChannelIndex不存在，再尝试从路由参数获取
           const routeChannelIndex = this.$route.query.channelIndex;
           const routeChannelTag = this.$route.query.channelTag;
           
@@ -163,7 +177,6 @@
               console.log('从路由参数恢复频道标签:', this.params.tag);
             }
             
-            // 清除URL参数，避免重复使用
             this.$router.replace({ name: 'Home' });
           }
         }
@@ -225,8 +238,7 @@
                   });
               } else {
                   console.log('频道列表加载失败，使用默认配置:', d);
-                  // 如果接口失败，使用默认配置
-                  this.tabTitles = Config.tabTitles;
+                  this.tabTitles = Array.isArray(Config.tabTitles) ? Config.tabTitles : [];
                   this.tabList = [...Array(this.tabTitles.length).keys()].map(i => []);
                   this.hasMoreData = {};
                   this.tabTitles.forEach((ch, idx) => {
@@ -237,22 +249,25 @@
               
               // 统一在最后调用一次load，避免重复加载
               this.$nextTick(() => {
-                  if(this.$refs['wxc-tab-page']){                       
+                  const tabPage = this.$refs['wxc-tab-page'];
+                  if(tabPage && Array.isArray(this.tabTitles) && this.tabTitles.length > 0){                       
                       // 避免使用可选链操作符，使用传统条件检查
-                      const channelTitle = this.tabTitles[this.params.index] ? this.tabTitles[this.params.index].title : '未知';
-                      console.log('准备设置频道索引:', this.params.index, '对应频道:', channelTitle);
+                      const safeIndex = Math.max(0, Math.min(this.params.index, this.tabTitles.length - 1));
+                      const channelTitle = this.tabTitles[safeIndex] ? this.tabTitles[safeIndex].title : '未知';
+                      console.log('准备设置频道索引:', safeIndex, '对应频道:', channelTitle);
                       // 设置到指定的频道索引，禁用动画效果避免闪烁
-                      this.$refs['wxc-tab-page'].setPage(this.params.index, null, false);
+                      tabPage.setPage(safeIndex, null, false);
                       
                       // 确保当前频道的标签正确设置
-                      this.params.tag = this.tabTitles[this.params.index] ? this.tabTitles[this.params.index].id : '__all__';
+                      this.params.index = safeIndex;
+                      this.params.tag = this.tabTitles[safeIndex] ? this.tabTitles[safeIndex].id : '__all__';
                       console.log('频道标签设置为:', this.params.tag);
                       // 首次加载按普通加载处理，避免显示加载更多
                       this.params.loaddir = 0;
                       
                       // 加载数据
                       this.load();
-                    } else {
+                    } else if(!tabPage) {
                       console.error('wxc-tab-page组件未找到，无法设置频道');
                     }
                   
@@ -267,7 +282,7 @@
           }).catch((e)=>{
               console.error('加载频道异常:', e);
               // 如果接口失败，使用默认配置
-              this.tabTitles = Config.tabTitles;
+              this.tabTitles = Array.isArray(Config.tabTitles) ? Config.tabTitles : [];
               this.tabList = [...Array(this.tabTitles.length).keys()].map(i => []);
               this.hasMoreData = {};
               this.tabTitles.forEach((ch, idx) => {
@@ -277,22 +292,45 @@
               
               // 统一在最后调用一次load，避免重复加载
               this.$nextTick(() => {
-                  if(this.$refs['wxc-tab-page']){                        
-                      console.log('准备设置频道索引(异常情况):', this.params.index, '对应频道:', this.tabTitles[this.params.index] ? this.tabTitles[this.params.index].title : '未知');
+                  const tabPage = this.$refs['wxc-tab-page'];
+                  if(tabPage && Array.isArray(this.tabTitles) && this.tabTitles.length > 0){                        
+                      const safeIndex = Math.max(0, Math.min(this.params.index, this.tabTitles.length - 1));
+                      console.log('准备设置频道索引(异常情况):', safeIndex, '对应频道:', this.tabTitles[safeIndex] ? this.tabTitles[safeIndex].title : '未知');
                       // 设置到指定的频道索引，禁用动画效果避免闪烁
-                      this.$refs['wxc-tab-page'].setPage(this.params.index, null, false);
+                      tabPage.setPage(safeIndex, null, false);
                       
                       // 确保当前频道的标签正确设置
-                      this.params.tag = this.tabTitles[this.params.index] ? this.tabTitles[this.params.index].id : '__all__';
+                      this.params.index = safeIndex;
+                      this.params.tag = this.tabTitles[safeIndex] ? this.tabTitles[safeIndex].id : '__all__';
                       console.log('频道标签设置为(异常情况):', this.params.tag);
                       
                       // 加载数据
                       this.load();
-                  } else {
+                  } else if(!tabPage) {
                       console.error('wxc-tab-page组件未找到，无法设置频道(异常情况)');
                   }
               });
-          });
+          }).catch((e)=>{
+              console.log('频道列表请求异常，使用默认配置:', e);
+              this.tabTitles = Array.isArray(Config.tabTitles) ? Config.tabTitles : [];
+              this.tabList = [...Array(this.tabTitles.length).keys()].map(i => []);
+              this.hasMoreData = {};
+              this.tabTitles.forEach((ch, idx) => {
+                  this.hasMoreData[idx] = true;
+              });
+              this.loadingChannels = false;
+              this.$nextTick(() => {
+                  const tabPage = this.$refs['wxc-tab-page'];
+                  if(tabPage && Array.isArray(this.tabTitles) && this.tabTitles.length > 0){
+                      const safeIndex = Math.max(0, Math.min(this.params.index, this.tabTitles.length - 1));
+                      tabPage.setPage(safeIndex, null, false);
+                      this.params.index = safeIndex;
+                      this.params.tag = this.tabTitles[safeIndex] ? this.tabTitles[safeIndex].id : '__all__';
+                      this.params.loaddir = 0;
+                      this.load();
+                  }
+              });
+          })
       },
       // 恢复滚动位置的方法
       restoreScrollPosition() {
@@ -549,10 +587,25 @@
           for(let i=0;i<data.length;i++){
             let ims = [];
             if(data[i].images){
-              // 处理图片字符串，移除方括号并分割
-              let imgStr = String(data[i].images).replace(/[\[\]]/ig,'').trim();
-              if(imgStr){
-                ims = imgStr.split(',').filter(img => img.trim()).map(img => img.trim());
+              let rawImages = String(data[i].images).trim();
+              try{
+                if(rawImages.charAt(0) === '['){
+                  let parsed = JSON.parse(rawImages);
+                  if(Array.isArray(parsed)){
+                    ims = parsed.map(s => String(s).replace(/[`'"\s]/g, '').trim()).filter(Boolean);
+                  }
+                }
+              }catch(e){
+                ims = [];
+              }
+              if(!ims || ims.length === 0){
+                let imgStr = rawImages.replace(/[\[\]]/ig,'').trim();
+                if(imgStr){
+                  ims = imgStr
+                    .split(',')
+                    .map(img => String(img).replace(/[`'"\s]/g, '').trim())
+                    .filter(Boolean);
+                }
               }
             }
             
@@ -567,6 +620,7 @@
             
             // 先创建一个新对象，复制所有原始字段
             let tmp = {...data[i]};
+            tmp.title = String(tmp.title || '').replace(/\s+/g,'').trim();
             // 添加视图需要的额外字段
             tmp.comment = tmp.comment || 0;
             tmp.source = tmp.authorName || '未知';
@@ -689,8 +743,9 @@
         // 获取token和equipmentId并拼接到url
         Promise.all([
           this.$store.getToken(),
-          this.$store.getEquipmentId()
-        ]).then(([token, equipmentId]) => {
+          this.$store.getEquipmentId(),
+          this.$store.getUser()
+        ]).then(([token, equipmentId, user]) => {
           let url = item.staticUrl;
           if (url) {
             const separator = url.indexOf('?') !== -1 ? '&' : '?';
@@ -711,6 +766,7 @@
             const params = {
               token: token || '',
               equipmentId: equipmentId || '',
+              uid: user ? user.id : '',
               articleId: item.id || '',
               title: encodeURIComponent(item.title || ''),
               authorId: item.authorId || 0,
