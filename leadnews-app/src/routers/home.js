@@ -9,6 +9,7 @@ import Screen from '@/pages/load_screen/index'
 import SearchResult from '@/pages/search_result/index'
 import UserInfo from '@/pages/user/index'
 import RealNameAuth from '@/pages/user/realname_auth'
+import EditUserInfo from '@/pages/user/edit_info'
 
 let routes = [
     {
@@ -41,6 +42,11 @@ let routes = [
         path:'/user/realname_auth',
         name: 'realname_auth',
         component:RealNameAuth
+    },{
+        path:'/user/edit_info',
+        name: 'user_edit_info',
+        component:EditUserInfo,
+        props:true
     },{
         path:'/article',
         name: 'article-info',

@@ -3,13 +3,6 @@
     <hamburger :toggle-click="toggleSideBar" class="hamburger-container"/>
     <span class="company-container">校园头条</span>
     <div class="right-menu">
-      <el-tooltip content="搜索" effect="dark" placement="bottom">
-       <el-input v-model="searchText" type="text" @keyup.enter.native="searchInfo" size="small" style='width:180px;margin-right:20px' placeholder="请输入搜索的文章内容"  prefix-icon="el-icon-search"  >
-     </el-input>
-      </el-tooltip>
-      <el-tooltip content="消息" effect="dark" placement="bottom">
-        <span>消息</span>
-      </el-tooltip>
       <el-dropdown class="avatar-container right-menu-item" trigger="click">
         <div class="avatar-wrapper">
           <img :src="headImg" class="user-avatar">

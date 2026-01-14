@@ -37,7 +37,8 @@
     methods:{
       queryData() {
         let params = {
-          status: this.selectState.value
+          status: this.selectState.value,
+          page: 1
         }
         this.changeParam(params)
       },

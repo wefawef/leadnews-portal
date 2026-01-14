@@ -9,8 +9,9 @@
         </wxc-minibar>
         <scroller class="scroller">
             <div class="header">
-                <image class="avatar" :src="userInfo.image || defaultAvatar" placeholder="http://192.168.3.133:9000/leadnews/2025/12/17/2c98fd9bfda44e6bb40f9ea356c7e5bd.jpg"></image>
+                <image class="avatar" :src="userInfo.image || defaultAvatar" placeholder="http://192.168.3.133:9000/leadnews/2025/12/17/2c98fd9bfda44e6bb40f9ea356c7e5bd.jpg" @click="onAvatarClick"></image>
                 <text class="username">{{userInfo.name || '未知用户'}}</text>
+                <text class="edit-info-btn" @click="goEditUserInfo">修改个人信息</text>
             </div>
             <div class="info-cell">
                 <text class="label">手机号码</text>
@@ -26,7 +27,7 @@
             </div>
             <div class="info-cell" @click="goToRealNameAuth">
                 <text class="label">实名认证</text>
-                <text class="value">{{userInfo.identityAuthentication ? '已认证' : '未认证 >'}}</text>
+                <text class="value">{{userInfo.identityAuthentication ? '√初始账号姓名 密码123456' : '×未认证'}}</text>
             </div>
              <div class="info-cell">
                 <text class="label">创建时间</text>
@@ -37,6 +38,7 @@
                 <text class="btn" @click="goToRealNameAuth">去实名认证</text>
             </div>
         </scroller>
+        <input type="file" ref="avatarInput" style="display:none" @change="handleAvatarFileChange" accept="image/*" />
     </div>
 </template>
 
@@ -58,6 +60,9 @@
             Api.setVue(this);
             this.loadUserInfo();
         },
+        activated() {
+            this.loadUserInfo();
+        },
         methods: {
             minibarLeftButtonClick() {
                 this.$router.back();
@@ -66,6 +71,9 @@
                 Api.getUserInfo({}).then(d => {
                     if(d.code == 200){
                         this.userInfo = d.data;
+                        if(this.$store && this.$store.setUser){
+                            this.$store.setUser(d.data).catch(() => {});
+                        }
                     }else{
                         modal.toast({
                             message: d.errorMessage || '获取用户信息失败',
@@ -104,6 +112,90 @@
                 } else {
                     modal.toast({ message: '您已通过实名认证', duration: 2 });
                 }
+            },
+            goEditUserInfo() {
+                this.$router.push({
+                    name: 'user_edit_info',
+                    params: {
+                        id: this.userInfo.id,
+                        name: this.userInfo.name,
+                        phone: this.userInfo.phone,
+                        sex: this.userInfo.sex
+                    }
+                });
+            },
+            onAvatarClick() {
+                if (weex.config.env.platform === 'Web') {
+                    if (this.$refs.avatarInput) {
+                        this.$refs.avatarInput.click();
+                    } else {
+                        modal.toast({ message: '暂不支持此环境上传', duration: 2 });
+                    }
+                    return;
+                }
+                const imageModule = weex.requireModule('image');
+                if (imageModule && imageModule.pickImage) {
+                    imageModule.pickImage((res) => {
+                        if (res && (res.url || res.path)) {
+                            const fileUrl = res.url || ('file://' + res.path);
+                            this.userInfo.image = fileUrl;
+                            this.uploadAvatar(fileUrl);
+                        }
+                    });
+                } else {
+                    modal.toast({ message: 'Native模块未加载', duration: 2 });
+                }
+            },
+            handleAvatarFileChange(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.userInfo.image = e.target.result;
+                };
+                reader.readAsDataURL(file);
+
+                this.uploadAvatar(file);
+
+                event.target.value = '';
+            },
+            async uploadAvatar(image) {
+                let userId = this.userInfo && this.userInfo.id;
+                if (!userId && this.$store && this.$store.getUser) {
+                    const cachedUser = await this.$store.getUser().catch(() => null);
+                    userId = cachedUser ? cachedUser.id : null;
+                }
+                if (!userId) {
+                    modal.toast({ message: '未获取到用户ID', duration: 2 });
+                    return;
+                }
+
+                Api.upUserImage(userId, image).then((d) => {
+                    if (d && (d.code === 200 || d.success === true)) {
+                        let newImage = '';
+                        if (d.data) {
+                            if (typeof d.data === 'string') {
+                                newImage = d.data;
+                            } else if (d.data.image) {
+                                newImage = d.data.image;
+                            } else if (d.data.url) {
+                                newImage = d.data.url;
+                            }
+                        }
+                        if (newImage) {
+                            this.userInfo.image = newImage;
+                            if (this.$store && this.$store.setUser) {
+                                this.$store.setUser(this.userInfo).catch(() => {});
+                            }
+                        }
+                        modal.toast({ message: '头像更新成功', duration: 2 });
+                    } else {
+                        modal.toast({ message: (d && (d.errorMessage || d.message)) || '头像更新失败', duration: 2 });
+                    }
+                }).catch((e) => {
+                    modal.toast({ message: (e && (e.errorMessage || e.message)) || '头像更新失败', duration: 2 });
+                });
             }
         }
     }
@@ -133,6 +225,15 @@
         font-size: 36px;
         color: #333333;
         font-weight: bold;
+    }
+    .edit-info-btn{
+        margin-top: 12px;
+        font-size: 28px;
+        color: #3194ff;
+        padding: 10px 18px;
+        border-width: 1px;
+        border-color: #3194ff;
+        border-radius: 26px;
     }
     .info-cell {
         background-color: #ffffff;

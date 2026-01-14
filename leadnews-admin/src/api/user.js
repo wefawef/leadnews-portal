@@ -1,5 +1,5 @@
 import Request from '@/utils/request' 
-import { API_USERPROFILE , API_HEAD} from  '@/constants/api'
+import { API_USERPROFILE , API_HEAD, API_USER_LIST, API_USER_UPDATE, API_WEMEDIA_USER_UPDATE} from  '@/constants/api'
 //获取用户个人信息
 export function getUserProfile () {
     return  Request({
@@ -22,5 +22,30 @@ export function updateUserHead  (data) {
     url:API_HEAD,
     method:'patch',
     data
+  })
+}
+
+//用户状态更新
+export function updateUserStatus(data) {
+  return Request({
+    url: API_USER_UPDATE,
+    method: 'post',
+    data
+  })
+}
+
+//自媒体用户状态更新
+export function updateWmUserStatus(data) {
+  return Request({
+    url: API_WEMEDIA_USER_UPDATE,
+    method: 'post',
+    data
+  })
+}
+export function authLoadList(keyWord) {
+  return Request({
+    url: API_USER_LIST,
+    method: 'post',
+    params: { keyWord }
   })
 }

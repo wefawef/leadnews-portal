@@ -20,28 +20,35 @@
         label="状态">
         <template slot-scope="scope">
           <span>
-             <el-tag class="audit" v-if="scope.row.status == '1'">待审核</el-tag>
-             <el-tag class="publish" v-if="scope.row.status == '2'">驳回审核</el-tag>
-             <el-tag class="publish" v-if="scope.row.status == '9'">审核通过</el-tag>
+             <el-tag type="info" v-if="scope.row.status == '0'">创建中</el-tag>
+             <el-tag v-if="scope.row.status == '1'">待审核</el-tag>
+             <el-tag type="danger" v-if="scope.row.status == '2'">审核失败</el-tag>
+             <el-tag type="success" v-if="scope.row.status == '9'">审核通过</el-tag>
           </span>
         </template>
       </el-table-column>
       <el-table-column
         label="正面照">
         <template slot-scope="scope">
-          <span><img class="article-img" :src="getImage(scope.row.font_image, 'back_image')"/></span>
+          <span><img class="article-img" :src="getImage(scope.row.fontImage)" @error="imageError"/></span>
         </template>
       </el-table-column>
       <el-table-column
         label="背面照">
         <template slot-scope="scope">
-          <span><img class="article-img" :src="getImage(scope.row.back_image, 'back_image')"/></span>
+          <span><img class="article-img" :src="getImage(scope.row.backImage)" @error="imageError"/></span>
         </template>
       </el-table-column>
       <el-table-column
         label="手持照">
         <template slot-scope="scope">
-          <span><img class="article-img" :src="getImage(scope.row.hold_image, 'hold_image')"/></span>
+          <span><img class="article-img" :src="getImage(scope.row.holdImage)" @error="imageError"/></span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="活体照">
+        <template slot-scope="scope">
+          <span><img class="article-img" :src="getImage(scope.row.liveImage)" @error="imageError"/></span>
         </template>
       </el-table-column>
       <el-table-column
@@ -53,7 +60,7 @@
       <el-table-column
         label="提交时间">
         <template slot-scope="scope">
-          <span><dd class="time">{{dateFormat(scope.row.submited_time)}}</dd></span>
+          <span><dd class="time">{{dateFormat(scope.row.submitedTime)}}</dd></span>
         </template>
       </el-table-column>
       <el-table-column label="操作"
@@ -87,6 +94,7 @@
 <script>
 import DateUtil from '@/utils/date'
 const avatar = require('@/assets/avatar.jpg')
+const emptyImage = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
 export default {
   props: ['host','authList','pageSize','total','changePage','authPassRealName', 'authFailRealName'],
   data() {
@@ -101,11 +109,19 @@ export default {
     }
   },
   methods: {
-    getImage : function(item, key){
-      if(item[key]){
-        return this.host+item[key];
+    getImage (url){
+      if(url){
+        // 去除首尾空格和可能存在的反引号
+        url = url.trim().replace(/`/g, '');
+        if (url.indexOf("http") === 0) return url;
+        // 如果是相对路径但没有 host，返回 avatar 避免裂图
+        if (!this.host) return emptyImage;
+        return this.host + url;
       }
-      return avatar
+      return emptyImage
+    },
+    imageError(e) {
+      e.target.src = emptyImage
     },
     //页码变化 调用上层组件的方法
     pageChange (newPage) {

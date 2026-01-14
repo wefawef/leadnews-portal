@@ -18,7 +18,11 @@ module.exports = {
             pathRewrite: {
               '^/server_85/ADMIN/api/v1/sensitive': '/wemedia/api/v1/sensitive',
               '^/server_85/ADMIN/api/v1/channel': '/wemedia/api/v1/channel',
+              '^/server_85/ADMIN/api/v1/auth': '/user/api/v1/auth',
+              '^/server_85/ADMIN/api/v1/user': '/wemedia/api/v1/user',
+              '^/server_85/ADMIN/api/v1/personal': '/user/api/v1/personal',
               '^/server_85/ADMIN': '/admin'
+
         }
       },
       '/server_85/WEBSOCKET': {

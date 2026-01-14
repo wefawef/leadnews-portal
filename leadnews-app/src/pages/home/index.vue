@@ -767,6 +767,8 @@
               token: token || '',
               equipmentId: equipmentId || '',
               uid: user ? user.id : '',
+              userName: encodeURIComponent(user ? user.name || '' : ''),
+              userImage: decodeURIComponent(user ? user.image || '' : ''),
               articleId: item.id || '',
               title: encodeURIComponent(item.title || ''),
               authorId: item.authorId || 0,

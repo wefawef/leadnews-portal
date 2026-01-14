@@ -30,9 +30,9 @@ export const  API_STATISTICS_FANS = '/api/v1/statistics/fans' //粉丝统计
 export const  API_STATISTICS_PORTRAIT = '/api/v1/statistics/portrait' //画像统计
 
 export const  API_WEBSOCKET_AUTH = '/api/v1/websocket/admin' //ws授权验证
-export const  API_AUTH_LIST = '/api/v1/admin/auth/list' //审核列表
-export const  API_AUTH_PASS = '/api/v1/admin/auth/authPass' //通过审核
-export const  API_AUTH_FAIL = '/api/v1/admin/auth/authFail' //通过审核
+export const  API_AUTH_LIST = '/api/v1/auth/list' //审核列表
+export const  API_AUTH_PASS = '/api/v1/auth/authPass' //通过审核
+export const  API_AUTH_FAIL = '/api/v1/auth/authFail' //通过审核
 
 export  const  API_COMMON_LIST = '/api/v1/sensitive/list' // 通用的列表加载器
 export  const  API_COMMON_UPDATE = '/api/v1/sensitive/update' // 通用的修改
@@ -43,6 +43,11 @@ export const API_SENSITIVE_LIST = '/api/v1/sensitive/list' // 列表查询（Sen
 export const API_SENSITIVE_SAVE = '/api/v1/sensitive/save' // 新增（实体：{sensitives}）
 export const API_SENSITIVE_UPDATE = '/api/v1/sensitive/update' // 修改（实体：{id,sensitives}）
 export const API_SENSITIVE_DELETE = '/api/v1/sensitive/del' // 删除（路径参数：/del/{id}）
+
+// User module endpoints
+export const API_USER_LIST = '/api/v1/personal/userList' // 用户列表
+export const API_USER_UPDATE = '/api/v1/personal/upDate' // 用户状态更新
+export const API_WEMEDIA_USER_UPDATE = '/api/v1/user/upDate' // 自媒体用户状态更新
 
 // Channel module endpoints
 export const API_CHANNEL_LIST_ALL = '/api/v1/channel/channels'

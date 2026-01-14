@@ -73,7 +73,7 @@ service.interceptors.response.use(
        message = '请求参数错误'
       break;
       case 401:
-      message = 'token过期或未传'
+      message = '登入信息过期！ 请重新登入'
       break;
       case 403:
        message = '操作失败'

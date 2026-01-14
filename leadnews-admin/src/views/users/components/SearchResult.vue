@@ -9,10 +9,14 @@
           <el-table-column :label="item.label" v-if="item.type=='radio'">
             <template slot-scope="scope">
               <template v-for="rs in  item.radios">
-                <template v-if="rs.value==scope.row[item.name]">
-                  <el-tag effect="plain" type="info"  v-if="scope.row[item.name]==false">{{rs.label}}</el-tag>
-                  <el-tag effect="plain" type="success"  v-else-if="scope.row[item.name]==true">{{rs.label}}</el-tag>
-                  <el-tag effect="plain" type="info"  v-else-if="scope.row[item.name]==0">{{rs.label}}</el-tag>
+                <!-- 处理布尔值 -->
+                <template v-if="typeof scope.row[item.name] === 'boolean'">
+                  <el-tag effect="plain" type="info"  v-if="scope.row[item.name]==false && rs.value===0">{{rs.label}}</el-tag>
+                  <el-tag effect="plain" type="success"  v-else-if="scope.row[item.name]==true && rs.value===1">{{rs.label}}</el-tag>
+                </template>
+                <!-- 处理数字值 -->
+                <template v-else-if="rs.value==scope.row[item.name]">
+                  <el-tag effect="plain" type="info"  v-if="scope.row[item.name]==0">{{rs.label}}</el-tag>
                   <el-tag effect="plain" type="success"  v-else-if="scope.row[item.name]==1">{{rs.label}}</el-tag>
                   <el-tag effect="plain" type="warning"  v-else-if="scope.row[item.name]==2">{{rs.label}}</el-tag>
                   <el-tag effect="plain" type="danger"  v-else-if="scope.row[item.name]==3">{{rs.label}}</el-tag>
@@ -22,9 +26,37 @@
               </template>
             </template>
           </el-table-column>
-          <el-table-column :label="item.label" v-else-if="item.name.indexOf('_time')>-1">
+          <el-table-column :label="item.label" v-else-if="item.name === 'sex'">
+             <template slot-scope="scope">
+               <span v-if="scope.row.sex === false || scope.row.sex === 0">男</span>
+               <span v-else-if="scope.row.sex === true || scope.row.sex === 1">女</span>
+               <span v-else>未知</span>
+             </template>
+          </el-table-column>
+          <el-table-column :label="item.label" v-else-if="item.name === 'identityAuthentication'">
+            <template slot-scope="scope">
+              <span v-if="scope.row.identityAuthentication === false || scope.row.identityAuthentication === 0 || scope.row.identityAuthentication === null">未认证</span>
+              <span v-else-if="scope.row.identityAuthentication === true || scope.row.identityAuthentication === 1">已认证</span>
+              <span v-else>未知</span>
+            </template>
+          </el-table-column>
+          <el-table-column :label="item.label" v-else-if="item.name === 'flag'">
+            <template slot-scope="scope">
+              <span v-if="scope.row.flag === 0">普通用户</span>
+              <span v-else-if="scope.row.flag === 1">自媒体人</span>
+              <span v-else-if="scope.row.flag === 2">大V</span>
+              <span v-else>未知</span>
+            </template>
+          </el-table-column>
+          <el-table-column :label="item.label" v-else-if="item.name.indexOf('_time')>-1 || item.name.indexOf('Time')>-1">
             <template slot-scope="scope">
               <span>{{ dateFormat(scope.row[item.name]) }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column :label="item.label" v-else-if="item.name === 'status'">
+            <template slot-scope="scope">
+              <el-tag type="success" v-if="scope.row.status === false || scope.row.status === 0">正常</el-tag>
+              <el-tag type="danger" v-else>锁定</el-tag>
             </template>
           </el-table-column>
           <el-table-column :label="item.label" v-else>
@@ -39,16 +71,13 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            @click="operateForView(scope.row)">查看</el-button>
-          <el-button
-            size="mini"
             type="danger"
             v-if="scope.row.status == 1"
             @click="operateForDisable(scope.row.id,0,scope.$index )">启用</el-button>
           <el-button
             size="mini"
             v-else
-            @click="operateForDisable(scope.row.id,1,scope.$index )">锁定</el-button>
+            @click="operateForDisable(scope.row.id,1,scope.$index )">用户锁定</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -66,7 +95,7 @@
 
 <script>
 import DateUtil from '@/utils/date'
-import {updateData} from '@/api/common'
+import {updateUserStatus, updateWmUserStatus} from '@/api/user'
 const avatar = require('@/assets/avatar.jpg')
 export default {
   props: ['host','list','fileds','table','pageSize','total','changePage','changeStatus','editData','viewData'],
@@ -88,7 +117,13 @@ export default {
   methods: {
     getImage : function(item, key){
       if(item[key]){
-        return this.host+item[key];
+        let url = item[key];
+        if (url.indexOf("http") === 0) {
+          return url;
+        }
+        if (this.host) {
+          return this.host + url;
+        }
       }
       return avatar
     },
@@ -104,22 +139,42 @@ export default {
       return DateUtil.format13(time)
     },
     async operateForDisable(id,status,index) {
-      this.id.value = id;
-      let params = {
-        name:this.table,
-        where:[this.id],
-        sets:[{filed:'status',value:status}]
+      // 1. Prepare params for updateUserStatus
+      let userParams = {
+        id: id
       }
-      let res = await updateData(params)
-      if(res.code==0){
-        this.changeStatus(index,status);
-        this.$message({type:'success',message:'操作成功！'});
-      }else{
-        this.$message({type:'error',message:res.errorMessage});
+      
+      // 2. Prepare params for updateWmUserStatus
+      let wmUserParams = {
+        apUserId: id
       }
-    },
-    operateForView(item) {
-      this.viewData(item)
+
+      // 3. Execute both requests in parallel
+      try {
+        let [userRes, wmUserRes] = await Promise.all([
+          updateUserStatus(userParams),
+          updateWmUserStatus(wmUserParams)
+        ]);
+
+        // 4. Check results. Assume success if BOTH succeed.
+        // Or should we consider it partial success? 
+        // Usually, if one fails, we should probably warn the user.
+        // But for UI update, if the main user update succeeds, we toggle the UI.
+        
+        if(userRes.code==200 && wmUserRes.code==200){
+           this.changeStatus(index,status);
+           this.$message({type:'success',message:'操作成功！'});
+        } else {
+           // Aggregate error messages
+           let errorMsg = '';
+           if (userRes.code != 200) errorMsg += `用户状态更新失败: ${userRes.errorMessage} `;
+           if (wmUserRes.code != 200) errorMsg += `自媒体状态更新失败: ${wmUserRes.errorMessage}`;
+           this.$message({type:'error',message: errorMsg});
+        }
+      } catch (error) {
+         console.error("Update failed", error);
+         this.$message({type:'error',message: '操作失败，请重试'});
+      }
     },
     open(msg) {
       this.$prompt(msg, '提示', {

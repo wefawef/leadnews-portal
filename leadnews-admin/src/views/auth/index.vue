@@ -42,11 +42,18 @@
     },
     methods: {
       async searchAuthList(newParams) {
-        let res = await findAuthList({...this.params, ...newParams});
+        this.params = {...this.params, ...newParams}
+        if (newParams && newParams.page) {
+           this.$refs.mySearchResult.listPage.currentPage = newParams.page
+        }
+        let res = await findAuthList(this.params);
         if (res.code == 200) {
           this.authList = res.data
-          this.host = res.host
-          this.total = res.total //总记录数
+          // 只有当 res.host 存在时才更新，防止丢失
+          if (res.host) {
+            this.host = res.host
+          }
+          this.total = res.total ? res.total : res.data.length //总记录数
         } else {
           this.$message({type: 'error', message: res.error_message})
         }

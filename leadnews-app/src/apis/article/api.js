@@ -67,30 +67,30 @@ Api.prototype = {
             })
         })
     },
-    // 不喜欢
-    read : function(data){
-        let url = this.vue.$config.urls.get('read_behavior')
-        return this.vue.$store.getEquipmentId().then(equipmentId=>{
-            return new Promise((resolve, reject) => {
-                this.vue.$request.post(url,{
-                    equipment_id:equipmentId,
-                    article_id:data.articleId,
-                    count:1,
-                    read_duration:data.readDuration,
-                    percentage:data.percentage,
-                    load_duration:data.loadDuration
-                }).then((d)=>{
-                    resolve(d);
-                }).catch((e)=>{
-                    reject(e);
-                })
-            })
-        }).catch(e=>{
-            return new Promise((resolve, reject) => {
-                reject(e);
-            })
-        })
-    },
+    // // 不喜欢
+    // read : function(data){
+    //     let url = this.vue.$config.urls.get('read_behavior')
+    //     return this.vue.$store.getEquipmentId().then(equipmentId=>{
+    //         return new Promise((resolve, reject) => {
+    //             this.vue.$request.post(url,{
+    //                 equipment_id:equipmentId,
+    //                 article_id:data.articleId,
+    //                 count:1,
+    //                 read_duration:data.readDuration,
+    //                 percentage:data.percentage,
+    //                 load_duration:data.loadDuration
+    //             }).then((d)=>{
+    //                 resolve(d);
+    //             }).catch((e)=>{
+    //                 reject(e);
+    //             })
+    //         })
+    //     }).catch(e=>{
+    //         return new Promise((resolve, reject) => {
+    //             reject(e);
+    //         })
+    //     })
+    // },
     // 收藏
     collection : function(data){
         let url = this.vue.$config.urls.get('collection_behavior')

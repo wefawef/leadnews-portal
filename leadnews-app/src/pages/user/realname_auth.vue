@@ -144,29 +144,32 @@
                     return;
                 }
 
-                let params = {
-                    name: this.name,
-                    idno: this.idno,
-                    frontImage: this.frontImage,
-                    backImage: this.backImage,
-                    handheldImage: this.handheldImage,
-                    liveImage: this.liveImage
-                };
+                const getUser = (this.$store && this.$store.getUser) ? this.$store.getUser() : Promise.resolve(null);
+                Promise.resolve(getUser).catch(() => null).then((user) => {
+                    let params = {
+                        userId: String(user.id),
+                        name: this.name,
+                        idno: this.idno,
+                        frontImage: this.frontImage,
+                        backImage: this.backImage,
+                        handheldImage: this.handheldImage,
+                        liveImage: this.liveImage
+                    };
+                    modal.toast({ message: '正在提交...', duration: 1 });
 
-                modal.toast({ message: '正在提交...', duration: 1 });
-                
-                Api.applyForRealName(params).then(d => {
-                    if (d.code == 200 || d.code == 0) { // Assuming 0 or 200 is success
-                        modal.toast({ message: '提交成功', duration: 2 });
-                        setTimeout(() => {
-                            this.$router.back();
-                        }, 2000);
-                    } else {
-                        modal.toast({ message: d.errorMessage || '提交失败', duration: 2 });
-                    }
-                }).catch(e => {
-                    console.error(e);
-                    modal.toast({ message: '网络错误', duration: 2 });
+                    Api.applyForRealName(params).then(d => {
+                        if (d.code == 200 || d.code == 0) { // Assuming 0 or 200 is success
+                            modal.toast({ message: '提交成功', duration: 2 });
+                            setTimeout(() => {
+                                this.$router.back();
+                            }, 2000);
+                        } else {
+                            modal.toast({ message: d.errorMessage || '提交失败', duration: 2 });
+                        }
+                    }).catch(e => {
+                        console.error(e);
+                        modal.toast({ message: '网络错误', duration: 2 });
+                    });
                 });
             }
         }

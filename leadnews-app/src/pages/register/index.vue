@@ -14,7 +14,7 @@
                 </div>
                 <div class="input-wapper">
                     <text class="icon">{{userIcon}}</text>
-                    <input v-model="params.phone" return-key-type="defalut" autocomplete="off" placeholder="请输入手机号" class="input"/>
+                    <input v-model="params.phone" type="tel" maxlength="11" @input="onPhoneInput" return-key-type="defalut" autocomplete="off" placeholder="请输入手机号" class="input"/>
                 </div>
                 <div class="input-wapper">
                     <text class="icon">{{passIcon}}</text>
@@ -75,13 +75,25 @@
             goLogin(){
                 this.$router.push('/login')
             },
+            normalizePhone(value){
+                return String(value || '').replace(/\D/g, '').slice(0, 11)
+            },
+            onPhoneInput(e){
+                const v = e && e.value !== undefined ? e.value : this.params.phone
+                this.params.phone = this.normalizePhone(v)
+            },
             register(){
+                this.params.phone = this.normalizePhone(this.params.phone)
                 if(!this.params.name || String(this.params.name).replace(/\s/g, '') === ''){
                     modal.toast({ message:'请输入用户名', duration:3 })
                     return;
                 }
                 if(!this.params.phone || String(this.params.phone).replace(/\s/g, '') === ''){
                     modal.toast({ message:'请输入手机号', duration:3 })
+                    return;
+                }
+                if(String(this.params.phone).length !== 11){
+                    modal.toast({ message:'手机号应为11位数字', duration:3 })
                     return;
                 }
                 if(!this.params.password || String(this.params.password).replace(/\s/g, '') === ''){
