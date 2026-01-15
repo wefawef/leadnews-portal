@@ -40,6 +40,10 @@ export const asyncRouterMap = [
       {
         path:'/auth/index',
         component: () => import('@/views/auth/index.vue'),
+      },
+      {
+        path:'/user/center',
+        component: () => import('@/views/user/index.vue'),
       }
     ]
   },{

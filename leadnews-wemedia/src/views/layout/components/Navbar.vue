@@ -7,9 +7,7 @@
        <el-input v-model="searchText" type="text" @keyup.enter.native="searchInfo" size="small" style='width:180px;margin-right:20px' placeholder="请输入搜索的文章内容"  prefix-icon="el-icon-search"  >
      </el-input>
       </el-tooltip>
-      <el-tooltip content="消息" effect="dark" placement="bottom">
-        <span>消息</span>
-      </el-tooltip>
+
       <el-dropdown class="avatar-container right-menu-item" trigger="click">
         <div class="avatar-wrapper">
           <img :src="headImg" class="user-avatar">
@@ -22,11 +20,7 @@
               个人信息
             </el-dropdown-item>
           </router-link>
-          <a target="_blank" href="https://github.com/PanJiaChen/vue-element-admin/">
-            <el-dropdown-item @click="goToGit">
-              git地址
-            </el-dropdown-item>
-          </a>
+
           <el-dropdown-item divided>
             <span style="display:block;" @click="logout">退出</span>
           </el-dropdown-item>
@@ -61,7 +55,9 @@ export default {
        return this.user.name ? this.user.name : '未登录'
      },
      headImg () {
-       return this.user.photo ? this.user.photo : require('@/assets/avatar.jpg')
+       if (this.user.image) return this.user.image
+       if (this.user.photo) return this.user.photo
+       return require('@/assets/avatar.jpg')
      }
   },
   methods: {
@@ -72,10 +68,6 @@ export default {
     logout() {
       clearUser() //退出前要清除掉用户的信息
       this.$router.replace({path:'/login'})
-    },
-    goToGit () {
-       //去掉git的地址
-       window.location.href = 'http://git.itcast.cn/dual-front/heima-toutiao-meiti-admin'
     },
     searchInfo () {
       if(this.searchText) {

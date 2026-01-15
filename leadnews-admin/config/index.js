@@ -21,6 +21,9 @@ module.exports = {
               '^/server_85/ADMIN/api/v1/auth': '/user/api/v1/auth',
               '^/server_85/ADMIN/api/v1/user': '/wemedia/api/v1/user',
               '^/server_85/ADMIN/api/v1/personal': '/user/api/v1/personal',
+              '^/server_85/ADMIN/admin/admin/api/upAdminImage': '/admin/admin/api/upAdminImage',
+              '^/server_85/ADMIN/admin/admin/api/getAdminInform': '/admin/admin/api/getAdminInform',
+              '^/server_85/ADMIN/admin/admin/api/upAdminInform': '/admin/admin/api/upAdminInform',
               '^/server_85/ADMIN': '/admin'
 
         }

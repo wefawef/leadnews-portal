@@ -10,16 +10,9 @@
           <i class="el-icon-caret-bottom"/>
         </div>
         <el-dropdown-menu slot="dropdown">
-          <router-link to="/user/center">
-            <el-dropdown-item>
-              个人信息
-            </el-dropdown-item>
-          </router-link>
-          <a target="_blank" href="https://github.com/PanJiaChen/vue-element-admin/">
-            <el-dropdown-item @click="goToGit">
-              git地址
-            </el-dropdown-item>
-          </a>
+          <el-dropdown-item @click.native="goToUserInfo">
+            个人信息
+          </el-dropdown-item>
           <el-dropdown-item divided>
             <span style="display:block;" @click="logout">退出</span>
           </el-dropdown-item>
@@ -54,7 +47,7 @@ export default {
        return this.user.name ? this.user.name : '未登录'
      },
      headImg () {
-       return this.user.photo ? this.user.photo : require('@/assets/avatar.jpg')
+       return this.user.image ? this.user.image : require('@/assets/avatar.jpg')
      }
   },
   methods: {
@@ -69,6 +62,9 @@ export default {
     goToGit () {
        //去掉git的地址
        window.location.href = 'http://git.itcast.cn/dual-front/heima-toutiao-meiti-admin'
+    },
+    goToUserInfo() {
+      this.$router.push({ path: '/user/center' })
     },
     searchInfo () {
       if(this.searchText) {

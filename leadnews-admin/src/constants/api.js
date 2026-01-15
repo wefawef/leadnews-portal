@@ -48,6 +48,9 @@ export const API_SENSITIVE_DELETE = '/api/v1/sensitive/del' // 删除（路径�
 export const API_USER_LIST = '/api/v1/personal/userList' // 用户列表
 export const API_USER_UPDATE = '/api/v1/personal/upDate' // 用户状态更新
 export const API_WEMEDIA_USER_UPDATE = '/api/v1/user/upDate' // 自媒体用户状态更新
+export const API_ADMIN_INFO = '/admin/admin/api/getAdminInform' // 获取管理员信息
+export const API_ADMIN_IMAGE_UPLOAD = '/admin/admin/api/upAdminImage' // 管理员头像上传
+export const API_ADMIN_UPDATE = '/admin/admin/api/upAdminInform' // 管理员信息修改
 
 // Channel module endpoints
 export const API_CHANNEL_LIST_ALL = '/api/v1/channel/channels'
@@ -55,4 +58,3 @@ export const API_CHANNEL_LIST = '/api/v1/channel/list'
 export const API_CHANNEL_SAVE = '/api/v1/channel/save'
 export const API_CHANNEL_UPDATE = '/api/v1/channel/update'
 export const API_CHANNEL_DELETE = '/api/v1/channel/del'
-

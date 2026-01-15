@@ -1,5 +1,5 @@
 import Request from '@/utils/request' 
-import { API_USERPROFILE , API_HEAD, API_USER_LIST, API_USER_UPDATE, API_WEMEDIA_USER_UPDATE} from  '@/constants/api'
+import { API_USERPROFILE , API_HEAD, API_USER_LIST, API_USER_UPDATE, API_WEMEDIA_USER_UPDATE, API_ADMIN_INFO, API_ADMIN_IMAGE_UPLOAD, API_ADMIN_UPDATE} from  '@/constants/api'
 //获取用户个人信息
 export function getUserProfile () {
     return  Request({
@@ -47,5 +47,29 @@ export function authLoadList(keyWord) {
     url: API_USER_LIST,
     method: 'post',
     params: { keyWord }
+  })
+}
+
+// 获取管理员信息
+export function getAdminInfo(id) {
+  return Request({
+    url: API_ADMIN_INFO + "/" + id,
+    method: 'get'
+  })
+}
+
+export function upAdminImage(data) {
+  return Request({
+    url: API_ADMIN_IMAGE_UPLOAD,
+    method: 'post',
+    data
+  })
+}
+
+export function upAdminInform(data) {
+  return Request({
+    url: API_ADMIN_UPDATE,
+    method: 'post',
+    data
   })
 }

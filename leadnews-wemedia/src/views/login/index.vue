@@ -133,13 +133,10 @@ export default {
        }
        //登录
        let result = await loginByUsername(name,password) //登录
-        if(result.code==200){
+        if(result.code === 200 || result.code === 0){
           // 设置用户信息（登录成功后调用）
           this.$router.replace({path:'/index'}) //跳转
-          setUser({
-            token: result.data.token,
-            username: result.data.username,
-          });
+          // setUser由api/login.js处理，此处不再重复设置，避免覆盖关键信息
         }else{
           this.$message({
             message:result.errorMessage,

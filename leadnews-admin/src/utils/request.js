@@ -3,7 +3,7 @@ import BigInt from 'json-bigint'
 import Router from  '@/router'
 import { Message } from 'element-ui'
 import { getUser,setUser } from   '@/utils/store'
-import { API_USERIMAGES_ADD , API_HEAD} from  '@/constants/api'
+import { API_USERIMAGES_ADD , API_HEAD, API_ADMIN_IMAGE_UPLOAD} from  '@/constants/api'
 import LoadingManage from './loading'
 // create an axios instance
 const service = axios.create({
@@ -16,7 +16,7 @@ const service = axios.create({
 
 })
 const IsImgUpload = (config) => {
-    return  ((config.url == API_USERIMAGES_ADD && config.method == 'post') || (config.url == API_HEAD && config.method == 'patch'))
+    return  ((config.url == API_USERIMAGES_ADD && config.method == 'post') || (config.url == API_HEAD && config.method == 'patch') || (config.url == API_ADMIN_IMAGE_UPLOAD && config.method == 'post'))
 }
 //request
 service.interceptors.request.use(

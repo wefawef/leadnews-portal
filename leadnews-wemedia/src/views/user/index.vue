@@ -1,6 +1,9 @@
 <template>
   <div class="user-container">
-    <header>账号信息</header>
+    <header>
+      账号信息
+      <el-button type="primary" size="small" style="float:right; margin-top: 10px;" @click="openEditDialog">修改个人信息</el-button>
+    </header>
     <div class="wrap">
       <div class="form-item username">
         <label>
@@ -9,36 +12,29 @@
           <a @click="showHead" style="color:#3296fa"  href="javascript:;">更换头像</a>
           </div>
         </label>
-        <div v-if="!editUser" class="rightContent">
+        <div class="rightContent">
           <dl>
             <dt>{{user.name}}</dt>
-            <dd>{{user.intro}}</dd>
           </dl>
-            <a style="color:#3296fa" @click="beginEdit('user')" href="javascript:;">修改</a>
         </div>
-           <div v-if="editUser" class="clause edituser">
-             <el-form>
-               <el-form-item label-width="120px" label="名称">
-                  <el-input style='width:30%' placeholder="请输入头条号名称" v-model="userData.name"></el-input>
-               </el-form-item>
-                <el-form-item  label-width="120px" label="简介">
-                  <el-input  style='width:30%'  placeholder="请输入头条号简介" v-model="userData.intro"></el-input>
-               </el-form-item>
-             </el-form>  
-            <div class="btn-group">
-              <el-button @click="saveEdit('user')" size="small" type="primary">保存</el-button>
-              <el-button @click="cancelEdit('user')" size="small">取消</el-button>
-            </div>
-          </div>
       </div>
       <div class="form-item userinfo">
         <label>账号信息</label>
         <div class="rightContent">
           <div class="clause">
-            <span>头条号类型</span>个人
+            <span>头条号类型</span>{{typeName}}
           </div>
           <div class="clause">
-            <span>头条号ID</span>{{user.id}}
+            <span>运营评分</span>{{user.score}}
+          </div>
+          <div class="clause">
+            <span>归属地</span>{{user.location}}
+          </div>
+          <div class="clause">
+            <span>状态</span>{{statusName}}
+          </div>
+          <div class="clause">
+            <span>创建时间</span>{{dateFormat(user.createdTime)}}
           </div>
         </div>
       </div>
@@ -46,24 +42,15 @@
         <label>登录方式</label>
         <div class="rightContent">
           <div  class="clause">
-            <span>绑定手机</span>{{user.mobile}}
+            <span>绑定手机</span>{{user.phone}}
           </div>
         </div>
       </div>
       <div class='form-item userinfo'>
           <label>邮箱</label>
           <div class="rightContent">
-          <div v-if="!editEmail" class="clause">
+          <div class="clause">
              <span>{{user.email}}</span>
-             <a href="javascript:;" @click="beginEdit('email')">修改邮箱</a>
-          </div>
-          <div v-if="editEmail" class="clause">  
-            <span>邮箱</span>
-            <el-input placeholder="请输入邮箱地址" v-model="emailData"></el-input>
-            <div class="btn-group">
-              <el-button @click="saveEdit('email')" size="small" type="primary">保存</el-button>
-              <el-button @click="cancelEdit('email')" size="small">取消</el-button>
-            </div>
           </div>
         </div>
       </div>
@@ -72,33 +59,54 @@
       :visible.sync="showHeadUpload"
        title="上传头像"
       >
-      <img  class='localimg' v-if="showLocalImg" :src="localImg" alt="">
       <el-upload  :on-change="fileChange" ref="myUpload" class="avatar-uploader" :auto-upload="false" :limit="1">
-         <i  class="el-icon-plus avatar-uploader-icon"></i>
+         <img  class='localimg' v-if="showLocalImg" :src="localImg" alt="">
+         <i v-else class="el-icon-plus avatar-uploader-icon"></i>
        </el-upload>
       <span slot="footer" class="dialog-footer">
         <el-button @click="showHeadUpload = false">取 消</el-button>
         <el-button type="primary" @click="uploadHead">确 定</el-button>
      </span>
     </el-dialog>
+    <el-dialog title="修改个人信息" :visible.sync="showEditDialog">
+      <el-form :model="editForm" label-width="80px">
+        <el-form-item label="邮箱">
+          <el-input v-model="editForm.email"></el-input>
+        </el-form-item>
+        <el-form-item label="手机号">
+          <el-input v-model="editForm.phone"></el-input>
+        </el-form-item>
+        <el-form-item label="归属地">
+          <el-input v-model="editForm.location"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="showEditDialog = false">取 消</el-button>
+        <el-button type="primary" @click="saveUserInfo">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getUserProfile , updateUserProfile , updateUserHead } from '@/api/user' 
-import { setUser } from '@/utils/store'
+import { getUserInform , updateUserHead, updateUserInform } from '@/api/user' 
+import { setUser, getUser } from '@/utils/store'
+import DateUtil from '@/utils/date'
+
 export default {
   name: 'ContentManage',
   data() {
     return {
        user:{},
-       emailData:null, //邮箱
-       userData:null,  //用户信息
-       editEmail:false,//编辑邮箱
-       editUser:false, //编辑用户信息
        showHeadUpload:false,
        showLocalImg:false, //显示本地图片
-       localImg:null
+       localImg:null,
+       showEditDialog: false,
+       editForm: {
+        email: '',
+        phone: '',
+        location: ''
+       }
     }
   },
   created () {
@@ -106,10 +114,24 @@ export default {
   },
   computed: {
      headImg () {
+        if(this.user.image) return this.user.image
         return  this.user.photo ? this.user.photo : require('@/assets/avatar.jpg')
+     },
+     typeName() {
+        // 0 个人 1 企业 2 子账号
+        const map = {0:'个人', 1:'企业', 2:'子账号'}
+        return map[this.user.type] || '个人'
+     },
+     statusName() {
+         // 0 暂时不可用 1 永久不可用 9 正常可用
+         const map = {0:'暂时不可用', 1:'永久不可用', 9:'正常可用'}
+         return map[this.user.status] || ''
      }
   },
   methods: {
+    dateFormat(time) {
+        return DateUtil.format13HH(time)
+    },
     fileChange () {
          let file = document.querySelector('.el-upload .el-upload__input').files[0] ;
          this.localImg = URL.createObjectURL(file)
@@ -119,80 +141,56 @@ export default {
      * 显示上传头像的图层
      * ***/
     showHead () {
+      this.showLocalImg = false
+      this.localImg = null
       this.$refs.myUpload && this.$refs.myUpload.clearFiles()  //清除垃圾数据
       this.showHeadUpload = true //显示弹层
     },
     async getUser () {
-      let  result = await getUserProfile()  //获取用户数据
-      setUser(result) //更新数据到缓存中
-      this.user = result;  //设置用户数据
+      let currentUser = getUser()
+      if(currentUser && currentUser.id) {
+          let res = await getUserInform(currentUser.id)  //获取用户数据
+          if(res.code === 0 || res.code === 200 || res.code === undefined) { // accommodate various success codes
+             let newData = res.data || res; // if no data wrapper, use res
+             let mergedUser = {...currentUser, ...newData}
+             setUser(mergedUser) //更新数据到缓存中
+             this.user = mergedUser;  //设置用户数据
+          }
+      }
     },
-    //开始进入编辑态 编辑的是某个信息
-    beginEdit (type) {
-       if(this.checkOtherClose(type)) {
-            this.$message({type:'warning',message:'请关掉其他正在编辑的内容'})
-            return;
-       }
-       if(type == 'email') {
-          this.editEmail = true //编辑邮箱
-          this.emailData = this.user.email //读取邮箱
-       }
-       else if(type == 'user') {
-          this.userData = {...this.user} //解构方式的赋值 因为如果是对象 可能造成数据会自动同步到原有数据
-          this.editUser = true //用户信息
-       }
-    },
-    //检查其他的编辑状态功能是否已关闭
-    checkOtherClose (type) {
-        if(type == 'email'){
-          return this.editUser 
-       }
-       else if(type == 'user'){
-          return  this.editEmail 
-       }
-    },
-    //取消编辑 通用方法
-    cancelEdit (type) {
-        if(type == 'email') {
-          this.editEmail = false //取消编辑邮箱
-       }
-       else if(type == 'user') {
-          this.editUser = false //取消编辑用户
-       }
-    },
-    //保存编辑态
-  async saveEdit (type) {
-      if(type == 'email') {
-        let pattrn = /^[A-Za-z0-9._%-]+@([A-Za-z0-9-]+\.)+[A-Za-z]{2,4}$/
-        if(this.emailData.match(pattrn)) {
-         await updateUserProfile({...this.user,email:this.emailData})
-         this.getUser () //重新加载数据
-        this.editEmail = false  //保存成功关闭
-        }else{
-           this.$message({ type:'warning',message:'邮箱格式不正确!'})
-        }
-     }
-     else if (type == 'user') {
-        if(this.userData.name){
-            await updateUserProfile(this.userData)
-            this.getUser () //重新加载数据
-            this.editUser = false  //保存成功关闭
-        }else{
-           this.$message({type:'warning', message:'头条号名称不能为空' })
-        }
-     }
-    },
+
     //修改头像
    async uploadHead () {
         let files = document.querySelector('.el-upload .el-upload__input').files ;
         if(files && files.length) {
           let fd = new FormData();
-          fd.append('photo', files[0], files[0].name);
+          fd.append('image', files[0], files[0].name);
+          fd.append('id', this.user.id);
            await updateUserHead(fd)
-          this.$message({message:'上传成功',type:'success'}) && this.getUser () //重新加载数据
+          this.$message({message:'上传成功',type:'success'})
+          this.getUser () //重新加载数据
+          this.showHeadUpload = false
         }else{
            this.$message({message:"请选择一张图片",type:"warning"})
         }   
+    },
+    openEditDialog() {
+      this.editForm = {
+        email: this.user.email,
+        phone: this.user.phone,
+        location: this.user.location
+      }
+      this.showEditDialog = true
+    },
+    async saveUserInfo() {
+      const data = {
+        id: this.user.id,
+        ...this.editForm
+      }
+      await updateUserInform(data)
+      this.$message.success('修改成功')
+      this.showEditDialog = false
+      this.getUser()
     }
   }
 }
@@ -216,7 +214,6 @@ export default {
     width: 178px;
     height: 178px;
     border-radius: 4px;
-    position: absolute;
   }
   .avatar-uploader:hover {
     border-color: #409EFF;
