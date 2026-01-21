@@ -7,6 +7,10 @@
     </div>
     <div class="content-body">
       <list class="item-container" :style="{ height: listHeight + 'px' }">
+        <refresh @refresh="loadMore" :display="loadingMore ? 'show' : 'hide'" class="loading">
+          <loading-indicator class="loading-icon"></loading-indicator>
+          <text class="loading-text">加载中...</text>
+        </refresh>
         <cell v-for="(item,key) in list" class="cell" :key="key">
           <wxc-pan-item :ext-id="'concern-' + key" @wxcPanItemClicked="onItemClick(item)">
             <Item0 v-if="item.type==0" :data="item"/>
@@ -40,6 +44,7 @@ export default {
   data: () => ({
     list: [],
     loading: false,
+    loadingMore: false,
     listHeight: 1334
   }),
   created () {
@@ -68,7 +73,13 @@ export default {
         })
         .finally(() => {
           this.loading = false
+          this.loadingMore = false
         })
+    },
+    loadMore () {
+      if (this.loading) return
+      this.loadingMore = true
+      this.loadList()
     },
     getUserId () {
       return this.$store.getUser().then(user => {
