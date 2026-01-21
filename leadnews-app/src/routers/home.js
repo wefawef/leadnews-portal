@@ -2,6 +2,7 @@
 import Layout from '@/compoents/layouts/layout_main'
 import Home from '@/pages/home/index'
 import Mark from '@/pages/mark/index'
+import Concern from '@/pages/concern/index'
 import Article from '@/pages/article/index'
 import Search from '@/pages/search/index'
 import Login from '@/pages/login/index'
@@ -26,6 +27,11 @@ let routes = [
                 path:'/mark',
                 name:'Mark',
                 component: Mark
+            },
+            {
+                path:'/concern',
+                name:'Concern',
+                component: Concern
             }
         ]
     },{

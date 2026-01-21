@@ -151,6 +151,10 @@
                     this.currentPage = 1
                     return
                 }
+                if(path.indexOf('/concern') === 0){
+                    this.currentPage = 2
+                    return
+                }
                 if(path.indexOf('/user') === 0){
                     this.currentPage = 3
                     return
@@ -175,6 +179,10 @@
                 }
                 if(page === 1){
                     this.$router.push('/mark')
+                    return
+                }
+                if(page === 2){
+                    this.$router.push('/concern')
                     return
                 }
                 if(page === 3){
