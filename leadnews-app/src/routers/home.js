@@ -1,6 +1,7 @@
 // ============  主页路由MODEL  ==================
 import Layout from '@/compoents/layouts/layout_main'
 import Home from '@/pages/home/index'
+import Mark from '@/pages/mark/index'
 import Article from '@/pages/article/index'
 import Search from '@/pages/search/index'
 import Login from '@/pages/login/index'
@@ -20,6 +21,11 @@ let routes = [
                 path:'/home',
                 name:'Home',
                 component: Home
+            },
+            {
+                path:'/mark',
+                name:'Mark',
+                component: Mark
             }
         ]
     },{

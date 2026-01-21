@@ -133,10 +133,33 @@
         data: () => ({
             currentPage: 0
         }),
+        watch: {
+            $route: {
+                handler(val){
+                    this.syncCurrentPage(val)
+                },
+                immediate: true
+            }
+        },
         created () {
             this.isIPhoneX = Utils.env.isIPhoneX();
         },
         methods: {
+            syncCurrentPage(route){
+                const path = route && route.path ? route.path : ''
+                if(path.indexOf('/mark') === 0){
+                    this.currentPage = 1
+                    return
+                }
+                if(path.indexOf('/user') === 0){
+                    this.currentPage = 3
+                    return
+                }
+                if(path.indexOf('/home') === 0 || path === '/'){
+                    this.currentPage = 0
+                    return
+                }
+            },
             getFillColor (index){
                 if(this.currentPage==index){
                     return this.tabStyles.activeIconColor;
@@ -145,13 +168,21 @@
                 }
             },
             setPage(page, url = null, animated = true) {
-                if(page === 3){
-                    this.$router.push('/user');
-                    return;
-                }
                 this.currentPage = page;
+                if(page === 0){
+                    this.$router.push('/home')
+                    return
+                }
+                if(page === 1){
+                    this.$router.push('/mark')
+                    return
+                }
+                if(page === 3){
+                    this.$router.push('/user')
+                    return
+                }
                 if(page>0){
-                    this.$config.noAction();
+                    this.$config.noAction()
                 }
             }
         }
