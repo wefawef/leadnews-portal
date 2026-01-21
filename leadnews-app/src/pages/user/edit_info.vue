@@ -13,7 +13,7 @@
             </div>
             <div class="form-group">
                 <text class="label">手机号</text>
-                <input class="input" type="tel" maxlength="11" @input="onPhoneInput" placeholder="请输入手机号" v-model="form.phone" />
+                <input class="input" type="tel" placeholder="请输入手机号" v-model="form.phone" />
             </div>
             <div class="form-group">
                 <text class="label">性别</text>
@@ -55,19 +55,12 @@
             minibarLeftButtonClick() {
                 this.$router.back();
             },
-            normalizePhone(value){
-                return String(value || '').replace(/\D/g, '').slice(0, 11)
-            },
-            onPhoneInput(e){
-                const v = e && e.value !== undefined ? e.value : this.form.phone
-                this.form.phone = this.normalizePhone(v)
-            },
             initForm() {
                 const p = (this.$route && this.$route.params) ? this.$route.params : {};
                 if (p && (p.id || p.name || p.phone || p.sex !== undefined)) {
                     this.form.id = p.id || '';
                     this.form.name = p.name || '';
-                    this.form.phone = this.normalizePhone(p.phone || '');
+                    this.form.phone = p.phone || '';
                     this.form.sex = (p.sex === 1 || p.sex === '1' || p.sex === true) ? 1 : 0;
                     return;
                 }
@@ -76,7 +69,7 @@
                         if (!user) return;
                         this.form.id = user.id || '';
                         this.form.name = user.name || '';
-                        this.form.phone = this.normalizePhone(user.phone || '');
+                        this.form.phone = user.phone || '';
                         this.form.sex = (user.sex === 1 || user.sex === '1' || user.sex === true) ? 1 : 0;
                     }).catch(() => {});
                 }
@@ -85,7 +78,6 @@
                 this.form.sex = sex;
             },
             submit() {
-                this.form.phone = this.normalizePhone(this.form.phone)
                 if (!this.form.id) {
                     modal.toast({ message: '未获取到用户ID', duration: 2 });
                     return;
@@ -96,10 +88,6 @@
                 }
                 if (!this.form.phone || String(this.form.phone).replace(/\s/g, '') === '') {
                     modal.toast({ message: '请输入手机号', duration: 2 });
-                    return;
-                }
-                if (String(this.form.phone).length !== 11) {
-                    modal.toast({ message: '手机号应为11位数字', duration: 2 });
                     return;
                 }
 
@@ -199,3 +187,4 @@
         border-radius: 45px;
     }
 </style>
+

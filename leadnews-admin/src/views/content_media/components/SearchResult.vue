@@ -22,7 +22,7 @@
               </template>
             </template>
           </el-table-column>
-          <el-table-column :label="item.label" v-else-if="item.name.indexOf('_time')>-1">
+          <el-table-column :label="item.label" v-else-if="item.name.indexOf('_time')>-1 || item.name.indexOf('Time')>-1">
             <template slot-scope="scope">
               <span>{{ dateFormat(scope.row[item.name]) }}</span>
             </template>
@@ -44,11 +44,11 @@
           <el-button
             size="mini"
             type="text"
-            @click="operateForDisable(scope.row.id,2,scope.$index )">拒绝</el-button>
+            @click="operateForFail(scope.row.id,scope.$index)">拒绝</el-button>
           <el-button
             size="mini"
             type="text"
-            @click="operateForDisable(scope.row.id,4,scope.$index )">通过</el-button>
+            @click="operateForPass(scope.row.id,scope.$index)">通过</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -66,7 +66,7 @@
 
 <script>
 import DateUtil from '@/utils/date'
-import {updateData} from '@/api/common'
+import {checkByHuman} from '@/api/content'
 const avatar = require('@/assets/avatar.jpg')
 export default {
   props: ['host','list','fileds','table','pageSize','total','changePage','changeStatus','editData','viewData'],
@@ -100,19 +100,34 @@ export default {
     dateFormat (time) {
       return DateUtil.format13(time)
     },
-    async operateForDisable(id,status,index) {
-      this.id.value = id;
-      let params = {
-        name:this.table,
-        where:[this.id],
-        sets:[{filed:'status',value:status}]
+    async operateForPass(id,index) {
+      let res = await checkByHuman(id, 1, '')
+      if (res && res.code == 200) {
+        this.changeStatus(index, 1)
+        this.$message({type:'success',message:'操作成功！'})
+      } else {
+        this.$message({type:'error',message:(res && (res.errorMessage || res.error_message)) || '操作失败'})
       }
-      let res = await updateData(params)
-      if(res.code==0){
-        this.changeStatus(index,status);
-        this.$message({type:'success',message:'操作成功！'});
-      }else{
-        this.$message({type:'error',message:res.errorMessage});
+    },
+    operateForFail(id,index) {
+      this.openReject(id, index)
+    },
+    openReject(id,index) {
+      this.$prompt('请输入驳回审核原因', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+      }).then(({ value }) => {
+        this.submitReject(id, index, value)
+      }).catch(() => {
+      })
+    },
+    async submitReject(id,index,reason) {
+      let res = await checkByHuman(id, 0, reason)
+      if (res && res.code == 200) {
+        this.changeStatus(index, 0)
+        this.$message({type:'success',message:'操作成功！'})
+      } else {
+        this.$message({type:'error',message:(res && (res.errorMessage || res.error_message)) || '操作失败'})
       }
     },
     operateForView(item) {

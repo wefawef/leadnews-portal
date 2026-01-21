@@ -3,12 +3,12 @@
     <header>{{`共找到${total}条符合条件的内容`}}</header>
     <ul class="result-container">
       <li v-for="(item,index) in  articleList" :key='index' class='articles-item'>
-        <img class="article-img" :src="getImage(item)"/>
+        <img class="article-img" v-for="(img, idx) in getImages(item)" :key="idx" :src="img"/>
         <dl class="article-content">
           <dd class="article-time">在{{dateFormat(item.createdTime)}}创建</dd>
           <dt>
             <a href="#" class="">{{item.title}}</a>
-            <div  @click="operateBtn(item.id,$event)">
+            <div v-if="item.status != '10'" @click="operateBtn(item.id,$event)">
               <i data-type='up'  v-if="item.status == '9'&&item.enable=='0'" class="el-icon-upload2">上架</i>
               <i data-type='down'  v-if="item.status == '9'&&item.enable=='1'" class="el-icon-download">下架</i>
               <i data-type='modify'  v-if="item.enable != '1' && item.status!='100'" class="el-icon-edit">修改</i>
@@ -22,6 +22,7 @@
             <el-tag class="audit" v-if="item.status == '4'">待发布</el-tag>
             <el-tag class="publish" v-if="item.status == '8'">待发布</el-tag>
             <el-tag class="publish" v-if="item.status == '9'">已发表</el-tag>
+            <el-tag class="unaudit" v-if="item.status == '10'">被锁定</el-tag>
             <el-tag class="unaudit" v-if="item.status == '2'">未通过审核:{{item.reason}}</el-tag>
             <el-tag class="delete" v-if="item.status == '100'">已删除</el-tag>
             <template v-if="item.status == '9'">
@@ -46,7 +47,6 @@
 
 <script>
 import DateUtil from '@/utils/date'
-const avatar = require('@/assets/avatar.jpg')
 export default {
   props: ['host','articleList','pageSize','total','changePage','deleteArticlesById','upOrDown'],
   data() {
@@ -66,14 +66,15 @@ export default {
       return date.toLocaleString(); // 或者使用其他格式化方式
       // 或者使用 moment.js 等库进行更复杂的格式化
     },
-    getImage : function(item){
+    getImages : function(item){
       if(item.images){
         let temp = item.images.split(",")
-        if(temp.length>0){
-          return temp[0];
+        let images = temp.filter(t => t && t.trim().length > 0);
+        if(images.length > 0){
+            return images.slice(0, 3);
         }
       }
-      return avatar
+      return []
     },
     //页码变化 调用上层组件的方法
     pageChange (newPage) {
@@ -235,7 +236,7 @@ export default {
     height: 80px;
     border-radius: 4px;
     object-fit: cover;
-    margin-right: 20px;
+    margin-right: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 

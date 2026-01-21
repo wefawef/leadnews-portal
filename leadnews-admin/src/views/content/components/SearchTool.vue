@@ -26,12 +26,7 @@
     },
     methods:{
       queryData() {
-        let params = {
-          filed:'title',
-          type:'like',
-          value: this.name
-        }
-        this.changeParam(params)
+        this.changeParam(this.name)
       }
     }
   }

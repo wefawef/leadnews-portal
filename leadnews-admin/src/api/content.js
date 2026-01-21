@@ -1,5 +1,5 @@
 import Request from '@/utils/request'
-import  { API_ARTICLES_INFO,API_STATISTICS_NEWS , API_SEARCHARTICELS,API_ARTICLES_DELETE } from  '@/constants/api'
+import  { API_ARTICLES_INFO,API_STATISTICS_NEWS , API_SEARCHARTICELS,API_SEARCHARTICELS_VO,API_ARTICLES_ONE_VO,API_ARTICLES_DELETE,API_ARTICLES_DOWN,API_ARTICLES_LIST_CHECK_BY_HUMAN,API_ARTICLES_CHECK_BY_HUMAN } from  '@/constants/api'
 
 //获取统计数据
 export function getNewsStatistics(data) {
@@ -35,5 +35,54 @@ export function  searchArticle (data) {
     method:'post',
     data,
     params:{}
+  })
+}
+
+export function searchArticleVo (data) {
+  return   Request({
+    url:API_SEARCHARTICELS_VO,
+    method:'post',
+    data,
+    params:{}
+  })
+}
+
+export function getArticleVoById (id) {
+  return Request({
+    url: API_ARTICLES_ONE_VO + '/' + id,
+    method: 'get'
+  })
+}
+
+export function downNews (id) {
+  return Request({
+    url: API_ARTICLES_DOWN + '/' + id,
+    method: 'post'
+  })
+}
+
+export function listCheckByHuman (params) {
+  let data = params || {}
+  let title = data.title || 'all'
+  let url = API_ARTICLES_LIST_CHECK_BY_HUMAN
+  url = url + '/' + encodeURIComponent(title)
+  let requestParams = {...data}
+  delete requestParams.title
+  return Request({
+    url,
+    method: 'post',
+    params: requestParams
+  })
+}
+
+export function checkByHuman(id, status, reason) {
+  let safeReason = reason === undefined || reason === null ? '' : String(reason).trim()
+  if (!safeReason) {
+    safeReason = 'null'
+  }
+  let url = API_ARTICLES_CHECK_BY_HUMAN + '/' + encodeURIComponent(id) + '/' + encodeURIComponent(status) + '/' + encodeURIComponent(safeReason)
+  return Request({
+    url,
+    method: 'post'
   })
 }

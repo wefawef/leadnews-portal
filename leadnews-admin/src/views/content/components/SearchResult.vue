@@ -22,7 +22,7 @@
               </template>
             </template>
           </el-table-column>
-          <el-table-column :label="item.label" v-else-if="item.name.indexOf('_time')>-1">
+          <el-table-column :label="item.label" v-else-if="item.name.indexOf('_time')>-1 || item.name.indexOf('Time')>-1">
             <template slot-scope="scope">
               <span>{{ dateFormat(scope.row[item.name]) }}</span>
             </template>
@@ -34,6 +34,12 @@
           </el-table-column>
         </template>
       </template>
+      <el-table-column label="状态" width="100">
+        <template slot-scope="scope">
+          <span v-if="scope.row.status == 10">被锁定</span>
+          <span v-else>正常</span>
+        </template>
+      </el-table-column>
       <el-table-column label="操作"
          width="200" >
         <template slot-scope="scope">
@@ -43,12 +49,12 @@
           <el-button
             size="mini"
             type="danger"
-            v-if="scope.row.status == 1"
+            v-if="scope.row.status == 10"
             @click="operateForDisable(scope.row.id,0,scope.$index )">启用</el-button>
           <el-button
             size="mini"
             v-else
-            @click="operateForDisable(scope.row.id,1,scope.$index )">锁定</el-button>
+            @click="operateForDisable(scope.row.id,10,scope.$index )">锁定</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -66,7 +72,7 @@
 
 <script>
 import DateUtil from '@/utils/date'
-import {updateData} from '@/api/common'
+import {downNews} from '@/api/content'
 const avatar = require('@/assets/avatar.jpg')
 export default {
   props: ['host','list','fileds','table','pageSize','total','changePage','changeStatus','editData','viewData'],
@@ -74,11 +80,6 @@ export default {
     return {
        listPage:{
           currentPage:1
-       },
-       id: {
-         filed: 'id',
-         type:'eq',
-         value:''
        },
       setForStatus: {
         status: ''
@@ -104,18 +105,12 @@ export default {
       return DateUtil.format13(time)
     },
     async operateForDisable(id,status,index) {
-      this.id.value = id;
-      let params = {
-        name:this.table,
-        where:[this.id],
-        sets:[{filed:'status',value:status}]
-      }
-      let res = await updateData(params)
-      if(res.code==0){
-        this.changeStatus(index,status);
-        this.$message({type:'success',message:'操作成功！'});
-      }else{
-        this.$message({type:'error',message:res.errorMessage});
+      let res = await downNews(id)
+      if (res && res.code == 200) {
+        this.changeStatus(index,status)
+        this.$message({type:'success',message:'操作成功！'})
+      } else {
+        this.$message({type:'error',message:(res && res.errorMessage) || '请求失败'})
       }
     },
     operateForView(item) {

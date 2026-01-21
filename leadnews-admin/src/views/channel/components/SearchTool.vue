@@ -5,7 +5,7 @@
       <el-form-item label-width="100px" label="搜索标签">
         <el-input
           v-model="name"
-          placeholder="请输入标签名称"
+          placeholder="请输入频道名称"
           style="width: 400px;"
           class="filter-item"
         />
