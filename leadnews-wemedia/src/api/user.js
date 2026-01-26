@@ -42,3 +42,21 @@ export function updateUserInform (data) {
       data
   })
 }
+
+export function sendMessage (phone) {
+  const safePhone = encodeURIComponent(phone)
+  return Request({
+    url:`http://127.0.0.1:51602/wemedia/login/sendMessage/${safePhone}`,
+    method:'post'
+  })
+}
+
+export function upDatePasswd (phone, passWd, message) {
+  const safePhone = encodeURIComponent(phone)
+  const safePass = encodeURIComponent(passWd)
+  const safeMessage = encodeURIComponent(message)
+  return Request({
+    url:`http://127.0.0.1:51602/wemedia/login/upDatePasswd/${safePhone}/${safePass}/${safeMessage}`,
+    method:'post'
+  })
+}

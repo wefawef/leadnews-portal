@@ -60,6 +60,10 @@ export const asyncRouterMap = [
     component: () => import('@/views/login/index.vue'),
   },
   {
+    path: '/change-password',
+    component: () => import('@/views/login/change-password.vue'),
+  },
+  {
     path: '*',
     component: () => import('@/views/404.vue'),
   }

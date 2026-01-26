@@ -30,7 +30,7 @@
                 </div>
                 <div class="more">
                     <text class="go-register" @click="goRegister">注册新账号</text>
-                    <text class="go-home" @click="see">游客试用 ></text>
+                    <text class="go-home" @click="see">修改密码 ></text>
                 </div>
             </div>
         </div>
@@ -63,8 +63,7 @@
                 this.$router.push('/register')
             },
             see : function(){
-                // 直接跳转到首页，不进行登录
-                this.$router.push("/home")
+                this.$router.push("/reset_password")
             },
             login:function(){
                 // 验证输入

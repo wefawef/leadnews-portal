@@ -74,7 +74,7 @@
           <el-input v-model="editForm.email"></el-input>
         </el-form-item>
         <el-form-item label="手机号">
-          <el-input v-model="editForm.phone"></el-input>
+          <el-input class="phone-readonly" :value="maskedPhone" disabled></el-input>
         </el-form-item>
         <el-form-item label="归属地">
           <el-input v-model="editForm.location"></el-input>
@@ -126,9 +126,19 @@ export default {
          // 0 暂时不可用 1 永久不可用 9 正常可用
          const map = {0:'暂时不可用', 1:'永久不可用', 9:'正常可用'}
          return map[this.user.status] || ''
+     },
+     maskedPhone() {
+        return this.maskPhone(this.editForm.phone)
      }
   },
   methods: {
+    maskPhone(value) {
+      const phone = value ? String(value) : ''
+      if (phone.length < 7) {
+        return phone
+      }
+      return `${phone.slice(0, 3)}****${phone.slice(-4)}`
+    },
     dateFormat(time) {
         return DateUtil.format13HH(time)
     },
@@ -317,6 +327,10 @@ export default {
   }
   .el-input {
     width: auto;
+  }
+  ::v-deep .phone-readonly .el-input__inner {
+    color: #999999;
+    background-color: #f5f7fa;
   }
 }
 

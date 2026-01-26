@@ -62,7 +62,7 @@
           <el-input v-model="editForm.name"></el-input>
         </el-form-item>
         <el-form-item label="手机号">
-          <el-input v-model="editForm.phone"></el-input>
+          <el-input :value="maskedPhone" disabled></el-input>
         </el-form-item>
         <el-form-item label="邮箱">
           <el-input v-model="editForm.email"></el-input>
@@ -98,6 +98,9 @@ export default {
   computed: {
      headImg () {
        return this.user.image ? this.user.image : require('@/assets/avatar.jpg')
+     },
+     maskedPhone () {
+       return this.maskPhone(this.editForm.phone)
      }
   },
   created() {
@@ -164,6 +167,13 @@ export default {
     },
     dateFormat(time) {
       return time ? DateUtil.format13HH(time) : ''
+    },
+    maskPhone(phone) {
+      if (!phone) return ''
+      const text = String(phone)
+      const matched = text.match(/^(\d{3})\d+(\d{4})$/)
+      if (matched) return `${matched[1]}****${matched[2]}`
+      return text
     },
     openEditDialog() {
       this.editForm = {

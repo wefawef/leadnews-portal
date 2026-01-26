@@ -13,7 +13,7 @@
             </div>
             <div class="form-group">
                 <text class="label">手机号</text>
-                <input class="input" type="tel" placeholder="请输入手机号" v-model="form.phone" />
+                <input class="input input-disabled" type="tel" :value="maskedPhone" :disabled="true" />
             </div>
             <div class="form-group">
                 <text class="label">性别</text>
@@ -50,6 +50,13 @@
         created() {
             Api.setVue(this);
             this.initForm();
+        },
+        computed: {
+            maskedPhone() {
+                const v = String(this.form.phone || '')
+                if (v.length < 7) return v ? v.replace(/\d/g, '*') : ''
+                return v.slice(0, 3) + '****' + v.slice(-4)
+            }
         },
         methods: {
             minibarLeftButtonClick() {
@@ -152,6 +159,10 @@
         border-radius: 10px;
         background-color: #ffffff;
     }
+    .input-disabled {
+        background-color: #f2f2f2;
+        color: #999999;
+    }
     .sex-row {
         flex-direction: row;
         align-items: center;
@@ -187,4 +198,3 @@
         border-radius: 45px;
     }
 </style>
-

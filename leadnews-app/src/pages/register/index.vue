@@ -16,6 +16,11 @@
                     <text class="icon">{{userIcon}}</text>
                     <input v-model="params.phone" type="tel" maxlength="11" @input="onPhoneInput" return-key-type="defalut" autocomplete="off" placeholder="请输入手机号" class="input"/>
                 </div>
+                <div class="input-wapper sms-row">
+                    <text class="icon">{{passIcon}}</text>
+                    <input v-model="params.code" return-key-type="go" autocomplete="off" placeholder="请输入验证码" class="input"/>
+                    <text class="sms-button" :style="{ backgroundColor: (smsCountdown > 0 || smsSending) ? '#d9d9d9' : '#3194ff', color: (smsCountdown > 0 || smsSending) ? '#999999' : '#ffffff' }" @click="sendSmsCode">{{ smsCountdown > 0 ? smsCountdown + 's' : '发送验证码' }}</text>
+                </div>
                 <div class="input-wapper">
                     <text class="icon">{{passIcon}}</text>
                     <input v-model="params.password" return-key-type="go" autocomplete="off" type="password" placeholder="请输入密码" class="input"/>
@@ -24,14 +29,6 @@
                     <text class="icon">{{passIcon}}</text>
                     <input v-model="params.confirm" return-key-type="go" autocomplete="off" type="password" placeholder="请再次输入密码" class="input"/>
                 </div>
-                <div class="input-wapper captcha-row">
-                    <input v-model="params.code" return-key-type="go" autocomplete="off" placeholder="请输入验证码" class="input"/>
-                    <div class="captcha" @click="refreshCaptcha">
-                        <image v-if="captchaSrc" class="captcha-img" :src="captchaSrc"></image>
-                        <text v-else class="captcha-text">{{captchaText}}</text>
-                    </div>
-                </div>
-                <text class="captcha-refresh" @click="refreshCaptcha">看不清，换一个</text>
                 <text class="button" @click="register">立即注册</text>
                 <div class="more">
                     <router-link to="/login">
@@ -48,7 +45,6 @@
     import Api from '@/apis/register/api'
     import TopBar from '@/compoents/bars/login_top_bar'
     const modal = weex.requireModule('modal')
-    const platform = weex && weex.config && weex.config.env ? weex.config.env.platform : 'Web'
     export default {
         name: "register",
         components:{TopBar},
@@ -63,13 +59,19 @@
                     confirm:'',
                     code:''
                 },
-                captchaText:'',
-                captchaSrc:''
+                smsCountdown: 0,
+                smsSending: false,
+                smsTimer: null
             }
         },
         created(){
             Api.setVue(this);
-            this.refreshCaptcha();
+        },
+        destroyed(){
+            if (this.smsTimer) {
+                clearInterval(this.smsTimer)
+                this.smsTimer = null
+            }
         },
         methods:{
             goLogin(){
@@ -82,6 +84,51 @@
                 const v = e && e.value !== undefined ? e.value : this.params.phone
                 this.params.phone = this.normalizePhone(v)
             },
+            isValidPhone(value){
+                const v = this.normalizePhone(value)
+                if (v.length !== 11) return false
+                if (!/^1[3-9]\d{9}$/.test(v)) return false
+                if (/^(\d)\1{10}$/.test(v)) return false
+                return true
+            },
+            startSmsCountdown(seconds){
+                if (this.smsTimer) {
+                    clearInterval(this.smsTimer)
+                    this.smsTimer = null
+                }
+                this.smsCountdown = seconds
+                this.smsTimer = setInterval(() => {
+                    if (this.smsCountdown <= 1) {
+                        this.smsCountdown = 0
+                        clearInterval(this.smsTimer)
+                        this.smsTimer = null
+                        return
+                    }
+                    this.smsCountdown -= 1
+                }, 1000)
+            },
+            sendSmsCode(){
+                if (this.smsCountdown > 0 || this.smsSending) return
+                const phone = this.normalizePhone(this.params.phone)
+                if (!this.isValidPhone(phone)) {
+                    modal.toast({ message:'请输入有效的手机号', duration:3 })
+                    return
+                }
+                this.smsSending = true
+                const url = `http://127.0.0.1:51601/user/api/v1/login/sendMessage/${phone}`
+                this.$request.post(url, {}).then(d => {
+                    if (d && d.code === 200) {
+                        this.startSmsCountdown(60)
+                        modal.toast({ message:'验证码已发送', duration:2 })
+                    } else {
+                        modal.toast({ message: (d && d.errorMessage) ? d.errorMessage : '发送失败，请稍后重试', duration:3 })
+                    }
+                }).catch(() => {
+                    modal.toast({ message:'网络错误，请稍后重试', duration:3 })
+                }).finally(() => {
+                    this.smsSending = false
+                })
+            },
             register(){
                 this.params.phone = this.normalizePhone(this.params.phone)
                 if(!this.params.name || String(this.params.name).replace(/\s/g, '') === ''){
@@ -92,8 +139,8 @@
                     modal.toast({ message:'请输入手机号', duration:3 })
                     return;
                 }
-                if(String(this.params.phone).length !== 11){
-                    modal.toast({ message:'手机号应为11位数字', duration:3 })
+                if(!this.isValidPhone(this.params.phone)){
+                    modal.toast({ message:'请输入有效的手机号', duration:3 })
                     return;
                 }
                 if(!this.params.password || String(this.params.password).replace(/\s/g, '') === ''){
@@ -108,11 +155,7 @@
                     modal.toast({ message:'请输入验证码', duration:3 })
                     return;
                 }
-                if(String(this.params.code).toLowerCase() !== String(this.captchaText).toLowerCase()){
-                    modal.toast({ message:'验证码不正确', duration:3 })
-                    return;
-                }
-                Api.register({ phone: this.params.phone, password: this.params.password, name: this.params.name }).then(d=>{
+                Api.register({ phone: this.params.phone, password: this.params.password, name: this.params.name, verificationMessage: this.params.code }).then(d=>{
                     if(d.code === 501){
                         modal.toast({ message:'参数无效', duration:3 })
                         return;
@@ -134,20 +177,6 @@
                 }).catch(() => {
                     modal.toast({ message: '网络错误，请稍后重试', duration:3 })
                 })
-            },
-            refreshCaptcha(){
-                const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
-                let s = ''
-                for(let i=0;i<4;i++){
-                    s += chars.charAt(Math.floor(Math.random()*chars.length))
-                }
-                this.captchaText = s
-                if(platform === 'Web'){
-                    const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="120" height="40"><rect width="120" height="40" fill="#F5F5F5"/><text x="15" y="28" font-size="22" font-family="Arial" fill="#333">'+s+'</text></svg>'
-                    this.captchaSrc = 'data:image/svg+xml;utf8,'+encodeURIComponent(svg)
-                }else{
-                    this.captchaSrc = ''
-                }
             }
         }
     }
@@ -230,33 +259,17 @@
         text-decoration: none;
         font-weight: bold;
     }
-    .captcha-row{
+    .sms-row{
         align-items: center;
     }
-    .captcha{
-        width: 160px;
-        height: 60px;
-        background-color: #f5f7f9;
-        margin-left: 20px;
-        justify-content: center;
-        align-items: center;
-        border-radius: 10px;
-    }
-    .captcha-img{
-        width: 160px;
-        height: 60px;
-    }
-    .captcha-text{
-        font-size: 26px;
-        color: #333333;
-        letter-spacing: 4px;
-    }
-    .captcha-refresh{
+    .sms-button{
+        width: 180px;
+        height: 64px;
+        line-height: 64px;
+        text-align: center;
+        border-radius: 32px;
         font-size: 24px;
-        color: #999999;
-        text-decoration: none;
-        margin-top: 15px;
-        margin-bottom: 20px;
+        margin-left: 20px;
     }
     .button{
         margin-top: 20px;

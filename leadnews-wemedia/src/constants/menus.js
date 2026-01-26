@@ -15,7 +15,6 @@ export  const  MenuData = [
    {
     title:'粉丝管理', path:'/fans',icon:'el-icon-user',
     children:[
-    { title:'粉丝概况' , path : '/fans/index'},
     { title:'粉丝画像' , path : '/fans/info'},
     { title:'粉丝列表' , path : '/fans/list'}
   ]

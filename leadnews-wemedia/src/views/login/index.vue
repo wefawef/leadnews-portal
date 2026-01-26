@@ -17,6 +17,9 @@
           <el-button type="primary" @click="submitForm('ruleForm')">登录</el-button>
         </el-form-item>
       </el-form>
+      <div class="change-password-link">
+        <a href="javascript:;" @click="goChangePassword">修改密码</a>
+      </div>
     </div>
 
     <!-- 用户协议弹窗 -->
@@ -114,6 +117,9 @@ export default {
     },
     openPrivacy() {
       this.privacyVisible = true;
+    },
+    goChangePassword() {
+      this.$router.push({ path: '/change-password' })
     },
     async submitForm () {
        let {password , name} = this.ruleForm;
@@ -232,6 +238,15 @@ export default {
           transform: translateY(-1px);
           box-shadow: 0 6px 16px rgba(24, 144, 255, 0.4);
         }
+      }
+    }
+    .change-password-link {
+      text-align: right;
+      margin-top: 6px;
+      a {
+        color: #1890ff;
+        font-size: 14px;
+        cursor: pointer;
       }
     }
   }
