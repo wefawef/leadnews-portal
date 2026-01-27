@@ -1,10 +1,6 @@
 <template>
   <div class="fans-container">
-    <header>粉丝列表</header>
-    <div class="tabBar">
-      <router-link to="/fans/info" class="active">粉丝画像</router-link>
-      <router-link to="/fans/list">粉丝列表</router-link>
-    </div>
+    <header>粉丝画像</header>
     <div class="tabView">
       <Progress name="粉丝性别分布" :percentage="manPercent" :legend="['男', '女']"/>
       <category-chart

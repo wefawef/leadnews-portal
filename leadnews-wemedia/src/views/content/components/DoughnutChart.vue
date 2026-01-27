@@ -17,7 +17,7 @@ export default {
     },
     height: {
       type: String,
-      default: "380px"
+      default: "420px"
     },
     data : {
       type:Object
@@ -58,7 +58,7 @@ export default {
           {
             name: this.data.title,
             type: "pie",
-            radius: ["50%","70%"],
+            radius: ["60%","85%"],
             roseType: 'radius',
             avoidLabelOverlap: true,
             itemStyle:{
@@ -80,15 +80,11 @@ export default {
 <style rel="stylesheet/scss" lang="scss" scoped>
 .chart {
   margin-top: 10px;
-  width: 50%;
-  float: left;
+  width: 100%;
   font-size: 14px;
   .box {
     background-color: #fbfbfb;
     overflow: hidden;
-    .doughnut {
-      float: left;
-    }
   }
   .legend {
     margin: 0 10px 10px 10px;

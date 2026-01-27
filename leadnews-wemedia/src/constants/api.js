@@ -19,14 +19,13 @@ export const  API_MODIFYIMAGE_COL = '/api/v1/media/material/collect' //收藏用
 export const  API_MODIFYIMAGE_COL_CANCEL = '/api/v1/media/material/cancel_collect' //取消用户素材 或 修改收藏状态接口
 export const  API_MODIFYIMAGE_DELETE = '/api/v1/media/material/del_picture' //删除图片
 export const  API_USERPROFILE = 'user/profile' //获取用户个人资料
-export const  API_FANS = '/api/v1/user_fans/list' //粉丝列表
+export const  API_FANS = 'http://127.0.0.1:51602/user/api/v1/personal/fanList' //粉丝列表
 export const  API_FOLLOWER_PORTRAIT = '/api/v1/user_fans/fans_portrait' //获取粉丝性别同级数据
 export const  API_HEAD = 'user/photo' //编辑用户信息
 export const  API_FANS_AVATAR = '/api/v1/user_fans/avatar' //获取粉丝头像
 export const  API_CHANGE_FOLLOW_STATE = '/api/v1/user_fans/change_follow_state' //改变粉丝关注状态
 export const  API_GET_FANS_STATISTIC = '/api/v1/statistics/fans' //粉丝统计数据
 
-export const  API_STATISTICS_NEWS = '/api/v1/statistics/news' //图文统计
+export const  API_STATISTICS_NEWS = '/api/v1/media/news/statistics/news' //图文统计
 export const  API_STATISTICS_FANS = '/api/v1/statistics/fans' //粉丝统计
 export const  API_STATISTICS_PORTRAIT = '/api/v1/statistics/portrait' //画像统计
-

@@ -1,20 +1,14 @@
 <template>
   <div>
     <ul class="list">
-      <li v-for="item in fanList" :key="item.id">
-        <img class="article-img" :src="item.photo ? item.photo : require('@/assets/avatar.jpg') ">
-        <div>{{item.fans_name}}</div>
-        <el-button type="primary" v-if="!item.is_follow" @click="followFan(item.fans_id, $event)">关注</el-button>
-        <el-button type="warning" v-if="item.is_follow" @click="cancleFollowFan(item.fans_id, $event)">取消关注</el-button>
+      <li v-for="item in fanList" :key="item.id || item.name">
+        <img class="article-img" :src="item.image ? item.image : require('@/assets/avatar.jpg') ">
+        <div class="name">{{item.name}}</div>
+        <div class="meta">性别：{{formatSex(item.sex)}}</div>
+        <div class="meta">认证：{{formatAuth(item.identityAuthentication)}}</div>
+        <div class="meta">状态：{{formatStatus(item.status)}}</div>
+        <div class="meta">类型：{{formatFlag(item.flag)}}</div>
       </li>
-      <!--因为目前的接口没有数据 所以为了体验 这里采用模拟的数据-->
-      <!--    <div v-if="!fansList || !fansList.length">
-            <li v-for="(item,index) in list" :key="index">
-             <img class="article-img" src="@/assets/avatar.jpg">
-             <div>测试粉丝</div>
-             <el-button type="primary">关注</el-button>
-            </li>
-          </div>-->
     </ul>
     <div class="pagination">
       <el-pagination
@@ -32,13 +26,12 @@
 export default {
   data() {
     return {
-       list:[1,2,3,4,5,6,7,8,8,9,9],
        listPage:{
          currentPage:1
        }
     }
   },
-  props: ["name", "fanList", "total", "pageSize", "changePage", "followOperate"],
+  props: ["name", "fanList", "total", "pageSize", "changePage"],
   components: {
   },
   computed: {
@@ -48,11 +41,25 @@ export default {
     pageChange: function (newPage) {
       this.changePage && this.changePage({page: newPage})
     },
-    cancleFollowFan: function (fanId, event) {
-      this.followOperate && this.followOperate({fans_id: fanId, switch_state: false})
+    formatSex: function (sex) {
+      if (sex === 0 || sex === '0' || sex === false) return '男'
+      if (sex === 1 || sex === '1' || sex === true) return '女'
+      if (sex === 2 || sex === '2') return '未知'
+      return '未知'
     },
-    followFan: function (fanId, event) {
-      this.followOperate && this.followOperate({fans_id: fanId, switch_state: true})
+    formatAuth: function (value) {
+      return value ? '已认证' : '未认证'
+    },
+    formatStatus: function (value) {
+      if (value === 0 || value === '0' || value === false) return '正常'
+      if (value === 1 || value === '1' || value === true) return '锁定'
+      return '正常'
+    },
+    formatFlag: function (value) {
+      if (value === 0 || value === '0') return '普通用户'
+      if (value === 1 || value === '1') return '自媒体人'
+      if (value === 2 || value === '2') return '大V'
+      return '普通用户'
     }
   }
 }
@@ -60,24 +67,35 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" scoped>
   .list {
-    overflow: hidden;
     padding: 15px;
     li {
       border: 1px solid #e7e7e9;
-      width: 17%;
-      float: left;
-      margin:10px 1.5%;
-      text-align: center;
-      padding: 20px 0;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 20px;
+      margin-bottom: 10px;
+      background-color: #ffffff;
       img {
         border-radius: 50%;
-        width: 70px;
-        height: 70px;
+        width: 50px;
+        height: 50px;
+        flex-shrink: 0;
       }
       div {
-        font-size: 14px;
+        font-size: 13px;
         color: #666666;
-        margin: 10px 0;
+        margin: 0;
+        white-space: nowrap;
+      }
+      .name {
+        font-size: 14px;
+        color: #333333;
+        font-weight: 500;
+      }
+      .meta {
+        font-size: 12px;
+        color: #999999;
       }
     }
   }

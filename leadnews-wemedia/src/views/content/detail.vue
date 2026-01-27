@@ -16,9 +16,7 @@
     <Statist :article="all.article" :likes="all.likes" :collection="all.collection"/>
     <line-chart ref="lineChart"/>
     <div class="chart">
-      <template v-for="item in pie">
-        <doughnut-chart :data="item" v-if="item.title !='发文量-转化率'"/>
-      </template>
+      <doughnut-chart :data="pie" height="520px"/>
     </div>
   </div>
 </template>
@@ -64,9 +62,22 @@ export default {
     DoughnutChart
   },
   created(){
+    this.setTimeByType(this.parms.type)
     this.getNewsStatistics()
   },
   methods : {
+    setTimeByType:function(type){
+      if(type === -1 || type === '-1'){
+        return
+      }
+      if(type == '1'){// 本周
+        this.parms.stime=DateUtil.getWeekSTime()
+        this.parms.etime=DateUtil.getWeekETime()
+      }else{
+        this.parms.etime=DateUtil.getNearTime(0)
+        this.parms.stime=DateUtil.getNearTime(Number(type))
+      }
+    },
     loadDataByTimeRange:function(e){
       this.parms.type=-1
       this.parms.stime=e[0].getTime()
@@ -74,22 +85,30 @@ export default {
       this.getNewsStatistics();
     },
     loadDataByButton:function(e){
-      if(e=='1'){// 本周
-        this.parms.stime=DateUtil.getWeekSTime()
-        this.parms.etime=DateUtil.getWeekETime()
-      }else{
-        this.parms.etime=DateUtil.getNearTime(0)
-        this.parms.stime=DateUtil.getNearTime(e)
-      }
+      this.setTimeByType(e)
       this.getNewsStatistics();
     },
     async getNewsStatistics (){
+      if((this.parms.type !== -1 && this.parms.type !== '-1') && (!this.parms.stime || !this.parms.etime)){
+        this.setTimeByType(this.parms.type)
+      }
       let result = await getNewsStatistics(this.parms)
-      this.list = result.data
-      let all = {article:0,likes:0,collection:0,forward:0,comment:0,read_count:0}
+      const list = Array.isArray(result.data) ? result.data : (result.data ? [result.data] : [])
+      this.list = list
+      let all = {article:0,likes:0,collection:0,comment:0,read_count:0,follow:0,unlikes:0}
       let chats = {}
-      for (let i = 0; i < result.data.length; i++) {
-        let tmp = result.data[i];
+      for (let i = 0; i < list.length; i++) {
+        let item = list[i]
+        let tmp = {
+          created_time: Number(item.created_time),
+          article: Number(item.article) || 0,
+          read_count: Number(item.read_count) || 0,
+          likes: Number(item.likes) || 0,
+          comment: Number(item.comment) || 0,
+          collection: Number(item.collection) || 0,
+          follow: Number(item.follow) || 0,
+          unlikes: Number(item.unlikes) || 0
+        }
         let time = DateUtil.format13(tmp.created_time)
         let data = chats[time]?chats[time]:{}
         for (let j = 0; j <this.lineInfo.length ; j++) {
@@ -113,18 +132,11 @@ export default {
       }
       name.sort()
       let series = {}//折线图数据
-      let pie = {}//饼图数据
       for (let i = 0; i <name.length ; i++) {
         for (let j = 0; j <this.lineInfo.length ; j++) {
           let k=this.lineInfo[j].type
           series[k] = series[k]?series[k]:[]
-          series[k].push(chats[name[i]][k])
-          pie[k] = pie[k]?pie[k]:{}
-          pie[k]['title'] = this.lineInfo[j].name+' - 占比'
-          pie[k]['data'] = pie[k]['data']?pie[k]['data']:[]
-          pie[k]['legend'] = pie[k]['legend']?pie[k]['legend']:[]
-          pie[k]['legend'].push(name[i])
-          pie[k]['data'].push({value:chats[name[i]][k],name:name[i]})
+          series[k].push(Math.round(chats[name[i]][k] || 0))
         }
       }
       let data = []
@@ -141,14 +153,24 @@ export default {
       }
       let lineOption = {
         title: {text: '明细数据'},
-        tooltip: {trigger: 'axis'},
+        tooltip: {trigger: 'axis',formatter: function(params){return params.map(function(p){return p.seriesName + ': ' + Math.round(p.value || 0)}).join('<br/>')}},
         legend: {data:legend},
-        //grid: {left: '2%',right: '2%', bottom: '2%',containLabel: true},
-        xAxis: {type: 'category',boundaryGap: true,data: name},
-        yAxis: {type: 'value'},
+        xAxis: {type: 'category',boundaryGap: true,data: name,axisLabel: {show: false},axisTick: {show: false},axisLine: {show: false}},
+        yAxis: {type: 'value',axisLabel:{formatter:function(val){return Math.round(val)}},minInterval:1},
         series: data
       }
-      this.pie = pie
+      this.pie = {
+        title: '指标占比',
+        legend: ['阅读量','点赞量','评论量','收藏量','转发量','不喜欢'],
+        data: [
+          {name:'阅读量',value:Math.round(all.read_count || 0)},
+          {name:'点赞量',value:Math.round(all.likes || 0)},
+          {name:'评论量',value:Math.round(all.comment || 0)},
+          {name:'收藏量',value:Math.round(all.collection || 0)},
+          {name:'转发量',value:Math.round(all.follow || 0)},
+          {name:'不喜欢',value:Math.round(all.unlikes || 0)}
+        ]
+      }
       this.$refs['lineChart'].setOptions(lineOption)
     }
   }

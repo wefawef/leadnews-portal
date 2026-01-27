@@ -3,7 +3,7 @@
     <el-row :gutter="40">
       <el-col :span="8">
         <div class="grid-content">
-          <i></i>
+          <i class="fa fa-file-text-o icon-publish"></i>
           <div>
             <div>{{article}} 个</div>
             <span>图文发布量</span>
@@ -12,7 +12,7 @@
       </el-col>
       <el-col :span="8">
         <div class="grid-content">
-          <i></i>
+          <i class="fa fa-thumbs-o-up icon-like"></i>
           <div>
             <div>{{likes}} 个</div>
             <span>点赞数量</span>
@@ -21,7 +21,7 @@
       </el-col>
       <el-col :span="8">
         <div class="grid-content">
-          <i></i>
+          <i class="fa fa-star-o icon-collect"></i>
           <div>
             <div>{{collection}}</div>
             <span>收藏量</span>
@@ -60,8 +60,21 @@ export default {
       i {
         width: 50px;
         height: 50px;
-        background-color: red;
         border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        color: #ffffff;
+      }
+      .icon-publish {
+        background-color: #409EFF;
+      }
+      .icon-like {
+        background-color: #F56C6C;
+      }
+      .icon-collect {
+        background-color: #E6A23C;
       }
       & > div {
         margin: 0px 0 0 10px;

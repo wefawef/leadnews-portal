@@ -1,23 +1,19 @@
 <template>
   <div class="fans-container">
     <header>粉丝列表</header>
-    <div class="tabBar">
-      <router-link to="/fans/info">粉丝画像</router-link>
-      <router-link to="/fans/list" class="active">粉丝列表</router-link>
-    </div>
     <List
       :fanList="fansList"
       :total="total"
       :pageSize="params.size"
       :changePage="getFollowers"
-      :followOperate="followOperate"
     />
   </div>
 </template>
 
 <script>
 import List from './components/list/List.vue'
-import { getFollowers, getFollowersAvatar, changeFollowState } from '@/api/fans'
+import { getFollowers } from '@/api/fans'
+import { getUser } from '@/utils/store'
 export default {
   name: 'FansList',
   data() {
@@ -42,28 +38,17 @@ export default {
   methods: {
       //获取粉丝列表
       async getFollowers (newParams) {
-       let result = await getFollowers({...this.params, ...newParams}) //获取粉丝列表
-       var datas = result.data //粉丝列表数据
-       // 获取粉丝头像
-        for (let i = 0; i < datas.length; i++) {
-          let avatarRes = await getFollowersAvatar({id: datas[i].fans_id});
-          datas[i].photo = avatarRes;
+       const user = getUser() || {}
+       const userId = user.id || user.userId || user.uid
+       if (!userId) {
+         this.fansList = []
+         this.total = 0
+         return
        }
-        this.total = result.total;
-        this.fansList = datas;
-    },
-      async followOperate(data) {
-        let result = await changeFollowState(data);
-        if (data.switch_state) {
-          if (result.code == 0) {
-            this.$message({ type: 'success',  message: '关注成功!'  });
-          } else {
-            this.$message({ type: 'error',  message: result.error_message  });
-          }
-        } else {
-          this.$message({ type: 'success',  message: '取消关注成功!'  });
-        }
-        this.getFollowers()
+       let result = await getFollowers(userId,{...this.params, ...newParams})
+       const datas = Array.isArray(result.data) ? result.data : (result.data ? [result.data] : [])
+       this.total = result.total || datas.length
+       this.fansList = datas
       }
   }
 }

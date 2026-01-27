@@ -7,7 +7,7 @@ import { API_USERIMAGES_ADD , API_HEAD} from  '@/constants/api'
 import LoadingManage from './loading'
 // create an axios instance
 const service = axios.create({
-  baseURL: '/wemedia/MEDIA', // api 的 base_url
+  baseURL: '/wemedia', // api 的 base_url
   timeout: 10000, // request timeout
   transformResponse (data) {
     if(data)
