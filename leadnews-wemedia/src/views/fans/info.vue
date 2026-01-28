@@ -3,27 +3,15 @@
     <header>粉丝画像</header>
     <div class="tabView">
       <Progress name="粉丝性别分布" :percentage="manPercent" :legend="['男', '女']"/>
-      <category-chart
-        :ageRangeKey="ageRangeKey"
-        :ageRangeValue="ageRangeValue"
-        :width="width"
-        :height="height"
-        :autoResize="autoResize"
-        :fansAgePerc="fansAgePerc"
-      />
-      <Progress name="粉丝终端分布" :percentage="iosPercent" :legend="['Android', 'IOS']" />
-      <category-chart-big
-        :chartData="readData"
-      />
+      <Progress name="自媒体账号认证" :percentage="unauthPercent" :legend="['未认证', '已认证']"/>
     </div>
   </div>
 </template>
 
 <script>
 import Progress from './components/info/Progress.vue'
-import CategoryChart from './components/info/CategoryChart.vue'
-import CategoryChartBig from './components/info/CategoryChartBig.vue'
-import { getFollowersPortrait }  from '@/api/fans'
+import { getFollowers }  from '@/api/fans'
+import { getUser } from '@/utils/store'
 
 export default {
   name: 'ContentManage',
@@ -33,26 +21,14 @@ export default {
         male:0,
         female:0
       },
-      mobile: {
-        android: 0,
-        ios:0
-      },
-      ageRangeValue:[],
-      ageRangeKey:[],
-      width: '75%',
-      height: '350px',
-      autoResize: true,
-      fansAgePerc: [],
-      readData: {
-        key: [],
-        value: []
-      },
+      auth: {
+        unauth: 0,
+        auth: 0
+      }
     }
   },
   components: {
-    Progress,
-    CategoryChart,
-    CategoryChartBig
+    Progress
   },
   created () {
     this.getFansPortrait();
@@ -65,84 +41,53 @@ export default {
        //目前没有粉丝数据 所以 男粉丝+女粉丝是0  所以 模拟一下数据50
        return 50
      },
-    iosPercent () {
-       if ((this.mobile.android + this.mobile.ios) > 0) {
-         return Math.round(parseFloat(this.mobile.android / (this.mobile.android + this.mobile.ios)) * 100);
+    unauthPercent () {
+       if ((this.auth.unauth + this.auth.auth) > 0) {
+         return Math.round(parseFloat(this.auth.unauth / (this.auth.unauth + this.auth.auth)) * 100)
        }
-       return 50;
+       return 50
     }
   },
   methods: {
     //获取粉丝性别分布
     async  getFansPortrait () {
-       let result = await getFollowersPortrait();
-       if (result.code == 0) {
-
-         let portraits = result.data;
-         let ageItems = [];
-         let readItems = [];
-         let totalFans = 0;
-         portraits.forEach((item) => {
-           var key = item.name.split(":")[1];
-           var value = Number(item.value);
-           //提取性别
-           if (item.name.startsWith("sex")) {
-             this.gender[key] = value;
-           }
-           //提取手机
-           if (item.name.startsWith("mobile")) {
-             this.mobile[key] = value;
-           }
-           //年龄分布
-           if (item.name.startsWith("age")) {
-              ageItems.push(item);
-              totalFans += value;
-           }
-           //阅读统计
-           if (item.name.startsWith("read")) {
-             readItems.push(item);
-           }
-         });
-         this.setAges(ageItems, totalFans)
-         this.statisticRead(readItems)
-       } else {
-         this.$message({type: "error", message: result.error_message})
+       const user = getUser() || {}
+       const userId = user.id || user.userId || user.uid
+       if (!userId) {
+         this.gender.male = 0
+         this.gender.female = 0
+         this.auth.unauth = 0
+         this.auth.auth = 0
+         return
        }
-    },
-    setAges(ageItems, total) {
-      //排序年龄项
-      ageItems.sort((a, b) => {
-        if (a.name > b.name)
-          return 1;
-        else if (a.name < b.name)
-          return -1;
-        else
-          return 0;
-      });
-      ageItems.forEach((item)=>{
-        var key = item.name.split(":")[1];
-        var value = Number(item.value);
-        this.ageRangeKey.push(`${key}岁`);
-        this.ageRangeValue.push(Number(value));
-        let perc = Math.round(parseFloat((value / total) * 100));
-        this.fansAgePerc.push({age: key, perc: `${perc}%`})
-      })
-    },
-    statisticRead(readItems) {
-      readItems.sort((a, b) => {
-        if (a.name > b.name)
-          return 1;
-        else if (a.name < b.name)
-          return -1;
-        else
-          return 0;
-      });
-      readItems.forEach((item) => {
-        var key = item.name.split(":")[1];
-        var value = Number(item.value);
-        this.readData.key.push(key)
-        this.readData.value.push(value)
-      })
+       let result = await getFollowers(userId, {page:1,size:1000})
+       if (result.code == 0 || result.code == 200) {
+         const list = Array.isArray(result.data) ? result.data : (result.data ? [result.data] : [])
+         let male = 0
+         let female = 0
+         let unauth = 0
+         let auth = 0
+         list.forEach((item) => {
+           const sex = item.sex
+           if (sex === 0 || sex === '0' || sex === false) {
+             male += 1
+           } else if (sex === 1 || sex === '1' || sex === true) {
+             female += 1
+           }
+           const identityAuthentication = item.identityAuthentication
+           if (identityAuthentication === true || identityAuthentication === 1 || identityAuthentication === '1') {
+             auth += 1
+           } else {
+             unauth += 1
+           }
+         })
+         this.gender.male = male
+         this.gender.female = female
+         this.auth.unauth = unauth
+         this.auth.auth = auth
+       } else {
+         this.$message({type: "error", message: result.errorMessage || result.error_message})
+       }
     }
   }
 
