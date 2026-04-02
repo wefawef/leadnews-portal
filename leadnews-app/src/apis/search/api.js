@@ -8,17 +8,26 @@ Api.prototype = {
     // 加载搜索历史
     load_search_history: function(){
         let url = this.vue.$config.urls.get('load_search_history')
-        return this.vue.$request.postByEquipmentId(url,{page_size:5})
+        return this.vue.$request.post(url,{})
     },
     // 删除搜索词
     del_search: function(id){
         let url = this.vue.$config.urls.get('del_search')
-        return this.vue.$request.postByEquipmentId(url,{his_list:[{id:id}]})
+        return this.vue.$request.post(url,{searchId:id})
     },
     // 输入联想
     associate_search: function(searchWords){
         let url = this.vue.$config.urls.get('associate_search')
-        return this.vue.$request.postByEquipmentId(url,{search_words:searchWords,page_size:10})
+        let minBehotTime = new Date()
+        if (minBehotTime instanceof Date) {
+            minBehotTime = minBehotTime.getTime()
+        }
+        return this.vue.$request.post(url,{
+            searchWords: searchWords,
+            pageNum: 1,
+            pageSize: 10,
+            minBehotTime: minBehotTime
+        })
     },
     // 加载热词
     load_hot_keywords: function(){

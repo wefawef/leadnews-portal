@@ -8,11 +8,15 @@ Api.prototype = {
     // 加载
     article_search: function(parms){
         let url = this.vue.$config.urls.get('article_search')
+        let minBehotTime = parms.minBehotTime || new Date();
+        if (minBehotTime instanceof Date) {
+            minBehotTime = minBehotTime.getTime();
+        }
         return this.vue.$request.postByEquipmentId(url,{
-            search_words:parms.keyword,
-            page_num:parms.pageNum,
-            tag:parms.tag,
-            page_size:20
+            searchWords:parms.keyword,
+            pageNum:parms.pageNum,
+            pageSize:parms.pageSize || 20,
+            minBehotTime:minBehotTime
         })
     }
 }

@@ -73,6 +73,9 @@ const config = {
         pathRewrite: {
           '^/login': ''
         }
+      },'/search': {
+        target: 'http://'+ip+':51601/', //源地址
+        changeOrigin: true //改变源
       }
     },
     autoOpenBrowser: false,

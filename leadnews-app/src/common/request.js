@@ -117,9 +117,10 @@ function normalizeUrl(url){
     if(url.indexOf('/server_85') === 0){
         return 'http://heima-app-java.research.itcast.cn' + url
     }
-    if(url.indexOf('/article') === 0 || url.indexOf('/behavior') === 0 || url.indexOf('/user') === 0 || url.indexOf('/login') === 0){
+    if(url.indexOf('/article') === 0 || url.indexOf('/behavior') === 0 || url.indexOf('/user') === 0 || url.indexOf('/login') === 0 || url.indexOf('/search') === 0){
         let host = getNativeHost()
         let rewritten = url.replace(/^\/(article|behavior|user|login)/, '')
+        // 特殊处理 search，不剥离 /search 前缀
         return 'http://' + host + ':51601' + rewritten
     }
     return getNativeOrigin() + url

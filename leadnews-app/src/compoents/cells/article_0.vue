@@ -2,9 +2,9 @@
     <div class="list-item">
         <text class="title" :lines="2" :style="titleStyle">{{data.title}}</text>
         <div class="tags">
-            <text class="tags-text tags-icon">{{data.icon}}</text>
+<!--            <text class="tags-text tags-icon">{{data.icon}}</text>-->
             <text class="tags-text">{{data.source}}</text>
-            <text class="tags-text">评论 {{data.commit}}</text>
+            <text class="tags-text"> {{data.commit}}</text>
             <text class="tags-text date">{{formatDate(data.date)}}</text>
         </div>
     </div>

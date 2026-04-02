@@ -1,7 +1,7 @@
 <template>
     <div class="art-page" :style="pageStyle">
         <div class="top-bar" :style="topBarStyle">
-            <text class="back-home" @click="goHome">&lt;</text>
+            <text class="back-home" @click="goBack">&lt;</text>
         </div>
         <div class="news-container" :style="containerStyle">
             <iframe
@@ -140,7 +140,25 @@
                     console.error('更新iframe高度时出错:', error);
                 }
             },
-            goHome () {
+            goBack () {
+                if (typeof sessionStorage !== 'undefined') {
+                    const fromPage = sessionStorage.getItem('fromPage');
+                    if (fromPage === 'search-result') {
+                        const keyword = sessionStorage.getItem('searchKeyword');
+                        sessionStorage.removeItem('fromPage');
+                        sessionStorage.removeItem('searchKeyword');
+                        this.$router.replace({ 
+                            name: 'search_result', 
+                            params: { keyword: keyword } 
+                        });
+                        return;
+                    } else if (fromPage === 'Mark' || fromPage === 'Concern') {
+                        sessionStorage.removeItem('fromPage');
+                        this.$router.replace({ name: fromPage });
+                        return;
+                    }
+                    sessionStorage.removeItem('fromPage');
+                }
                 this.$router.replace({ name: 'Home' })
             },
             onIframeLoad() {

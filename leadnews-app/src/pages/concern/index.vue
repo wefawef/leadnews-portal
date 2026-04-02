@@ -172,6 +172,9 @@ export default {
           const queryString = Object.keys(params).map(key => `${key}=${params[key]}`).join('&')
           url = `${url}${separator}${queryString}`
         }
+        if (typeof sessionStorage !== 'undefined') {
+          sessionStorage.setItem('fromPage', 'Concern');
+        }
         this.$router.push({
           name: 'article-info',
           params: {
@@ -185,6 +188,9 @@ export default {
         })
       }).catch(e => {
         console.error('跳转文章详情失败', e)
+        if (typeof sessionStorage !== 'undefined') {
+          sessionStorage.setItem('fromPage', 'Concern');
+        }
         this.$router.push({
           name: 'article-info',
           params: {

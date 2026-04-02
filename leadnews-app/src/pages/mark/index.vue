@@ -198,26 +198,32 @@ export default {
           const queryString = Object.keys(params).map(key => `${key}=${params[key]}`).join('&')
           url = `${url}${separator}${queryString}`
         }
+        if (typeof sessionStorage !== 'undefined') {
+          sessionStorage.setItem('fromPage', 'Mark')
+        }
         this.$router.push({
           name: 'article-info',
           params: {
             id: item.id,
             staticUrl: url,
             title: item.title,
-            createdTime: item.createdTime,
+            createdTime: item.publishTime || item.createdTime,
             authorId: item.authorId
           },
           query: {}
         })
       }).catch(e => {
         console.error('跳转文章详情失败', e)
+        if (typeof sessionStorage !== 'undefined') {
+          sessionStorage.setItem('fromPage', 'Mark')
+        }
         this.$router.push({
           name: 'article-info',
           params: {
             id: item.id,
             staticUrl: item.staticUrl,
             title: item.title,
-            createdTime: item.createdTime,
+            createdTime: item.publishTime || item.createdTime,
             authorId: item.authorId
           },
           query: {}

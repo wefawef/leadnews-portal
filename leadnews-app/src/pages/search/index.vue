@@ -96,10 +96,10 @@
             // 加载搜索历史
             load_search_history : function(){
                 Api.load_search_history().then(data=>{
-                    if(data.code==0){
-                        this.data.history = data.data
+                    if(data.code==0 || data.code==200){
+                        this.data.history = Array.isArray(data.data) ? data.data : []
                     }else{
-                        modal.toast({message: data.error_message,duration: 3})
+                        modal.toast({message: data.errorMessage || data.error_message,duration: 3})
                     }
                 }).catch((e)=>{
                     console.log(e)
@@ -111,11 +111,11 @@
                 modal.confirm({message:'确认要删除吗？'},function(button) {
                     if(button=='OK') {
                         Api.del_search(id).then(data => {
-                            if (data.code == 0) {
+                            if (data.code == 0 || data.code == 200) {
                                 modal.toast({message: '删除成功', duration: 3})
                                 _this.load_search_history()
                             } else {
-                                modal.toast({message: data.error_message, duration: 3})
+                                modal.toast({message: data.errorMessage || data.error_message, duration: 3})
                             }
                         }).catch((e) => {
                             console.log(e)
@@ -126,11 +126,13 @@
             //用户输入时，提示联想词
             onInput : function(val){
                 Api.associate_search(val).then(data => {
-                    if (data.code == 0) {
+                    if (data.code == 0 || data.code == 200) {
                         this.data.keyword=val
                         this.showTip = true
-                        this.data.tip=data.data
+                        this.data.tip = Array.isArray(data.data) ? data.data : []
                     }
+                }).catch(e=>{
+                    console.log(e)
                 })
             },
             // 加载热搜关键字

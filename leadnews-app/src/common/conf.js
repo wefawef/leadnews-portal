@@ -4,10 +4,11 @@ const  config = {
         article:'ARTICLE',
         behavior:'BEHAVIOR',
         user:'USER',
-        login:'LOGIN'
+        login:'LOGIN',
+        search:'SEARCH'
     },
     // 请求本地的请求service
-    local:{user:true,article:true,behavior:true,login:true},
+    local:{user:true,article:true,behavior:true,login:true,search:true},
     // 代理前缀
     prefix:{
         server_85:'/server_85'
@@ -18,12 +19,12 @@ const  config = {
         loadnew:{url:'article/api/v1/article/loadnew/',sv:'article'},
         load_article_info:{url:'api/v1/article/load_article_info/',sv:'article'},
         load_article_behavior:{url:'api/v1/article/load_article_behavior/',sv:'article'},
-        load_search_history:{url:'api/v1/article/search/load_search_history/',sv:'article'},
-        del_search:{url:'api/v1/article/search/del_search/',sv:'article'},
+        load_search_history:{url:'api/v1/history/load',sv:'search'},
+        del_search:{url:'api/v1/history/del',sv:'search'},
         clear_search:{url:'api/v1/article/search/clear_search/',sv:'article'},
-        associate_search:{url:'api/v1/article/search/associate_search/',sv:'article'},
+        associate_search:{url:'api/v1/associate/search',sv:'search'},
         load_hot_keywords:{url:'api/v1/article/search/load_hot_keywords/',sv:'article'},
-        article_search:{url:'api/v1/article/search/article_search/',sv:'article'},
+        article_search:{url:'api/v1/article/search/search',sv:'search'},
         // ==========  behavior
         show_behavior:{url:'api/v1/behavior/show_behavior/',sv:'behavior'},
         read_behavior:{url:'api/v1/behavior/read_behavior/',sv:'behavior'},

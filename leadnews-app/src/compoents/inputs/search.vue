@@ -1,6 +1,6 @@
 <template>
     <div class="body" :style="getBodyStyle">
-        <text v-if="icon!=''" class="icon" :style="getIconStyle">{{icon}}</text>
+        <text v-if="icon!=''" class="icon" :style="getIconStyle" @click="onSubmit">{{icon}}</text>
         <input @blur="onBlur"
                @focus="onFocus"
                @input="onInput"
@@ -85,8 +85,13 @@
         },
         data(){
           return {
-              inpValue:''
+              inpValue: this.value
           }
+        },
+        watch: {
+            value(newVal) {
+                this.inpValue = newVal;
+            }
         },
         computed:{
             getInputStyle:function(){

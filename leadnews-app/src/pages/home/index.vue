@@ -42,6 +42,7 @@
   import Item3 from '../../compoents/cells/article_3.vue'
   import Config from './config'
   import Api from '@/apis/home/api'
+  import ArticleApi from '@/apis/article/api'
 
   const modal = weex.requireModule("modal")
 
@@ -731,16 +732,22 @@
         console.log('当前频道索引:', this.params.index);
         console.log('当前频道标签:', this.params.tag);
 
-        // 简化实现：只保存必要的频道信息
+        // 1. 发送行为与详情请求
+        ArticleApi.setVue(this);
+        ArticleApi.loadinfo(item.id);
+        ArticleApi.loadbehavior(item.id, item.authorId);
+
+        // 2. 简化实现：只保存必要的频道信息
         if (typeof sessionStorage !== 'undefined') {
           sessionStorage.setItem('lastChannelIndex', this.params.index.toString());
           sessionStorage.setItem('lastChannelTag', this.params.tag || '');
           sessionStorage.setItem('listItemIndex', (key || 0).toString());
           sessionStorage.setItem('lastArticleId', (item.id || '').toString());
+          sessionStorage.setItem('fromPage', 'home');
           console.log('已保存当前频道信息，索引:', this.params.index, '标签:', this.params.tag);
         }
 
-        // 获取token和equipmentId并拼接到url
+        // 3. 获取token和equipmentId并拼接到url
         Promise.all([
           this.$store.getToken(),
           this.$store.getEquipmentId(),
@@ -779,14 +786,14 @@
             url = `${url}${separator}${queryString}`;
           }
 
-          // 只传递必要的参数，避免URL过长
+          // 4. 只传递必要的参数，避免URL过长
           this.$router.push({
             name:'article-info',
             params:{
               id: item.id,
               staticUrl: url,
               title: item.title,
-              createdTime: item.createdTime,
+              createdTime: item.publishTime || item.createdTime,
               authorId: item.authorId
             },
             // 不再将整个对象放入query参数
@@ -803,7 +810,7 @@
               id: item.id,
               staticUrl: item.staticUrl,
               title: item.title,
-              createdTime: item.createdTime,
+              createdTime: item.publishTime || item.createdTime,
               authorId: item.authorId
             },
             query: {}
