@@ -7,6 +7,8 @@
                 @onBlur="onBlur"
                 @onChange="onChange"
                 :radius="62"
+                :showButton="true"
+                :borderWidth="0"
                 :icon="icon"
                 placeholder="请输入搜索关键字..."
                 rightWidth="0" />
@@ -51,7 +53,9 @@
         width: @screen-width;
         flex-direction: row;
         background-color: @mian-color;
+        border-width: 0px;
         border-style: solid;
+        border-color: transparent;
         height: @top-height;
         align-items: center;
         padding: 5px 30px 8px;

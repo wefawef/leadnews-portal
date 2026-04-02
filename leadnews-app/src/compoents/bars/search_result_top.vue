@@ -4,8 +4,13 @@
         <Search
                 :icon="icon"
                 @onSubmit="onSubmit"
+                @onInput="onInput"
+                @onFocus="onFocus"
+                @onBlur="onBlur"
                 :value="value"
                 :radius="62"
+                :showButton="true"
+                :borderWidth="0"
                 :placeholder="placeholder"
                 right-width="30"
                 left-width="30" />
@@ -42,6 +47,15 @@
             },
             onSubmit : function(val){
                 this.$emit('onSubmit', val);
+            },
+            onInput : function(val){
+                this.$emit('onInput', val);
+            },
+            onFocus : function(){
+                this.$emit('onFocus');
+            },
+            onBlur : function(e){
+                this.$emit('onBlur', e);
             }
         }
     }
@@ -53,7 +67,9 @@
         width: @screen-width;
         flex-direction: row;
         background-color: @mian-color;
+        border-width: 0px;
         border-style: solid;
+        border-color: transparent;
         height: @top-height;
         padding: 7px 15px 7px 20px;
         align-items: center;

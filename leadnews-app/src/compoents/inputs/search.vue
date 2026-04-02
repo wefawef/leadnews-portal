@@ -15,7 +15,8 @@
                :value="value"
                :style="getInputStyle"
                />
-        <text class="skin">&nbsp;</text>
+        <text v-if="showButton" class="btn" :style="getButtonStyle" @click="onSubmit">{{buttonText}}</text>
+        <text v-else class="skin">&nbsp;</text>
     </div>
 </template>
 
@@ -64,11 +65,11 @@
             },
             borderWidth:{
                 type:Number,
-                default:1
+                default:0
             },
             backgroundColor:{
               type:String,
-              default:'#ffffff'
+              default:'#f7f8fa'
             },
             placeholder:{
                 type:String,
@@ -81,6 +82,22 @@
             radius:{
                 type:Number,
                 default:30
+            },
+            showButton:{
+                type:Boolean,
+                default:true
+            },
+            buttonText:{
+                type:String,
+                default:'搜索'
+            },
+            buttonBackgroundColor:{
+                type:String,
+                default:'#3296fa'
+            },
+            buttonTextColor:{
+                type:String,
+                default:'#ffffff'
             }
         },
         data(){
@@ -99,17 +116,27 @@
                     marginLeft:(this.icon==''?'20px':'1px'),
                     height: (this.height - 10) + "px",
                     lineHeight: (this.height - 10) + "px",
-                    fontSize: (this.height / 70) * 32 + "px"
+                    fontSize: (this.height / 70) * 32 + "px",
+                    borderWidth: 0,
+                    borderTopWidth: 0,
+                    borderRightWidth: 0,
+                    borderBottomWidth: 0,
+                    borderLeftWidth: 0,
+                    borderColor: "transparent",
+                    backgroundColor: "transparent",
+                    outlineWidth: 0,
+                    outlineStyle: "solid",
+                    outlineColor: "transparent",
+                    boxShadow: "none"
                 }
             },
             getBodyStyle:function(){
-                console.log("======"+(this.height-this.radius))
                 return {
-                    borderRadius:(this.height-this.radius)+"px",
+                    borderRadius:this.radius+"px",
                     marginLeft:this.leftWidth+'px',
                     marginRight:this.rightWidth+'px',
-                    borderColor:this.color,
-                    borderWidth:this.borderWidth+"px",
+                    borderColor: this.borderWidth > 0 ? this.color : 'transparent',
+                    borderWidth: (this.borderWidth > 0 ? this.borderWidth : 0) + "px",
                     backgroundColor: this.backgroundColor,
                     'flex':this.flex,
                     'height':this.height+'px'
@@ -122,6 +149,18 @@
                     height:(this.height-10)+"px",
                     lineHeight:(this.height-10)+"px",
                     fontSize:(this.height/70)*32+"px"
+                }
+            },
+            getButtonStyle:function(){
+                return {
+                    backgroundColor: this.buttonBackgroundColor,
+                    color: this.buttonTextColor,
+                    height: (this.height - 18) + "px",
+                    lineHeight: (this.height - 18) + "px",
+                    fontSize: (this.height / 70) * 30 + "px",
+                    paddingLeft: "18px",
+                    paddingRight: "18px",
+                    borderRadius: (this.height - 18) / 2 + "px"
                 }
             }
         },
@@ -155,11 +194,9 @@
     @import '../../styles/common';
     .body{
         flex-direction: row;
-        justify-content: space-between;
         align-items: center;
-        border-width:1px;
-        border-color: @border-color;
-        border-style: solid;
+        padding-left: 10px;
+        padding-right: 10px;
     }
     .icon{
         font-size: 28px;
@@ -167,10 +204,20 @@
     }
     .input{
         flex:1;
-        border: none;
+        border-width: 0px;
+        border-top-width: 0px;
+        border-right-width: 0px;
+        border-bottom-width: 0px;
+        border-left-width: 0px;
+        border-color: transparent;
+        background-color: transparent;
         placeholder-color:'a5a5a5'
     }
     .skin{
         width: 20px;
+    }
+    .btn{
+        text-align: center;
+        margin-left: 10px;
     }
 </style>

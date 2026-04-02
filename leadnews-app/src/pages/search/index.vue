@@ -2,12 +2,15 @@
     <div class="art-page">
         <div class="art-top"><TopBar @onBlur="onBlur" @onInput="onInput"/></div>
         <scroller class="scroller" :style="{'height':scrollerHeight}" show-scrollbar="true">
-            <template v-for="item in data.history">
-                <SearchHistory @onClickText="doSearch" @onDeleteHistory="onDeleteHistory" :id="item.id" :title="item.keyword"/>
-            </template>
-            <a href="#" class="all-search">
-                <text class="all-search-text">全部搜索记录</text>
-            </a>
+            <div class="history-wrap">
+                <scroller class="history-scroller" scroll-direction="horizontal" show-scrollbar="false">
+                    <div class="history-row">
+                        <template v-for="item in data.history">
+                            <SearchHistory mode="chip" @onClickText="doSearch" @onDeleteHistory="onDeleteHistory" :id="item.id" :title="item.keyword"/>
+                        </template>
+                    </div>
+                </scroller>
+            </div>
             <Title title="今日热点" :icon="icon.hot"/>
             <div class="hot-body">
                 <template v-for="item in data.hot">
@@ -189,6 +192,18 @@
         flex-direction: column;
         width: 750px;
         margin-top: 120px;
+    }
+    .history-wrap{
+        background-color: #ffffff;
+        padding: 10px 20px;
+    }
+    .history-scroller{
+        width: 710px;
+    }
+    .history-row{
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: nowrap;
     }
     .all-search{
         font-size: 36px;

@@ -1,6 +1,44 @@
 <template>
     <div class="wrapper">
-        <div class="top-body"><Home_Bar @onSubmit="onSubmit" :value="keyword"/></div>
+        <div class="top-body">
+            <Home_Bar
+                @onSubmit="onSubmit"
+                @onInput="onInput"
+                @onFocus="onFocus"
+                @onBlur="onBlur"
+                :value="searchValue"
+            />
+        </div>
+        <div class="overlay" v-if="overlay.visible">
+            <scroller class="overlay-scroller" :style="{'height':(tabPageHeight)+'px'}" show-scrollbar="true">
+                <template v-if="overlay.mode==='history'">
+                    <div class="history-wrap">
+                        <scroller class="history-scroller" scroll-direction="horizontal" show-scrollbar="false">
+                            <div class="history-row">
+                                <template v-for="item in overlay.history">
+                                    <SearchHistory
+                                        mode="chip"
+                                        @onClickText="onSelectHistory"
+                                        @onDeleteHistory="onDeleteHistory"
+                                        :id="item.id"
+                                        :title="item.keyword"
+                                    />
+                                </template>
+                            </div>
+                        </scroller>
+                    </div>
+                    <div class="empty-cell" v-if="!overlay.history || overlay.history.length===0">
+                        <text class="empty-text">暂无搜索记录</text>
+                    </div>
+                </template>
+                <template v-else>
+                    <SearchTip @onSelect="onSelectSuggestion" :search="searchValue" :data="overlay.tip"/>
+                    <div class="empty-cell" v-if="!overlay.tip || overlay.tip.length===0">
+                        <text class="empty-text">暂无联想词</text>
+                    </div>
+                </template>
+            </scroller>
+        </div>
         <div class="content-body">
             <list class="item-container" :style="{ height: (tabPageHeight) + 'px' }">
                 <!-- 列表项，并绑定显示事件 -->
@@ -30,10 +68,13 @@
     import Item3 from '../../compoents/cells/article_3.vue'
     import Api from '@/apis/search_result/api'
     import ArticleApi from '@/apis/article/api'
+    import SearchApi from '@/apis/search/api'
+    import SearchHistory from '@/compoents/cells/search_0'
+    import SearchTip from '@/compoents/inputs/search_tip'
 
     export default {
         name: 'HeiMa-Home',
-        components: {Home_Bar, Item0,Item1,Item3,WxcPanItem},
+        components: {Home_Bar, Item0,Item1,Item3,WxcPanItem,SearchHistory,SearchTip},
         props:{
             keyword:''//当前搜索的关键字
         },
@@ -42,6 +83,13 @@
             showmore:true,//是否显示loadmore动画
             resultList: [],//列表数据集合
             tabPageHeight: 1334,//列表总高度
+            searchValue:'',
+            overlay:{
+                visible:false,
+                mode:'history',
+                history:[],
+                tip:[]
+            },
             params:{
                 tag:"__all__",
                 keyword:'',
@@ -58,10 +106,75 @@
             // 初始化高度，顶部菜单高度120+顶部bar 90
             this.tabPageHeight = Utils.env.getPageHeight()-110;
             this.params.keyword = this.keyword;
+            this.searchValue = this.keyword;
             Api.setVue(this);
+            SearchApi.setVue(this);
             this.load();
+            this.load_search_history();
         },
         methods: {
+            load_search_history : function(){
+                SearchApi.load_search_history().then(data=>{
+                    if(data.code==0 || data.code==200){
+                        this.overlay.history = Array.isArray(data.data) ? data.data : []
+                    }
+                }).catch(e=>{
+                    console.log(e)
+                })
+            },
+            onInput : function(val){
+                this.searchValue = val;
+                if(!val){
+                    this.overlay.mode = 'history';
+                    this.overlay.tip = [];
+                    this.overlay.visible = true;
+                    this.load_search_history();
+                    return;
+                }
+                SearchApi.associate_search(val).then(data=>{
+                    if(data.code==0 || data.code==200){
+                        this.overlay.mode = 'tip';
+                        this.overlay.tip = Array.isArray(data.data) ? data.data : [];
+                        this.overlay.visible = true;
+                    }
+                }).catch(e=>{
+                    console.log(e)
+                })
+            },
+            onFocus : function(){
+                if(!this.searchValue){
+                    this.overlay.mode = 'history';
+                    this.overlay.tip = [];
+                    this.overlay.visible = true;
+                    this.load_search_history();
+                }
+            },
+            onBlur : function(){
+                this.overlay.visible = false;
+            },
+            onSelectSuggestion : function(val){
+                this.onSubmit(val);
+            },
+            onSelectHistory : function(val){
+                this.onSubmit(val);
+            },
+            onDeleteHistory : function(id){
+                const modal = weex.requireModule("modal")
+                modal.confirm({message:'确认要删除吗？'},(button)=>{
+                    if(button==='OK') {
+                        SearchApi.del_search(id).then(data => {
+                            if (data.code == 0 || data.code == 200) {
+                                modal.toast({message: '删除成功', duration: 3})
+                                this.load_search_history()
+                            } else {
+                                modal.toast({message: data.errorMessage || data.error_message, duration: 3})
+                            }
+                        }).catch((e) => {
+                            console.log(e)
+                        })
+                    }
+                })
+            },
             // 上拉加载更多
             loadmore:function(){
                 this.showmore=true;
@@ -153,7 +266,7 @@
                 if (typeof sessionStorage !== 'undefined') {
                     sessionStorage.setItem('lastArticleId', (item.id || '').toString());
                     sessionStorage.setItem('fromPage', 'search-result');
-                    sessionStorage.setItem('searchKeyword', this.keyword || '');
+                    sessionStorage.setItem('searchKeyword', this.params.keyword || this.keyword || '');
                 }
 
                 // 3. 获取token和equipmentId并拼接到url
@@ -220,6 +333,8 @@
                 });
             },
             onSubmit : function(val){
+                this.searchValue = val;
+                this.overlay.visible = false;
                 this.params.keyword = val;
                 this.params.pageNum = 1;
                 this.resultList = [];
@@ -242,6 +357,38 @@
         position: fixed;
         left: 0;
         top: 0;
+    }
+    .overlay{
+        position: absolute;
+        top: 90px;
+        width: 750px;
+        z-index: 999;
+        background-color: #ffffff;
+    }
+    .overlay-scroller{
+        width: 750px;
+        background-color: #ffffff;
+    }
+    .history-wrap{
+        background-color: #ffffff;
+        padding: 10px 20px;
+    }
+    .history-scroller{
+        width: 710px;
+    }
+    .history-row{
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: nowrap;
+    }
+    .empty-cell{
+        align-items: center;
+        justify-content: center;
+        padding: 30px 0;
+    }
+    .empty-text{
+        color: #999999;
+        font-size: 24px;
     }
     .content-body{
         flex: 1;

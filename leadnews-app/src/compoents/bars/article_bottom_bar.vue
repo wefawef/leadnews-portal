@@ -1,6 +1,6 @@
 <template>
     <div class="bar_bg">
-        <Search icon="" rightWidth=25 placeholder="写评论" />
+        <Search icon="" :showButton="false" :borderWidth="0" rightWidth=25 placeholder="写评论" />
         <text class="icon">&#xf075;</text>
         <text @click="clickCollection" class="icon" :style="{color:collection?'#3296fa':'#a5a5a5'}">&#xf005;</text>
         <text @click="clickForward" class="icon" :style="{color:forward?'#3296fa':'#a5a5a5'}">&#xf14d;</text>
