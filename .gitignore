@@ -1,5 +1,5 @@
 # leadnews-admin generated assets
-leadnews-admin/dist/static/
+leadnews-admin/dist/
 
 # leadnews-app local/build artifacts
 leadnews-app/.idea/
@@ -7,3 +7,6 @@ leadnews-app/dist/
 leadnews-app/node_modules/
 leadnews-app/platforms/android/app/src/main/assets/dist/
 leadnews-app/platforms/android/bundlejs/
+
+# leadnews-wemedia generated assets
+leadnews-wemedia/dist/
