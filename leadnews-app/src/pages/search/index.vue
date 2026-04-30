@@ -11,7 +11,7 @@
                     </div>
                 </scroller>
             </div>
-            <Title title="今日热点" :icon="icon.hot"/>
+            <Title title="" :icon="icon.hot"/>
             <div class="hot-body">
                 <template v-for="item in data.hot">
                     <div class="item">
@@ -21,34 +21,34 @@
                     </div>
                 </template>
             </div>
-            <Title title="大家都在搜" :icon="icon.other"/>
+            <Title title="" :icon="icon.other"/>
             <div class="hot-body">
                 <div class="item">
-                    <HotCell title="长宁4.8级地震" tip="精"/>
-                    <HotCell title="长宁4.8级地震"/>
+                    <HotCell title="" tip="精"/>
+                    <HotCell title=""/>
                 </div>
                 <div class="item">
-                    <HotCell title="长宁4.8级地震" tip="荐"/>
-                    <HotCell title="长宁4.8级地震"/>
+                    <HotCell title="" tip="荐"/>
+                    <HotCell title=""/>
                 </div>
                 <div class="item">
-                    <HotCell title="长宁4.8级地震"/>
-                    <HotCell title="长宁4.8级地震" tip="热"/>
+                    <HotCell title=""/>
+                    <HotCell title="" tip="热"/>
                 </div>
             </div>
-            <Title title="大家都在搜" :icon="icon.other"/>
+            <Title title="" :icon="icon.other"/>
             <div class="hot-body">
                 <div class="item">
-                    <HotCell title="长宁4.8级地震" tip="精"/>
-                    <HotCell title="长宁4.8级地震"/>
+                    <HotCell title="" tip="精"/>
+                    <HotCell title=""/>
                 </div>
                 <div class="item">
-                    <HotCell title="长宁4.8级地震" tip="荐"/>
-                    <HotCell title="长宁4.8级地震"/>
+                    <HotCell title="" tip="荐"/>
+                    <HotCell title=""/>
                 </div>
                 <div class="item">
-                    <HotCell title="长宁4.8级地震"/>
-                    <HotCell title="长宁4.8级地震" tip="热"/>
+                    <HotCell title=""/>
+                    <HotCell title="" tip="热"/>
                 </div>
             </div>
         </scroller>

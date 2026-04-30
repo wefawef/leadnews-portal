@@ -110,7 +110,7 @@ export default {
       ruleForm: {
         name: '',
         password: '',
-        agree: false
+        agree: true
       },
       rules: {
         name: [
