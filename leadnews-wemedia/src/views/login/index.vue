@@ -7,7 +7,24 @@
           <el-input type="text" v-model="ruleForm.name" autocomplete="off" placeholder="请输入账户名"></el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input type="password" v-model="ruleForm.password" autocomplete="off" placeholder="请输入密码"></el-input>
+          <el-input
+            :type="showPassword ? 'text' : 'password'"
+            v-model="ruleForm.password"
+            autocomplete="off"
+            placeholder="请输入密码"
+            @blur="concealPassword"
+          >
+            <i
+              slot="suffix"
+              class="el-input__icon el-icon-view password-view-icon"
+              @mousedown.prevent="revealPassword"
+              @mouseup="concealPassword"
+              @mouseleave="concealPassword"
+              @touchstart.prevent="revealPassword"
+              @touchend="concealPassword"
+              @touchcancel="concealPassword"
+            ></i>
+          </el-input>
         </el-form-item>
         <div class="allow">
           <div id="myCode"></div>
@@ -92,6 +109,7 @@ export default {
       agreementVisible: false,
       privacyVisible: false,
       checked: true,
+      showPassword: false,
       ruleForm: {
         name: '',
         password: '',
@@ -120,6 +138,12 @@ export default {
     },
     goChangePassword() {
       this.$router.push({ path: '/change-password' })
+    },
+    revealPassword() {
+      this.showPassword = true;
+    },
+    concealPassword() {
+      this.showPassword = false;
     },
     async submitForm () {
        let {password , name} = this.ruleForm;
@@ -209,6 +233,11 @@ export default {
     }
     .el-form-item {
       margin-bottom: 24px;
+    }
+    .password-view-icon {
+      cursor: pointer;
+      color: #909399;
+      user-select: none;
     }
     .checkCode {
       .el-input {

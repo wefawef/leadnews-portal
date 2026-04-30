@@ -2,17 +2,19 @@
   <div>
     <Editor ref="editor" :fileds="fileds" title="频道" :table="'AD_CHANNEL'" submitApiType="channel" :submitSuccess="submitSuccess"/>
     <search-tool :changeParam="changeParam" :addData="addData" />
-    <search-result
-      ref='mySearchResult'
-      :list="list"
-      :host="host"
-      :total="total"
-      :table="this.params.name"
-      :editData="editData"
-      :deleteData="deleteData"
-      :changePage="changePage"
-      :changeStatus="changeStatus"
-      :pageSize="params.size"/>
+    <div v-loading="listLoading">
+      <search-result
+        ref='mySearchResult'
+        :list="list"
+        :host="host"
+        :total="total"
+        :table="this.params.name"
+        :editData="editData"
+        :deleteData="deleteData"
+        :changePage="changePage"
+        :changeStatus="changeStatus"
+        :pageSize="params.size"/>
+    </div>
   </div>
 </template>
 
@@ -32,6 +34,7 @@
           where:[]
         },
         searchName:'',
+        listLoading:false,
         total:0,
         host:'',
         list:[],
@@ -85,11 +88,12 @@
         this.loadData()
       },
       async loadData() {
+        this.listLoading = true
         let res
         if(this.searchName && this.searchName.length){
-          res = await listChannels({ page: this.params.page, size: this.params.size, name: this.searchName })
+          res = await this.withTimeout(listChannels({ page: this.params.page, size: this.params.size, name: this.searchName }), null)
         }else{
-          res = await getAllChannels()
+          res = await this.withTimeout(getAllChannels(), null)
         }
         const code = Number(res && res.code)
         if(code===200){
@@ -117,8 +121,32 @@
             this.total = 0
           }
         }else{
-          this.$message({type: 'error', message: res && res.error_message})
+          this.$message({type: 'error', message: (res && res.error_message) || '请求失败'})
         }
+        this.listLoading = false
+      },
+      withTimeout(promise, fallback, wait) {
+        const timeout = wait || 4000
+        return new Promise((resolve) => {
+          let settled = false
+          const timer = setTimeout(() => {
+            if (settled) return
+            settled = true
+            resolve(fallback)
+          }, timeout)
+
+          Promise.resolve(promise).then((result) => {
+            if (settled) return
+            settled = true
+            clearTimeout(timer)
+            resolve(result)
+          }, () => {
+            if (settled) return
+            settled = true
+            clearTimeout(timer)
+            resolve(fallback)
+          })
+        })
       },
       normalizeChannel(item){
         return {

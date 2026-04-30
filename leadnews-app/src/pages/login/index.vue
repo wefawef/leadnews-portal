@@ -18,12 +18,24 @@
                 </div>
                 <div class="input-wapper">
                     <text class="icon">{{passIcon}}</text>
-                    <input v-model="params.password" return-key-type="go"
-                           autocomplete="off"
-                           type="password"
-                           placeholder="请输入密码"
-                           class="input"
-                    />
+                    <div class="password-field">
+                        <input v-model="params.password" return-key-type="go"
+                               autocomplete="off"
+                               type="password"
+                               placeholder="请输入密码"
+                               class="input password-input"
+                        />
+                        <text v-if="showPassword" class="password-preview">{{params.password}}</text>
+                    </div>
+                    <text
+                        class="password-eye"
+                        @touchstart="revealPassword"
+                        @touchend="concealPassword"
+                        @touchcancel="concealPassword"
+                        @mousedown="revealPassword"
+                        @mouseup="concealPassword"
+                        @mouseleave="concealPassword"
+                    >{{eyeIcon}}</text>
                 </div>
                 <div class="button" @click="login">
                     <text class="button-text">立即登录</text>
@@ -49,6 +61,8 @@
             return{
                 userIcon : '\uf007',
                 passIcon : '\uf023',
+                eyeIcon : '\uf06e',
+                showPassword: false,
                 params:{
                     phone:'',
                     password:''
@@ -64,6 +78,12 @@
             },
             see : function(){
                 this.$router.push("/reset_password")
+            },
+            revealPassword : function(){
+                this.showPassword = true
+            },
+            concealPassword : function(){
+                this.showPassword = false
             },
             login:function(){
                 // 验证输入
@@ -219,6 +239,32 @@
         background-color: transparent;
         margin-left: 20px;
         placeholder-color: #bbbbbb;
+    }
+    .password-field{
+        flex: 1;
+        height: 90px;
+        margin-left: 20px;
+        position: relative;
+    }
+    .password-input{
+        margin-left: 0;
+    }
+    .password-preview{
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 430px;
+        height: 90px;
+        line-height: 90px;
+        font-size: 30px;
+        color: #333333;
+        background-color: #ffffff;
+    }
+    .password-eye{
+        color: #999999;
+        font-size: 34px;
+        margin-left: 18px;
+        font-family: fontawesome;
     }
     .input:focus {
         outline: none;

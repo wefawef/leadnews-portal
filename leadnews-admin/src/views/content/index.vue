@@ -2,17 +2,19 @@
   <div>
     <Editor ref="editor" :fileds="fileds" title="内容" :table="this.params.name" :submitSuccess="submitSuccess"/>
     <search-tool :changeParam="changeParam" :addData="addData" />
-    <search-result
-      ref='mySearchResult'
-      :list="list"
-      :host="host"
-      :total="total"
-      :table="this.params.name"
-      :viewData="viewData"
-      :changePage="changePage"
-      :changeStatus="changeStatus"
-      :fileds="fileds"
-      :pageSize="params.size"/>
+    <div v-loading="listLoading">
+      <search-result
+        ref='mySearchResult'
+        :list="list"
+        :host="host"
+        :total="total"
+        :table="this.params.name"
+        :viewData="viewData"
+        :changePage="changePage"
+        :changeStatus="changeStatus"
+        :fileds="fileds"
+        :pageSize="params.size"/>
+    </div>
     <el-dialog title="查看 - 内容" :visible.sync="viewDialogVisible" width="60%">
       <div class="detail-item">
         <div class="detail-label">标题</div>
@@ -57,6 +59,7 @@
         total:0,
         host:'',
         list:[],
+        listLoading:false,
         viewDialogVisible:false,
         viewItem:{},
         viewSegments:[],
@@ -122,6 +125,7 @@
         this.loadData()
       },
       async loadData() {
+        this.listLoading = true
         let params = {
           page: this.params.page,
           size: this.params.size
@@ -129,16 +133,40 @@
         if (this.params.title) {
           params.title = this.params.title
         }
-        let res = await searchArticleVo(params);
-        if (res.code == 200) {
+        let res = await this.withTimeout(searchArticleVo(params), null);
+        if (res && res.code == 200) {
           this.list = res.data || []
           if (res.host) {
             this.host = res.host
           }
           this.total = res.total ? res.total : this.list.length
         } else {
-          this.$message({type: 'error', message: res.errorMessage || '请求失败'})
+          this.$message({type: 'error', message: (res && res.errorMessage) || '请求失败'})
         }
+        this.listLoading = false
+      },
+      withTimeout(promise, fallback, wait) {
+        const timeout = wait || 4000
+        return new Promise((resolve) => {
+          let settled = false
+          const timer = setTimeout(() => {
+            if (settled) return
+            settled = true
+            resolve(fallback)
+          }, timeout)
+
+          Promise.resolve(promise).then((result) => {
+            if (settled) return
+            settled = true
+            clearTimeout(timer)
+            resolve(result)
+          }, () => {
+            if (settled) return
+            settled = true
+            clearTimeout(timer)
+            resolve(fallback)
+          })
+        })
       },
       getCoverImages(images) {
         let imageList = []

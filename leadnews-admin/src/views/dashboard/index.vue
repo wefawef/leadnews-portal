@@ -44,6 +44,15 @@
               <div class="panel-subtitle">基于当前内容样本，展示阅读、点赞、评论和收藏对比</div>
             </div>
             <div class="panel-tools">
+              <el-input-number
+                v-model="sampleSize"
+                size="mini"
+                :min="1"
+                :max="50"
+                :step="1"
+                controls-position="right"
+                @keyup.enter.native="loadArticleData"
+              />
               <el-button size="mini" plain @click="loadArticleData">刷新内容样本</el-button>
             </div>
           </div>
@@ -65,7 +74,7 @@
           <div class="panel-header">
             <div>
               <div class="panel-title">待处理事项</div>
-              <div class="panel-subtitle">直接复用实名认证审核和人工审核接口</div>
+              <div class="panel-subtitle"></div>
             </div>
           </div>
 
@@ -176,6 +185,7 @@ export default {
       taskLoading: false,
       contentLoading: false,
       admin: {},
+      sampleSize: 10,
       articleSample: [],
       articleTotal: 0,
       pendingAuthList: [],
@@ -372,7 +382,8 @@ export default {
     },
     loadArticleData() {
       this.contentLoading = true
-      return this.withTimeout(searchArticleVo({ page: 1, size: 8 }), null).then((res) => {
+      const size = this.normalizeSampleSize()
+      return this.withTimeout(searchArticleVo({ page: 1, size: size }), null).then((res) => {
         if (res && res.code === 200) {
           this.articleSample = Array.isArray(res.data) ? res.data : []
           this.articleTotal = this.safeNumber(res.total) || this.articleSample.length
@@ -392,6 +403,19 @@ export default {
         this.renderTrendChart()
         this.contentLoading = false
       })
+    },
+    normalizeSampleSize() {
+      const size = parseInt(this.sampleSize, 10)
+      if (isNaN(size) || size < 1) {
+        this.sampleSize = 10
+        return 10
+      }
+      if (size > 50) {
+        this.sampleSize = 50
+        return 50
+      }
+      this.sampleSize = size
+      return size
     },
     summarizeArticleSample(list) {
       return list.reduce((summary, item) => {
@@ -736,7 +760,14 @@ export default {
 }
 
 .panel-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   flex-shrink: 0;
+}
+
+.panel-tools .el-input-number {
+  width: 108px;
 }
 
 .metric-grid {
