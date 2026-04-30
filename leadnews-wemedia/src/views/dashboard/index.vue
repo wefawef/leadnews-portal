@@ -63,7 +63,7 @@
             </div>
           </div>
 
-          <line-chart ref="contentTrendChart" height="360px" />
+          <line-chart class="trend-chart" ref="contentTrendChart" height="420px" />
         </section>
 
         <section class="panel recent-panel" v-loading="articleLoading">
@@ -77,8 +77,14 @@
 
           <div v-if="recentArticles.length" class="article-list">
             <article v-for="item in recentArticles" :key="item.id || item.title" class="article-card">
-              <div class="article-cover">
-                <img :src="getArticleCover(item)" alt="cover">
+              <div :class="['article-cover-group', `cover-count-${getArticleCovers(item).length}`]">
+                <div
+                  v-for="(image, index) in getArticleCovers(item)"
+                  :key="`${item.id || item.title || 'article'}-${index}`"
+                  class="article-cover"
+                >
+                  <img :src="image" alt="cover" @error="handleArticleCoverError">
+                </div>
               </div>
               <div class="article-body">
                 <div class="article-title-row">
@@ -496,7 +502,6 @@ export default {
       const list = Array.isArray(result.data) ? result.data : (result.data ? [result.data] : [])
       return list.map((item) => {
         return {
-          created_time: this.safeNumber(item.created_time),
           article: this.safeNumber(item.article),
           read_count: this.safeNumber(item.read_count),
           likes: this.safeNumber(item.likes),
@@ -519,73 +524,55 @@ export default {
       })
       return summary
     },
-    buildTimeline(list, seriesInfo) {
-      const timelineMap = {}
-
-      list.forEach((item) => {
-        const label = DateUtil.format13(item.created_time)
-        if (!timelineMap[label]) {
-          timelineMap[label] = {}
-        }
-        seriesInfo.forEach((series) => {
-          const currentValue = this.safeNumber(timelineMap[label][series.key])
-          timelineMap[label][series.key] = currentValue + this.safeNumber(item[series.key])
-        })
-      })
-
-      const labels = Object.keys(timelineMap).sort()
-      const seriesData = {}
-      seriesInfo.forEach((series) => {
-        seriesData[series.key] = []
-      })
-
-      labels.forEach((label) => {
-        seriesInfo.forEach((series) => {
-          seriesData[series.key].push(this.safeNumber(timelineMap[label][series.key]))
-        })
-      })
-
-      return {
-        labels: labels,
-        seriesData: seriesData
-      }
-    },
     renderContentChart() {
-      const seriesInfo = [
-        { key: 'article', name: '发文量', type: 'bar', color: '#3b82f6' },
-        { key: 'read_count', name: '阅读量', type: 'line', color: '#14b8a6' },
-        { key: 'likes', name: '点赞量', type: 'line', color: '#f59e0b' },
-        { key: 'comment', name: '评论量', type: 'line', color: '#ef4444' },
-        { key: 'collection', name: '收藏量', type: 'line', color: '#8b5cf6' }
+      const metricItems = [
+        { key: 'article', name: '发文量', color: '#3b82f6' },
+        { key: 'read_count', name: '阅读量', color: '#14b8a6' },
+        { key: 'likes', name: '点赞量', color: '#f59e0b' },
+        { key: 'comment', name: '评论量', color: '#ef4444' },
+        { key: 'collection', name: '收藏量', color: '#8b5cf6' },
+        { key: 'follow', name: '转发量', color: '#06b6d4' }
       ]
-      const timeline = this.buildTimeline(this.contentStats, seriesInfo)
+      const chartData = metricItems.map((item) => {
+        return {
+          value: this.safeNumber(this.contentSummary[item.key]),
+          itemStyle: {
+            color: item.color
+          }
+        }
+      })
 
       this.$nextTick(() => {
         if (!this.$refs.contentTrendChart) {
           return
         }
         this.$refs.contentTrendChart.setOptions({
-          color: seriesInfo.map((item) => item.color),
+          color: metricItems.map((item) => item.color),
           tooltip: {
-            trigger: 'axis'
+            trigger: 'axis',
+            axisPointer: {
+              type: 'shadow'
+            }
           },
           legend: {
-            data: seriesInfo.map((item) => item.name),
-            top: 10
+            show: false
           },
           grid: {
             left: 24,
             right: 24,
-            bottom: 20,
-            top: 56,
+            bottom: 26,
+            top: 34,
             containLabel: true
           },
           xAxis: {
             type: 'category',
             boundaryGap: true,
-            data: timeline.labels,
+            data: metricItems.map((item) => item.name),
             axisTick: { show: false },
-            axisLine: { lineStyle: { color: '#d7deea' } }
+            axisLine: { lineStyle: { color: '#d7deea' } },
+            axisLabel: {
+              interval: 0
+            }
           },
           yAxis: {
             type: 'value',
@@ -593,20 +580,22 @@ export default {
             axisTick: { show: false },
             splitLine: { lineStyle: { color: '#edf2f7' } }
           },
-          series: seriesInfo.map((series) => {
-            return {
-              name: series.name,
-              type: series.type,
-              smooth: series.type === 'line',
-              barMaxWidth: 28,
-              symbolSize: 7,
+          series: [
+            {
+              name: '统计量',
+              type: 'bar',
+              barMaxWidth: 42,
               emphasis: {
                 focus: 'series'
               },
-              areaStyle: series.type === 'line' ? { opacity: 0.08 } : null,
-              data: timeline.seriesData[series.key]
+              label: {
+                show: true,
+                position: 'top',
+                formatter: (params) => this.formatMetric(params.value)
+              },
+              data: chartData
             }
-          })
+          ]
         })
       })
     },
@@ -641,22 +630,28 @@ export default {
         unauth: unauth
       }
     },
-    getArticleCover(item) {
-      const imageList = item && item.images ? String(item.images).split(',').filter((image) => image && image.trim()) : []
-      if (!imageList.length) {
-        return DEFAULT_AVATAR
+    getArticleCovers(item) {
+      const imageList = item && item.images
+        ? String(item.images).split(',').map((image) => image.trim()).filter((image) => image)
+        : []
+      const covers = imageList.slice(0, 3).map((image) => this.normalizeArticleImage(image))
+      return covers.length ? covers : [DEFAULT_AVATAR]
+    },
+    normalizeArticleImage(image) {
+      const url = String(image || '').trim()
+      if (/^https?:\/\//.test(url)) {
+        return url
       }
-      const firstImage = imageList[0]
-      if (/^https?:\/\//.test(firstImage)) {
-        return firstImage
+      if (/^\/\//.test(url)) {
+        return `http:${url}`
       }
-      if (/^\/\//.test(firstImage)) {
-        return `http:${firstImage}`
+      if (this.articleHost && url.charAt(0) === '/') {
+        return `${this.articleHost}${url}`
       }
-      if (this.articleHost && firstImage.charAt(0) === '/') {
-        return `${this.articleHost}${firstImage}`
-      }
-      return firstImage
+      return url || DEFAULT_AVATAR
+    },
+    handleArticleCoverError(event) {
+      event.target.src = DEFAULT_AVATAR
     },
     articleStatusText(item) {
       const statusMap = {
@@ -942,12 +937,19 @@ export default {
   color: #98a4b5;
 }
 
+.trend-chart {
+  display: block;
+  min-height: 420px;
+}
+
 .article-list {
   padding: 0 22px;
 }
 
 .article-card {
   display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
   gap: 16px;
   padding: 16px 0;
   border-top: 1px solid #edf2f7;
@@ -958,11 +960,30 @@ export default {
   }
 }
 
-.article-cover {
+.article-cover-group {
   width: 132px;
   height: 92px;
   flex-shrink: 0;
-  border-radius: 14px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px;
+}
+
+.article-cover-group.cover-count-2 {
+  width: 270px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.article-cover-group.cover-count-3 {
+  width: 408px;
+  max-width: 100%;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.article-cover {
+  min-width: 0;
+  height: 100%;
+  border-radius: 10px;
   overflow: hidden;
   background: linear-gradient(135deg, #dbeafe, #e0f2fe);
 
@@ -974,7 +995,7 @@ export default {
 }
 
 .article-body {
-  min-width: 0;
+  min-width: 280px;
   flex: 1;
 }
 

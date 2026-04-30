@@ -34,7 +34,8 @@ export default {
   data() {
     return {
       chart: null,
-      sidebarElm: null
+      sidebarElm: null,
+      __resizeHandler: null
     }
   },
   watch: {
@@ -47,6 +48,15 @@ export default {
   },
   mounted() {
     this.initChart()
+    if (this.autoResize) {
+      this.__resizeHandler = () => {
+        if (this.chart) {
+          this.chart.resize()
+        }
+      }
+      window.addEventListener('resize', this.__resizeHandler)
+      this.$nextTick(this.__resizeHandler)
+    }
     // 监听侧边栏的变化
     this.sidebarElm = document.getElementsByClassName('sidebar-container')[0]
     this.sidebarElm && this.sidebarElm.addEventListener('transitionend', this.sidebarResizeHandler)
@@ -55,7 +65,7 @@ export default {
     if (!this.chart) {
       return
     }
-    if (this.autoResize) {
+    if (this.autoResize && this.__resizeHandler) {
       window.removeEventListener('resize', this.__resizeHandler)
     }
 
@@ -66,7 +76,7 @@ export default {
   },
   methods: {
     sidebarResizeHandler(e) {
-      if (e.propertyName === 'width') {
+      if (e.propertyName === 'width' && this.__resizeHandler) {
         this.__resizeHandler()
       }
     },

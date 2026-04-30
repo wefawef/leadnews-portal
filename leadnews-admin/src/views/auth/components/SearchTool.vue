@@ -17,24 +17,43 @@
 
 <script>
   export default {
-    props:["changeParam"],
+    props: {
+      changeParam: {
+        type: Function,
+        required: true
+      },
+      status: {
+        type: [Number, String],
+        default: 1
+      }
+    },
     data() {
+      const stateList = [
+        {label:'待审核',value:1},
+        {label:'审核通过',value:9},
+        {label:'审核失败',value:2},
+      ]
+      const defaultState = stateList.find((item) => Number(item.value) === Number(this.status)) || stateList[0]
       return {
-        stateList:[
-          {label:'待审核',value:1},
-          {label:'审核通过',value:9},
-          {label:'审核失败',value:2},
-        ],
+        stateList,
         date:null,
-        selectState:{
-          //选择的筛选状态
-          label:'待审核',value: 1
-        },
+        selectState: defaultState,
         userName: ''
+      }
+    },
+    watch: {
+      status(value) {
+        const state = this.getStateByValue(value)
+        if (state) {
+          this.selectState = state
+        }
       }
     },
 
     methods:{
+      getStateByValue(value) {
+        return this.stateList.find((item) => Number(item.value) === Number(value))
+      },
       queryData() {
         let params = {
           status: this.selectState.value,

@@ -2,6 +2,7 @@
   <div>
     <search-tool
       :changeParam="searchAuthList"
+      :status="params.status"
     />
     <search-result
       ref='mySearchResult'
@@ -26,7 +27,8 @@
       return {
         params:{
           page:1,
-          size:10
+          size:10,
+          status:1
         },
         total:0,
         host:'',

@@ -41,7 +41,7 @@
           <div class="panel-header">
             <div>
               <div class="panel-title">内容表现</div>
-              <div class="panel-subtitle">只基于当前内容列表接口返回的最近内容样本，展示阅读、点赞、评论和收藏对比</div>
+              <div class="panel-subtitle">基于当前内容样本，展示阅读、点赞、评论和收藏对比</div>
             </div>
             <div class="panel-tools">
               <el-button size="mini" plain @click="loadArticleData">刷新内容样本</el-button>
@@ -57,49 +57,6 @@
           </div>
 
           <line-chart ref="contentTrendChart" height="360px" />
-        </section>
-
-        <section class="panel recent-panel" v-loading="contentLoading">
-          <div class="panel-header">
-            <div>
-              <div class="panel-title">最近内容</div>
-              <div class="panel-subtitle">复用现有内容列表接口，快速查看最近的内容表现与发布状态</div>
-            </div>
-            <el-button type="text" @click="goTo('/content/index')">查看全部</el-button>
-          </div>
-
-          <div v-if="recentArticles.length" class="article-list">
-            <article v-for="item in recentArticles" :key="item.id || item.title" class="article-card">
-              <div class="article-cover">
-                <img :src="getArticleCover(item)" alt="article-cover">
-              </div>
-              <div class="article-body">
-                <div class="article-title-row">
-                  <h3 class="article-title">{{ item.title || '未命名内容' }}</h3>
-                  <el-tag size="mini" :type="articleStatusTag(item.status)">{{ articleStatusText(item.status) }}</el-tag>
-                </div>
-
-                <div class="article-meta">
-                  <span>{{ item.authName || '未知作者' }}</span>
-                  <span v-if="item.channel">{{ item.channel }}</span>
-                  <span v-if="item.pushTime">发布于 {{ formatDateTime(item.pushTime) }}</span>
-                </div>
-
-                <div class="article-stats">
-                  <span>阅读 {{ formatMetric(item.readCount) }}</span>
-                  <span>点赞 {{ formatMetric(item.goodCount) }}</span>
-                  <span>评论 {{ formatMetric(item.commentCount) }}</span>
-                  <span>收藏 {{ formatMetric(item.collectCount) }}</span>
-                </div>
-              </div>
-            </article>
-          </div>
-
-          <div v-else class="empty-block">
-            <div class="empty-title">暂无内容数据</div>
-            <div class="empty-text">当前接口没有返回最近内容，稍后可以从内容管理页继续排查。</div>
-            <el-button size="small" type="primary" @click="goTo('/content/index')">前往内容管理</el-button>
-          </div>
         </section>
       </el-col>
 
@@ -164,7 +121,7 @@
           <div class="panel-header">
             <div>
               <div class="panel-title">互动健康度</div>
-              <div class="panel-subtitle">同样只基于最近内容样本，按阅读量估算互动与负反馈比例</div>
+              <div class="panel-subtitle">同样只基于当前内容样本，按阅读量估算互动与负反馈比例</div>
             </div>
           </div>
 
@@ -219,9 +176,7 @@ export default {
       taskLoading: false,
       contentLoading: false,
       admin: {},
-      articleHost: '',
       articleSample: [],
-      recentArticles: [],
       articleTotal: 0,
       pendingAuthList: [],
       pendingAuthTotal: 0,
@@ -275,7 +230,7 @@ export default {
           key: 'reads',
           label: '样本阅读',
           value: this.formatMetric(this.contentSummary.read_count),
-          note: '来自最近内容样本'
+          note: '来自当前内容样本'
         }
       ]
     },
@@ -420,14 +375,11 @@ export default {
       return this.withTimeout(searchArticleVo({ page: 1, size: 8 }), null).then((res) => {
         if (res && res.code === 200) {
           this.articleSample = Array.isArray(res.data) ? res.data : []
-          this.recentArticles = this.articleSample.slice(0, 5)
-          this.articleHost = res.host || ''
-          this.articleTotal = this.safeNumber(res.total) || this.recentArticles.length
+          this.articleTotal = this.safeNumber(res.total) || this.articleSample.length
           this.contentSummary = this.summarizeArticleSample(this.articleSample)
           this.renderTrendChart()
         } else {
           this.articleSample = []
-          this.recentArticles = []
           this.articleTotal = 0
           this.contentSummary = this.summarizeArticleSample([])
           this.renderTrendChart()
@@ -435,7 +387,6 @@ export default {
         this.contentLoading = false
       }, () => {
         this.articleSample = []
-        this.recentArticles = []
         this.articleTotal = 0
         this.contentSummary = this.summarizeArticleSample([])
         this.renderTrendChart()
@@ -600,45 +551,6 @@ export default {
       }
       const percent = Math.round((this.safeNumber(value) / denominator) * 100)
       return percent > 100 ? 100 : percent
-    },
-    articleStatusText(status) {
-      const statusMap = {
-        10: '已封禁',
-        9: '已发布',
-        8: '待发布',
-        3: '待人工审核',
-        2: '审核失败',
-        1: '待审核',
-        0: '草稿'
-      }
-      return statusMap[this.safeNumber(status)] || '正常'
-    },
-    articleStatusTag(status) {
-      const value = this.safeNumber(status)
-      if (value === 10 || value === 2) {
-        return 'danger'
-      }
-      if (value === 9) {
-        return 'success'
-      }
-      if (value === 1 || value === 3 || value === 8) {
-        return 'warning'
-      }
-      return 'info'
-    },
-    getArticleCover(item) {
-      const images = item && item.images ? String(item.images).split(',').filter((image) => image && image.trim()) : []
-      if (!images.length) {
-        return DEFAULT_AVATAR
-      }
-      const firstImage = images[0]
-      if (/^https?:\/\//.test(firstImage)) {
-        return firstImage
-      }
-      if (this.articleHost) {
-        return this.articleHost + firstImage
-      }
-      return DEFAULT_AVATAR
     }
   }
 }
@@ -857,83 +769,6 @@ export default {
   margin-top: 8px;
   font-size: 12px;
   color: #98a4b5;
-}
-
-.article-list {
-  padding: 0 22px;
-}
-
-.article-card {
-  display: flex;
-  gap: 16px;
-  padding: 16px 0;
-  border-top: 1px solid #edf2f7;
-
-  &:first-child {
-    border-top: none;
-    padding-top: 0;
-  }
-}
-
-.article-cover {
-  width: 132px;
-  height: 92px;
-  flex-shrink: 0;
-  border-radius: 14px;
-  overflow: hidden;
-  background: linear-gradient(135deg, #dbeafe, #e0f2fe);
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-}
-
-.article-body {
-  min-width: 0;
-  flex: 1;
-}
-
-.article-title-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.article-title {
-  margin: 0;
-  font-size: 16px;
-  line-height: 1.5;
-  color: #1f2937;
-}
-
-.article-meta,
-.article-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-top: 10px;
-  font-size: 12px;
-  color: #8391a7;
-}
-
-.empty-block {
-  padding: 12px 22px 8px;
-  text-align: center;
-}
-
-.empty-title {
-  font-size: 18px;
-  color: #1f2a44;
-  margin-bottom: 8px;
-}
-
-.empty-text {
-  color: #7c889c;
-  line-height: 1.7;
-  margin-bottom: 16px;
 }
 
 .task-summary-grid {
