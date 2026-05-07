@@ -134,7 +134,7 @@
             </div>
           </div>
           <div v-if="hotArticles.length" class="hot-list">
-            <div v-for="(item, index) in hotArticles" :key="item.id" class="hot-item">
+            <div v-for="(item, index) in hotArticles" :key="item.id" class="hot-item hot-item-clickable" @click="viewHotArticle(item)">
               <span class="hot-rank" :class="['rank-' + (index+1)]">{{ index + 1 }}</span>
               <span class="hot-title">{{ item.title }}</span>
               <span class="hot-score">{{ item.score }}</span>
@@ -142,6 +142,30 @@
           </div>
           <div v-else class="task-empty">暂无热点文章数据！</div>
         </section>
+
+        <el-dialog title="查看 - 热点文章" :visible.sync="viewDialogVisible" width="60%">
+          <div class="detail-item">
+            <div class="detail-label">标题</div>
+            <div class="detail-value">{{ viewItem.title }}</div>
+          </div>
+          <div class="detail-item" v-if="coverImages && coverImages.length">
+            <div class="detail-label">封面</div>
+            <div class="detail-value">
+              <img v-for="(img, idx) in coverImages" :key="idx" :src="img" class="detail-image" style="margin-right: 10px; margin-bottom: 10px; display: inline-block;" />
+            </div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">内容</div>
+            <div class="detail-content">
+              <template v-for="(segment, index) in viewSegments">
+                <div v-if="segment.type === 'image'" :key="'img-' + index" class="detail-image-wrap">
+                  <img :src="segment.value" class="detail-image" />
+                </div>
+                <span v-else :key="'text-' + index" class="detail-text">{{ segment.value }}</span>
+              </template>
+            </div>
+          </div>
+        </el-dialog>
 
         <section class="panel interaction-panel" v-loading="contentLoading">
           <div class="panel-header">
@@ -184,7 +208,7 @@
 <script>
 import LineChart from '@/views/fans/components/index/LineChart.vue'
 import { getAdminInfo } from '@/api/user'
-import { searchArticleVo, listCheckByHuman, getHotArticles } from '@/api/content'
+import { searchArticleVo, listCheckByHuman, getHotArticles, getArticleVoById } from '@/api/content'
 import { findAuthList } from '@/api/auth'
 import { getUser, setUser } from '@/utils/store'
 import DateUtil from '@/utils/date'
@@ -218,7 +242,11 @@ export default {
         follow: 0,
         unlikes: 0
       },
-      hotArticles: []
+      hotArticles: [],
+      viewDialogVisible: false,
+      viewItem: {},
+      viewSegments: [],
+      coverImages: []
     }
   },
   computed: {
@@ -433,6 +461,81 @@ export default {
       }, () => {
         this.hotArticles = []
       })
+    },
+    async viewHotArticle(item) {
+      if (!item || !item.wmNewsId) {
+        this.$message({ type: 'warning', message: '该文章暂无自媒体信息' })
+        return
+      }
+      let detail = item
+      let res = await getArticleVoById(item.wmNewsId)
+      if (res && res.code == 200) {
+        detail = res.data && res.data.data ? res.data.data : res.data
+      } else {
+        this.$message({ type: 'error', message: res.errorMessage || '请求失败' })
+        return
+      }
+      this.viewItem = detail || {}
+      this.coverImages = this.getCoverImages(this.viewItem.images)
+      this.viewSegments = this.buildContentSegments(this.viewItem.content)
+      this.viewDialogVisible = true
+    },
+    getCoverImages(images) {
+      let imageList = []
+      if (Array.isArray(images)) {
+        imageList = images
+      } else if (typeof images === 'string') {
+        imageList = images.split(',').map(item => item.trim()).filter(item => item)
+      }
+      return imageList
+    },
+    buildContentSegments(content) {
+      let text = ''
+      if (content === undefined || content === null) {
+        text = ''
+      } else if (typeof content === 'string') {
+        let raw = content.trim()
+        if ((raw.startsWith('[') && raw.endsWith(']')) || (raw.startsWith('{') && raw.endsWith('}'))) {
+          try {
+            let parsed = JSON.parse(raw)
+            if (Array.isArray(parsed) && parsed.length > 0 && parsed.every(p => p && (p.type === 'image' || p.type === 'text') && p.value !== undefined)) {
+              return parsed.map(p => ({ type: p.type, value: p.value }))
+            }
+            text = this.extractTextFromContent(parsed)
+          } catch (e) {
+            text = raw
+          }
+        } else {
+          text = raw
+        }
+      } else {
+        text = this.extractTextFromContent(content)
+      }
+      const segments = []
+      const imgRegex = /<img[^>]+src=["']([^"']+)["'][^>]*>/gi
+      let lastIndex = 0
+      let match
+      while ((match = imgRegex.exec(text)) !== null) {
+        if (match.index > lastIndex) {
+          segments.push({ type: 'text', value: text.slice(lastIndex, match.index) })
+        }
+        segments.push({ type: 'image', value: match[1] })
+        lastIndex = match.index + match[0].length
+      }
+      if (lastIndex < text.length) {
+        segments.push({ type: 'text', value: text.slice(lastIndex) })
+      }
+      return segments.length > 0 ? segments : [{ type: 'text', value: text }]
+    },
+    extractTextFromContent(content) {
+      if (typeof content === 'string') return content
+      if (Array.isArray(content)) return content.map(c => this.extractTextFromContent(c)).join('')
+      if (content && typeof content === 'object') {
+        if (content.text) return content.text
+        if (content.value) return content.value
+        if (content.content) return this.extractTextFromContent(content.content)
+      }
+      return String(content)
     },
     normalizeSampleSize() {
       const size = parseInt(this.sampleSize, 10)
@@ -996,5 +1099,51 @@ export default {
   color: #8b98ad;
   margin-left: 10px;
   flex-shrink: 0;
+}
+
+.hot-item-clickable {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.hot-item-clickable:hover {
+  background-color: #f7f9fc;
+}
+
+.detail-item {
+  margin-bottom: 16px;
+}
+
+.detail-label {
+  font-size: 13px;
+  color: #748197;
+  margin-bottom: 6px;
+}
+
+.detail-value {
+  font-size: 14px;
+  color: #1f2937;
+  line-height: 1.6;
+}
+
+.detail-content {
+  font-size: 14px;
+  color: #1f2937;
+  line-height: 1.8;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.detail-image-wrap {
+  margin: 10px 0;
+}
+
+.detail-image {
+  max-width: 100%;
+  border-radius: 8px;
+}
+
+.detail-text {
+  white-space: pre-wrap;
 }
 </style>
