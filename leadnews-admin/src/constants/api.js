@@ -33,6 +33,7 @@ export const  API_GET_FANS_STATISTIC = '/api/v1/statistics/fans' //粉丝统计�
 export const  API_STATISTICS_NEWS = '/api/v1/statistics/news' //图文统计
 export const  API_STATISTICS_FANS = '/api/v1/statistics/fans' //粉丝统计
 export const  API_STATISTICS_PORTRAIT = '/api/v1/statistics/portrait' //画像统计
+export const  API_HOT_ARTICLES = '/api/v1/article/hot/__all__' //热点文章
 
 export const  API_WEBSOCKET_AUTH = '/api/v1/websocket/admin' //ws授权验证
 export const  API_AUTH_LIST = '/api/v1/auth/list' //审核列表

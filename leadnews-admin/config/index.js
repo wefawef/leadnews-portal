@@ -12,6 +12,13 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
+          '/article': {
+            target: 'http://localhost:51601/',
+            changeOrigin: true,
+            pathRewrite: {
+              '^/article': '/article'
+            }
+          },
           '/server_85/ADMIN': {
             target: 'http://localhost:51603/', //源地址
             changeOrigin: true, //改变源
@@ -22,6 +29,7 @@ module.exports = {
               '^/server_85/ADMIN/api/v1/user': '/wemedia/api/v1/user',
               '^/server_85/ADMIN/api/v1/personal': '/user/api/v1/personal',
               '^/server_85/ADMIN/api/v1/media/news/list_vo': '/wemedia/api/v1/media/news/list_vo',
+              '^/server_85/ADMIN/api/v1/article/hot': '/article/api/v1/article/hot',
               '^/server_85/ADMIN/api/v1/media/news/one_vo': '/wemedia/api/v1/media/news/one_vo',
               '^/server_85/ADMIN/api/v1/media/news/downNews': '/wemedia/api/v1/media/news/downNews',
               '^/server_85/ADMIN/api/v1/media/news/listCheckByHuman': '/wemedia/api/v1/media/news/listCheckByHuman',

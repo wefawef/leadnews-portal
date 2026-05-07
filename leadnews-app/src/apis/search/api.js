@@ -33,6 +33,11 @@ Api.prototype = {
     load_hot_keywords: function(){
         let url = this.vue.$config.urls.get('load_hot_keywords')
         return this.vue.$request.postByEquipmentId(url,{page_size:6})
+    },
+    // 加载热点文章
+    load_hot_articles: function(){
+        let url = this.vue.$config.urls.get('hot_articles')
+        return this.vue.$request.get(url)
     }
 }
 

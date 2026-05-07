@@ -24,6 +24,7 @@ const  config = {
         clear_search:{url:'api/v1/article/search/clear_search/',sv:'article'},
         associate_search:{url:'api/v1/associate/search',sv:'search'},
         load_hot_keywords:{url:'api/v1/article/search/load_hot_keywords/',sv:'article'},
+        hot_articles:{url:'/article/api/v1/article/hot/__all__',sv:'article'},
         article_search:{url:'api/v1/article/search/search',sv:'search'},
         // ==========  behavior
         show_behavior:{url:'api/v1/behavior/show_behavior/',sv:'behavior'},

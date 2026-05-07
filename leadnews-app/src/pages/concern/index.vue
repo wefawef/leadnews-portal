@@ -130,7 +130,7 @@ export default {
         tmp.date = tmp.publishTime
         tmp.type = type
         tmp.image = ims.slice(0, 3)
-        tmp.icon = '\uf06d'
+        tmp.icon = ''
         if (tmp.staticUrl) {
           tmp.staticUrl = String(tmp.staticUrl).replace(/[`'"\s]/g, '').trim()
         }

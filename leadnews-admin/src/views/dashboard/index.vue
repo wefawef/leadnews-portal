@@ -126,6 +126,23 @@
           </div>
         </section>
 
+        <section class="panel hot-articles-panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">热点文章 Top10</div>
+              <div class="panel-subtitle">每日定时计算，基于阅读、点赞、评论、收藏加权评分</div>
+            </div>
+          </div>
+          <div v-if="hotArticles.length" class="hot-list">
+            <div v-for="(item, index) in hotArticles" :key="item.id" class="hot-item">
+              <span class="hot-rank" :class="['rank-' + (index+1)]">{{ index + 1 }}</span>
+              <span class="hot-title">{{ item.title }}</span>
+              <span class="hot-score">{{ item.score }}</span>
+            </div>
+          </div>
+          <div v-else class="task-empty">暂无热点文章数据！</div>
+        </section>
+
         <section class="panel interaction-panel" v-loading="contentLoading">
           <div class="panel-header">
             <div>
@@ -167,7 +184,7 @@
 <script>
 import LineChart from '@/views/fans/components/index/LineChart.vue'
 import { getAdminInfo } from '@/api/user'
-import { searchArticleVo, listCheckByHuman } from '@/api/content'
+import { searchArticleVo, listCheckByHuman, getHotArticles } from '@/api/content'
 import { findAuthList } from '@/api/auth'
 import { getUser, setUser } from '@/utils/store'
 import DateUtil from '@/utils/date'
@@ -200,7 +217,8 @@ export default {
         collection: 0,
         follow: 0,
         unlikes: 0
-      }
+      },
+      hotArticles: []
     }
   },
   computed: {
@@ -315,7 +333,8 @@ export default {
       return Promise.all([
         this.loadAdminInfo(),
         this.loadTaskData(),
-        this.loadArticleData()
+        this.loadArticleData(),
+        this.loadHotArticles()
       ])
     },
     loadAdminInfo() {
@@ -402,6 +421,17 @@ export default {
         this.contentSummary = this.summarizeArticleSample([])
         this.renderTrendChart()
         this.contentLoading = false
+      })
+    },
+    loadHotArticles() {
+      return this.withTimeout(getHotArticles(), null).then((res) => {
+        if (res && res.code === 200 && Array.isArray(res.data)) {
+          this.hotArticles = res.data.slice(0, 10)
+        } else {
+          this.hotArticles = []
+        }
+      }, () => {
+        this.hotArticles = []
       })
     },
     normalizeSampleSize() {
@@ -917,5 +947,54 @@ export default {
   margin-bottom: 8px;
   font-size: 13px;
   color: #5b677b;
+}
+
+.hot-list {
+  padding: 0 22px;
+}
+
+.hot-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #eef2f7;
+}
+
+.hot-rank {
+  width: 24px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #98a4b5;
+  text-align: center;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.hot-rank.rank-1 {
+  color: #ef4444;
+}
+
+.hot-rank.rank-2 {
+  color: #f97316;
+}
+
+.hot-rank.rank-3 {
+  color: #eab308;
+}
+
+.hot-title {
+  flex: 1;
+  font-size: 13px;
+  color: #1f2937;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hot-score {
+  font-size: 12px;
+  color: #8b98ad;
+  margin-left: 10px;
+  flex-shrink: 0;
 }
 </style>

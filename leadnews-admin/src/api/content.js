@@ -1,5 +1,5 @@
 import Request from '@/utils/request'
-import  { API_ARTICLES_INFO,API_STATISTICS_NEWS , API_SEARCHARTICELS,API_SEARCHARTICELS_VO,API_ARTICLES_ONE_VO,API_ARTICLES_DELETE,API_ARTICLES_DOWN,API_ARTICLES_LIST_CHECK_BY_HUMAN,API_ARTICLES_CHECK_BY_HUMAN } from  '@/constants/api'
+import  { API_ARTICLES_INFO,API_STATISTICS_NEWS , API_SEARCHARTICELS,API_SEARCHARTICELS_VO,API_ARTICLES_ONE_VO,API_ARTICLES_DELETE,API_ARTICLES_DOWN,API_ARTICLES_LIST_CHECK_BY_HUMAN,API_ARTICLES_CHECK_BY_HUMAN,API_HOT_ARTICLES } from  '@/constants/api'
 
 //获取统计数据
 export function getNewsStatistics(data) {
@@ -84,5 +84,13 @@ export function checkByHuman(id, status, reason) {
   return Request({
     url,
     method: 'post'
+  })
+}
+
+//获取热点文章
+export function getHotArticles() {
+  return Request({
+    url: API_HOT_ARTICLES,
+    method: 'get'
   })
 }
