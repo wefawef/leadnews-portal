@@ -116,7 +116,7 @@
                         }).then(() => {
                             // 登录成功，跳转到首页
                             modal.toast({
-                                message: d.errorMessage || '登录成功',
+                                message: '登录成功',
                                 duration: 2
                             });
                             this.$router.push("/home");

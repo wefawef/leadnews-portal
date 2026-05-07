@@ -167,10 +167,11 @@
                                 modal.toast({message: '删除成功', duration: 3})
                                 this.load_search_history()
                             } else {
-                                modal.toast({message: data.errorMessage || data.error_message, duration: 3})
+                                modal.toast({message: data.errorMessage || '删除失败', duration: 3})
                             }
                         }).catch((e) => {
                             console.log(e)
+                            modal.toast({message: '删除失败，请检查网络', duration: 3})
                         })
                     }
                 })
@@ -187,6 +188,8 @@
                     this.tanfer(d.data);
                 }).catch((e)=>{
                     console.log(e)
+                    const modal = weex.requireModule('modal')
+                    modal.toast({message:'搜索失败，请检查网络',duration:2})
                 })
             },
             // 列表数据转换成View需要的Model对象

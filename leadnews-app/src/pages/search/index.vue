@@ -11,16 +11,6 @@
                     </div>
                 </scroller>
             </div>
-            <Title title="" :icon="icon.hot"/>
-            <div class="hot-body">
-                <template v-for="item in data.hot">
-                    <div class="item">
-                        <template v-for="k in item">
-                            <HotCell @onClick="doSearch" :title="k.hot_words" type="k.type"/>
-                        </template>
-                    </div>
-                </template>
-            </div>
             <Title title="热点文章" :icon="icon.hotArticle"/>
             <div class="hot-articles-body">
                 <template v-for="(article, index) in data.hotArticles">
@@ -53,15 +43,12 @@
                 scrollerHeight:'500px',
                 showTip:false,
                 icon : {
-                    hot : '\uf06d',
-                    other:'\uf17d',
                     hotArticle:''
                 },
                 data : {
                     keyword:'',//当前输入的关键字
                     history : [],//搜索历史
                     tip : [],// 联想词
-                    hot : [],//热搜关键字
                     hotArticles : []//热点文章
                 }
             }
@@ -72,7 +59,6 @@
         mounted(){
             this.scrollerHeight=(Utils.env.getPageHeight()-180)+'px';
             this.load_search_history()
-            this.load_hot_keywords()
             this.load_hot_articles()
         },
         methods:{
@@ -118,28 +104,6 @@
                         this.data.tip = Array.isArray(data.data) ? data.data : []
                     }
                 }).catch(e=>{
-                    console.log(e)
-                })
-            },
-            // 加载热搜关键字
-            load_hot_keywords : function(){
-                Api.load_hot_keywords().then(data=>{
-                    if(data.code==0){
-                        // 需要转换数据格式
-                        let newData=[]
-                        let temp = []
-                        for(var i=0;i<data.data.length;i++){
-                            if(i>0&&i%2==0){
-                                newData.push(temp)
-                                temp = []
-                            }
-                            temp.push(data.data[i])
-                        }
-                        this.data.hot = newData
-                    }else{
-                        modal.toast({message: data.error_message,duration: 3})
-                    }
-                }).catch((e)=>{
                     console.log(e)
                 })
             },

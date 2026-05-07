@@ -37,7 +37,7 @@ service.interceptors.request.use(
     return config
   },
   error => {
-    Promise.reject(error)
+    return Promise.reject(error)
   }
 )
 
@@ -73,14 +73,13 @@ service.interceptors.response.use(
        message = '请求参数错误'
       break;
       case 401:
-      message = '登入信息过期！ 请重新登入'
+      message = '登录信息过期，请重新登录'
       break;
       case 403:
-       message = '操作失败'
+       message = '拒绝访问'
        break;
       case 404:
-       message = '找不到请求的url'
-       // message = '手机号不正确'
+       message = '请求的资源不存在'
        break;
       case 500:
       message = '服务器异常'
@@ -89,15 +88,19 @@ service.interceptors.response.use(
       message = '服务器数据库异常'
        break;
        default :
-       message = '处理异常'
+       message = '网络连接失败，请检查网络'
     }
-   // message = message + ':' +  error.response ? error.response.data.message : error.response.data.message
+    if (error.response && error.response.data && error.response.data.errorMessage) {
+      message = message + '：' + error.response.data.errorMessage
+    }
       Message({
         message,
-        type: 'warning',
-        onClose:code  == '401' ? () =>   Router.replace({path:'/login'}) : null
+        type: 'warning'
       })
-     return new Promise(function(){}) //终止当前的promise链
+    if (code === 401) {
+      Router.replace({path:'/login'})
+    }
+     return Promise.reject(error)
   }
 )
 
