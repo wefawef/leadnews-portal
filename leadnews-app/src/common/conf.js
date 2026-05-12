@@ -17,8 +17,6 @@ const  config = {
         load:{url:'article/api/v1/article/load/',sv:'article'},
         loadmore:{url:'article/api/v1/article/loadmore/',sv:'article'},
         loadnew:{url:'article/api/v1/article/loadnew/',sv:'article'},
-        load_article_info:{url:'api/v1/article/load_article_info/',sv:'article'},
-        load_article_behavior:{url:'api/v1/article/load_article_behavior/',sv:'article'},
         load_search_history:{url:'api/v1/history/load',sv:'search'},
         del_search:{url:'api/v1/history/del',sv:'search'},
         clear_search:{url:'api/v1/article/search/clear_search/',sv:'article'},

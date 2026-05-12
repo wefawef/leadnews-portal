@@ -732,12 +732,7 @@
         console.log('当前频道索引:', this.params.index);
         console.log('当前频道标签:', this.params.tag);
 
-        // 1. 发送行为与详情请求
-        ArticleApi.setVue(this);
-        ArticleApi.loadinfo(item.id);
-        ArticleApi.loadbehavior(item.id, item.authorId);
-
-        // 2. 简化实现：只保存必要的频道信息
+        // 1. 简化实现：只保存必要的频道信息
         if (typeof sessionStorage !== 'undefined') {
           sessionStorage.setItem('lastChannelIndex', this.params.index.toString());
           sessionStorage.setItem('lastChannelTag', this.params.tag || '');

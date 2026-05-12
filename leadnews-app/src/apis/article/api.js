@@ -5,34 +5,6 @@ Api.prototype = {
     setVue : function(vue){
         this.vue = vue;
     },
-    // 保存展现行为数据
-    loadinfo : function(articleId){
-        let url = this.vue.$config.urls.get('load_article_info')
-        return new Promise((resolve, reject) => {
-            this.vue.$request.post(url,{article_id:articleId}).then((d)=>{
-                resolve(d);
-            }).catch((e)=>{
-                reject(e);
-            })
-        })
-    },
-    // 加载文章关系信息
-    loadbehavior: function(articleId,authorId){
-        let url = this.vue.$config.urls.get('load_article_behavior')
-        return this.vue.$store.getEquipmentId().then(equipmentId=>{
-            return new Promise((resolve, reject) => {
-                this.vue.$request.post(url,{equipment_id:equipmentId,article_id:articleId,author_id:authorId}).then((d)=>{
-                    resolve(d);
-                }).catch((e)=>{
-                    reject(e);
-                })
-            })
-        }).catch(e=>{
-            return new Promise((resolve, reject) => {
-                reject(e);
-            })
-        })
-    },
     // 喜欢、点赞
     like : function(data){
         let url = this.vue.$config.urls.get('like_behavior')

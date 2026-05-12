@@ -260,12 +260,7 @@
             wxcPanItemClicked(item){
                 console.log('搜索结果页：点击文章，文章ID:', item.id);
                 
-                // 1. 发送行为与详情请求 (仿照详情页需求)
-                ArticleApi.setVue(this);
-                ArticleApi.loadinfo(item.id);
-                ArticleApi.loadbehavior(item.id, item.authorId);
-
-                // 2. 简化实现：只保存必要的频道信息
+                // 1. 简化实现：只保存必要的频道信息
                 if (typeof sessionStorage !== 'undefined') {
                     sessionStorage.setItem('lastArticleId', (item.id || '').toString());
                     sessionStorage.setItem('fromPage', 'search-result');
